@@ -8,9 +8,9 @@ export default function Gov4Page() {
     <ShowcaseViewer
       folder="06_การยกระดับสู่ระบบราชการ 4.0"
       title="ศูนย์ข้อมูลการยกระดับสู่ระบบราชการ 4.0 (Gov 4.0)"
-      badgeText="ระบบราชการ 4.0 (D:\React\gts-tmd\About\06_การยกระดับสู่ระบบราชการ 4.0)"
+      badgeText="ระบบราชการ 4.0"
       description="ศูนย์รวมแผนงาน เอกสารพัฒนาองค์กร และผลการดำเนินงานการยกระดับสู่ระบบราชการ 4.0 ของกรมอุตุนิยมวิทยา"
-      folderPathDisplay="D:\React\gts-tmd\About\06_การยกระดับสู่ระบบราชการ 4.0"
+      folderPathDisplay=""
       HeaderIcon={Zap}
     />
   );

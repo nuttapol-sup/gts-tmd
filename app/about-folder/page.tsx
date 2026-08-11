@@ -15,9 +15,9 @@ function AboutFolderContent() {
     <ShowcaseViewer
       folder={folderName}
       title={cleanTitle}
-      badgeText={`D:\\React\\gts-tmd\\About\\${folderName}`}
+      badgeText={cleanTitle}
       description={`ศูนย์รวมข้อมูลและสื่อประชาสัมพันธ์ ${cleanTitle} กรมอุตุนิยมวิทยา`}
-      folderPathDisplay={`D:\\React\\gts-tmd\\About\\${folderName}`}
+      folderPathDisplay=""
       HeaderIcon={Folder}
     />
   );

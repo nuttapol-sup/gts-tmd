@@ -8,9 +8,9 @@ export default function NocPage() {
     <ShowcaseViewer
       folder="01_Thailand NOC"
       title="ศูนย์ข้อมูล Thailand NOC"
-      badgeText="Thailand NOC (D:\React\gts-tmd\About\01_Thailand NOC)"
+      badgeText="Thailand NOC"
       description="ศูนย์รวมเอกสาร แผนผังโครงสร้าง อัตรากำลัง และสื่อประชาสัมพันธ์ Thailand NOC กรมอุตุนิยมวิทยา"
-      folderPathDisplay="D:\React\gts-tmd\About\01_Thailand NOC"
+      folderPathDisplay=""
       HeaderIcon={Plane}
     />
   );

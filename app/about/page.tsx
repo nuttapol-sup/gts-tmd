@@ -40,7 +40,7 @@ export default function AboutPage() {
                 href="/noc"
                 className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:brightness-110 text-white text-xs font-bold shadow-lg shadow-cyan-500/25 transition-all cursor-pointer"
               >
-                <span>เข้าสู่คลังเอกสาร & สื่อ Thailand NOC (`D:\React\gts-tmd\Thailand NOC`)</span>
+                <span>เข้าสู่คลังเอกสาร & สื่อ Thailand NOC</span>
               </a>
             </div>
           </div>
