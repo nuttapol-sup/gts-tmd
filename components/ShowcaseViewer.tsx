@@ -326,7 +326,7 @@ export default function ShowcaseViewer({
           {isLoading ? (
             <div className="glass-panel rounded-3xl p-16 text-center text-slate-400 flex flex-col items-center justify-center gap-3">
               <RefreshCw className="w-8 h-8 text-cyan-400 animate-spin" />
-              <span>กำลังโหลดข้อมูลเอกสารจาก {displayBadge}...</span>
+              <span>กำลังโหลดข้อมูลเอกสาร...</span>
             </div>
           ) : currentSubfolders.length === 0 && currentFiles.length === 0 ? (
             /* Empty Directory State */
