@@ -1,13 +1,24 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import ShowcaseViewer from "@/components/ShowcaseViewer";
 import { Folder } from "lucide-react";
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 
 function AboutFolderContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const folderName = searchParams.get("folder") || "Thailand NOC";
+
+  useEffect(() => {
+    if (!folderName) return;
+    const lower = folderName.trim().toLowerCase();
+    if (lower.includes("noc")) router.replace("/noc");
+    else if (lower.includes("smart") || lower.includes("ค่านิยม")) router.replace("/smart");
+    else if (lower.includes("คุณธรรม") || lower.includes("moral")) router.replace("/moral");
+    else if (lower.includes("4.0") || lower.includes("gov4") || lower.includes("ราชการ")) router.replace("/gov4");
+    else if (lower.includes("swim")) router.replace("/swim");
+  }, [folderName, router]);
 
   const cleanTitle = folderName.replace(/^(\d+)[\._\-\s]+/, "");
 

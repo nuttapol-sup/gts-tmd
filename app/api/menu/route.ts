@@ -54,10 +54,18 @@ export async function GET() {
         const cleanLabel = folder.name.replace(/^(\d+)[\._\-\s]+/, "");
         const { icon, iconColor } = getIconForFolder(folder.name);
 
+        const lowerName = folder.name.toLowerCase();
+        let href = `/about-folder?folder=${encodeURIComponent(folder.name)}`;
+        if (lowerName.includes("noc")) href = "/noc";
+        else if (lowerName.includes("smart") || lowerName.includes("ค่านิยม")) href = "/smart";
+        else if (lowerName.includes("คุณธรรม") || lowerName.includes("moral")) href = "/moral";
+        else if (lowerName.includes("4.0") || lowerName.includes("gov4") || lowerName.includes("ราชการ")) href = "/gov4";
+        else if (lowerName.includes("swim")) href = "/swim";
+
         return {
           id: `about-dir-${idx}`,
           label: cleanLabel,
-          href: `/about-folder?folder=${encodeURIComponent(folder.name)}`,
+          href,
           icon,
           iconColor,
           folderName: folder.name,
