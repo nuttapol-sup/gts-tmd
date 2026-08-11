@@ -4,9 +4,9 @@
  * อ่านไฟล์ข่าวสภาพอากาศดิบทั้งหมดจาก FTP/received:
  * 1. Synoptic (SM*.*, SI*.*, SN*.*) -> เพิ่ม ZCZC...NNNN บันทึกเข้า FTP/<ปีพ.ศ.>/Synoptic/<DD-MMMYY.T<T>> และสำเนา SM<T>.TXT
  * 2. Note (NOTE*.*)               -> เพิ่ม ZCZC...NNNN บันทึกเข้า FTP/<ปีพ.ศ.>/Note/<DD-MMMYY.T<T>> และสำเนา N<T>.TXT
- * 3. Warning (WE*.*, WW*.*, ฯลฯ) -> เพิ่ม ZCZC...NNNN บันทึกเข้า FTP/<ปีพ.ศ.>/War/<DD-MMMYY.TXT> และสำเนา W<T>.TXT
- * 4. Metar (SA*.*, SP*.*)         -> เพิ่ม ZCZC...NNNN บันทึกเข้า FTP/<ปีพ.ศ.>/Metar/<DD-MMMYY.TXT> และสำเนา M<T>.TXT
- * 5. UpperAir (US*.*, UL*.*, ฯลฯ) -> เพิ่ม ZCZC...NNNN บันทึกเข้า FTP/<ปีพ.ศ.>/UpperAir/<DD-MMMYY.TXT> และสำเนา U<T>.TXT
+ * 3. Wind/UpperAir (U*.*, PR*.*)   -> เพิ่ม ZCZC...NNNN บันทึกเข้า FTP/<ปีพ.ศ.>/Wind/<DD-MMMYY.T<T>> และสำเนา U<T>.TXT
+ * 4. Warning (WE*.*, WW*.*, ฯลฯ) -> เพิ่ม ZCZC...NNNN บันทึกเข้า FTP/<ปีพ.ศ.>/War/<DD-MMMYY.TXT> และสำเนา W<T>.TXT
+ * 5. Metar (SA*.*, SP*.*)         -> เพิ่ม ZCZC...NNNN บันทึกเข้า FTP/<ปีพ.ศ.>/Metar/<DD-MMMYY.TXT> และสำเนา M<T>.TXT
  */
 
 const fs = require('fs');
@@ -66,6 +66,10 @@ function processFtpFiles() {
       categoryFolder = 'Synoptic';
       extName = `.T${utcCycle}`;
       copyPrefix = `SM`;
+    } else if (fileUpper.startsWith('U') || prefix2 === 'PR') {
+      categoryFolder = 'Wind';
+      extName = `.T${utcCycle}`;
+      copyPrefix = `U`;
     } else if (['WE', 'WW', 'WO', 'WS', 'WC', 'WV'].includes(prefix2)) {
       categoryFolder = 'War';
       extName = `.TXT`;
@@ -74,10 +78,6 @@ function processFtpFiles() {
       categoryFolder = 'Metar';
       extName = `.TXT`;
       copyPrefix = `M`;
-    } else if (['US', 'UL', 'UK', 'UG', 'UQ', 'UA', 'PR', 'WIND'].includes(prefix2)) {
-      categoryFolder = 'UpperAir';
-      extName = `.TXT`;
-      copyPrefix = `U`;
     }
 
     const targetFolder = path.join(BASE_FTP_DIR, yearBE, categoryFolder);
@@ -89,12 +89,12 @@ function processFtpFiles() {
       const rawContent = fs.readFileSync(filePath, 'utf-8').trim();
       const formattedEntry = `ZCZC\r\n${rawContent}\r\n\r\nNNNN\r\n\r\n`;
 
-      // 1. บันทึกลงไฟล์หลักประจำวัน e.g. 11-AUG26.TXT หรือ 11-AUG26.T00
+      // 1. บันทึกลงไฟล์หลักประจำวัน e.g. 11-AUG26.T00 หรือ 11-AUG26.TXT
       const mainFileName = `${dayStr}-${monthStr}${year2D}${extName}`;
       const mainPath = path.join(targetFolder, mainFileName);
       fs.appendFileSync(mainPath, formattedEntry, 'utf-8');
 
-      // 2. สำเนาลงไฟล์ประจำรอบเวลา e.g. W00.TXT, SM00.TXT, N00.TXT
+      // 2. สำเนาลงไฟล์ประจำรอบเวลา e.g. U00.TXT, SM00.TXT, N00.TXT, W00.TXT, M00.TXT
       const copyFileName = `${copyPrefix}${utcCycle}.TXT`;
       const copyPath = path.join(targetFolder, copyFileName);
       fs.copyFileSync(mainPath, copyPath);
