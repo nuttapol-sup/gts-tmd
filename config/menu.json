@@ -1,0 +1,39 @@
+{
+  "aboutSubmenu": [
+    {
+      "id": "noc",
+      "label": "Thailand NOC",
+      "href": "/noc",
+      "icon": "Plane",
+      "iconColor": "text-cyan-400"
+    },
+    {
+      "id": "smart",
+      "label": "ค่านิยมองค์กร (SO-SMART)",
+      "href": "/smart",
+      "icon": "Award",
+      "iconColor": "text-amber-400"
+    },
+    {
+      "id": "moral",
+      "label": "องค์กรคุณธรรม",
+      "href": "/moral",
+      "icon": "ShieldCheck",
+      "iconColor": "text-emerald-400"
+    },
+    {
+      "id": "gov4",
+      "label": "การยกระดับสู่ระบบราชการ 4.0",
+      "href": "/gov4",
+      "icon": "Zap",
+      "iconColor": "text-purple-400"
+    },
+    {
+      "id": "swim",
+      "label": "SWIM (System Wide Information)",
+      "href": "/swim",
+      "icon": "Globe",
+      "iconColor": "text-blue-400"
+    }
+  ]
+}
