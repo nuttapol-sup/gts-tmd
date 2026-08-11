@@ -309,7 +309,7 @@ export default function DocumentsPage() {
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <div className="flex items-center gap-2 font-bold text-sm text-cyan-300">
                 <HardDrive className="w-4 h-4 text-cyan-400" />
-                <span>โครงสร้างโฟลเดอร์ Root (doc)</span>
+                <span>เอกสารที่เกี่ยวข้อง</span>
               </div>
               <span className="text-[11px] text-slate-400 font-mono">
                 {allFiles.length} รายการ
@@ -328,7 +328,7 @@ export default function DocumentsPage() {
               >
                 <div className="flex items-center gap-2">
                   <Home className="w-4 h-4 text-cyan-400" />
-                  <span>📁 Root (doc)</span>
+                  <span>📁 เอกสารที่เกี่ยวข้อง</span>
                 </div>
                 <span className="text-[10px] font-mono text-cyan-300 bg-cyan-950 px-2 py-0.5 rounded-full border border-cyan-800">
                   {allFiles.length}
@@ -351,7 +351,7 @@ export default function DocumentsPage() {
                 className="flex items-center gap-1 hover:text-cyan-300 transition-colors cursor-pointer"
               >
                 <Home className="w-3.5 h-3.5 text-cyan-400" />
-                <span>doc</span>
+                <span>เอกสารที่เกี่ยวข้อง</span>
               </button>
 
               {breadcrumbs.map((folderName, index) => {
