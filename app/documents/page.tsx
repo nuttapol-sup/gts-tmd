@@ -27,6 +27,9 @@ import {
   HardDrive,
   Plus,
   ExternalLink,
+  ArrowUp,
+  ArrowDown,
+  ArrowUpDown,
 } from "lucide-react";
 import { DocFileItem, DocTreeNode } from "@/app/api/documents/route";
 
@@ -42,6 +45,7 @@ export default function DocumentsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "table">("grid");
+  const [sortMode, setSortMode] = useState<string>("custom");
 
   // Selected folder path ("" means root "doc")
   const [currentFolderPath, setCurrentFolderPath] = useState<string>("");
@@ -55,11 +59,12 @@ export default function DocumentsPage() {
   const [ytTitle, setYtTitle] = useState("");
   const [ytUrl, setYtUrl] = useState("");
   const [isSavingYt, setIsSavingYt] = useState(false);
+  const [isSavingOrder, setIsSavingOrder] = useState(false);
 
   const fetchDocuments = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch("/api/documents");
+      const res = await fetch(`/api/documents?sort=${sortMode}`);
       const data = await res.json();
       if (data.status === "success") {
         setTree(data.tree || []);
@@ -74,7 +79,40 @@ export default function DocumentsPage() {
 
   useEffect(() => {
     fetchDocuments();
-  }, []);
+  }, [sortMode]);
+
+  const handleMoveFile = async (index: number, direction: "up" | "down") => {
+    const filesToOrder = [...currentFiles];
+    const targetIdx = direction === "up" ? index - 1 : index + 1;
+
+    if (targetIdx < 0 || targetIdx >= filesToOrder.length) return;
+
+    const temp = filesToOrder[index];
+    filesToOrder[index] = filesToOrder[targetIdx];
+    filesToOrder[targetIdx] = temp;
+
+    setIsSavingOrder(true);
+    const orderedFileNames = filesToOrder.map((f) => f.fileName);
+
+    try {
+      const res = await fetch("/api/documents/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          orderedFileNames,
+          subfolder: currentFolderPath,
+        }),
+      });
+      const data = await res.json();
+      if (data.status === "success") {
+        fetchDocuments();
+      }
+    } catch (e) {
+      alert("เกิดข้อผิดพลาดในการบันทึกการจัดลำดับ");
+    } finally {
+      setIsSavingOrder(false);
+    }
+  };
 
   const handleAddYouTubeLink = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -147,106 +185,111 @@ export default function DocumentsPage() {
     ? allFiles.filter(
         (f) =>
           f.fileName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          (f.cleanTitle && f.cleanTitle.toLowerCase().includes(searchQuery.toLowerCase())) ||
           f.relativePath.toLowerCase().includes(searchQuery.toLowerCase())
       )
     : currentFolderPath === ""
-    ? tree.filter((n) => !n.isFolder && n.fileItem).map((n) => n.fileItem!)
-    : (currentNode?.children || []).filter((n) => !n.isFolder && n.fileItem).map((n) => n.fileItem!);
+    ? allFiles.filter((f) => f.subfolder === "Root")
+    : allFiles.filter((f) => f.subfolder === currentFolderPath);
 
-  const getFileIcon = (fileType: string) => {
-    switch (fileType) {
-      case "youtube":
-        return <YouTubeIcon className="w-6 h-6 text-red-500 fill-red-500/20" />;
+  const getFileIcon = (type: DocFileItem["fileType"]) => {
+    switch (type) {
       case "pdf":
-        return <FileText className="w-6 h-6 text-rose-400" />;
+        return <FileText className="w-5 h-5 text-rose-400" />;
       case "video":
-        return <Video className="w-6 h-6 text-purple-400" />;
+        return <Video className="w-5 h-5 text-purple-400" />;
+      case "youtube":
+        return <YouTubeIcon className="w-5 h-5 text-red-500" />;
       case "document":
-        return <FileSpreadsheet className="w-6 h-6 text-emerald-400" />;
+        return <FileSpreadsheet className="w-5 h-5 text-emerald-400" />;
+      case "image":
+        return <FileText className="w-5 h-5 text-cyan-400" />;
       default:
-        return <File className="w-6 h-6 text-cyan-400" />;
+        return <File className="w-5 h-5 text-slate-400" />;
     }
   };
 
-  const renderSidebarTreeNode = (node: DocTreeNode, depth: number = 0) => {
-    if (!node.isFolder) return null;
+  const breadcrumbs = currentFolderPath ? currentFolderPath.split("/") : [];
 
-    const isExpanded = !!expandedFolders[node.relativePath];
+  const renderSidebarTreeNode = (node: DocTreeNode, depth = 0) => {
     const isSelected = currentFolderPath === node.relativePath;
+    const isExpanded = !!expandedFolders[node.relativePath];
     const hasChildren = node.children && node.children.some((c) => c.isFolder);
 
     return (
-      <div key={node.relativePath} className="space-y-1">
+      <div key={node.relativePath} className="space-y-0.5">
         <div
           onClick={() => selectFolder(node.relativePath)}
-          style={{ paddingLeft: `${depth * 14 + 10}px` }}
-          className={`flex items-center justify-between py-2 pr-3 rounded-xl text-xs font-semibold cursor-pointer transition-all ${
+          style={{ paddingLeft: `${depth * 12 + 8}px` }}
+          className={`flex items-center justify-between py-1.5 pr-2 rounded-xl text-xs cursor-pointer transition-all ${
             isSelected
-              ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm"
+              ? "bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/40 shadow-sm"
               : "text-slate-300 hover:text-white hover:bg-slate-800/60"
           }`}
         >
-          <div className="flex items-center gap-2 min-w-0">
+          <div className="flex items-center gap-1.5 min-w-0">
             {hasChildren ? (
               <button
                 onClick={(e) => toggleFolderExpand(node.relativePath, e)}
-                className="p-0.5 rounded text-slate-400 hover:text-white shrink-0"
+                className="p-0.5 hover:text-cyan-400 text-slate-400 transition-colors shrink-0"
               >
-                {isExpanded ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
+                {isExpanded ? (
+                  <ChevronDown className="w-3.5 h-3.5" />
+                ) : (
+                  <ChevronRight className="w-3.5 h-3.5" />
+                )}
               </button>
             ) : (
-              <span className="w-3.5 shrink-0" />
+              <span className="w-3.5 h-3.5 shrink-0" />
             )}
-
             {isExpanded ? (
               <FolderOpen className="w-4 h-4 text-cyan-400 shrink-0" />
             ) : (
-              <Folder className="w-4 h-4 text-cyan-400/80 shrink-0" />
+              <Folder className="w-4 h-4 text-cyan-500/80 shrink-0" />
             )}
-
-            <span className="truncate">{node.name}</span>
+            <span className="truncate" title={node.name}>
+              {node.name}
+            </span>
           </div>
-
-          <span className="text-[10px] font-mono text-slate-400 bg-slate-900 px-2 py-0.5 rounded-full border border-slate-800 shrink-0 ml-1">
+          <span className="text-[10px] font-mono text-slate-400 bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800 shrink-0">
             {node.fileCount}
           </span>
         </div>
 
-        {isExpanded && node.children && (
-          <div className="space-y-1">
-            {node.children.map((child) => renderSidebarTreeNode(child, depth + 1))}
+        {hasChildren && isExpanded && (
+          <div className="space-y-0.5">
+            {node.children
+              ?.filter((c) => c.isFolder)
+              .map((child) => renderSidebarTreeNode(child, depth + 1))}
           </div>
         )}
       </div>
     );
   };
 
-  const breadcrumbs = currentFolderPath ? currentFolderPath.split("/") : [];
-
   return (
-    <main className="min-h-screen bg-[#0b132b] text-slate-100 flex flex-col pt-32 pb-16 relative overflow-hidden">
-      {/* Background Glow Orbs */}
-      <div className="absolute top-20 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-20 right-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
-
+    <div className="min-h-screen flex flex-col bg-[#0b132b] text-slate-100 font-sans selection:bg-cyan-500 selection:text-white">
       <Navbar />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 relative z-10 flex-1 w-full">
+      <main className="flex-1 py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-8 relative">
+        {/* Background Decorative Glow */}
+        <div className="absolute top-20 left-1/2 -translate-x-1/2 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+
         {/* Page Header */}
-        <div className="text-center max-w-3xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 text-xs font-semibold shadow-md">
-            <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-            คลังเอกสารและสื่อสารสนเทศ
+        <div className="text-center space-y-3 relative z-10">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-bold shadow-lg">
+            <Sparkles className="w-4 h-4 text-cyan-400" />
+            คลังเอกสาร & สื่อประชาสัมพันธ์ (Document Repository)
           </div>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-            คลังเอกสาร & สื่อวิดีโอ YouTube
+            เอกสารที่เกี่ยวข้อง
           </h1>
-          <p className="text-slate-300 text-sm sm:text-base font-light leading-relaxed">
-            สืบค้นไฟล์เอกสาร PDF, วิดีโอคู่มือ (MP4) และคลิปวิดีโอ YouTube โดยตรงจากโฟลเดอร์ในระบบ
+          <p className="text-sm sm:text-base text-slate-400 max-w-2xl mx-auto font-light">
+            รวบรวมคู่มือ เอกสารวิชาการ รายงานการประชุม แบบฟอร์ม และคลิปวิดีโอแนะนำการใช้งาน
           </p>
         </div>
 
-        {/* Top Control Bar: Search & Add YouTube & Actions */}
+        {/* Top Control Toolbar & Search */}
         <div className="glass-panel rounded-2xl p-4 border border-cyan-500/30 bg-slate-900/80 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl">
           <div className="relative w-full sm:max-w-md">
             <Search className="w-4 h-4 text-cyan-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -267,9 +310,22 @@ export default function DocumentsPage() {
             )}
           </div>
 
-          <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+          <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+            {/* Sort Mode Selector */}
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300">
+              <ArrowUpDown className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+              <select
+                value={sortMode}
+                onChange={(e) => setSortMode(e.target.value)}
+                className="bg-transparent text-xs text-cyan-300 font-semibold focus:outline-none cursor-pointer"
+              >
+                <option value="custom" className="bg-slate-900 text-white">🔢 ลำดับที่กำหนด (01_, 02_)</option>
+                <option value="name" className="bg-slate-900 text-white">🔤 ชื่อหัวข้อ (A-Z)</option>
+                <option value="date" className="bg-slate-900 text-white">📅 ใหม่ล่าสุด</option>
+              </select>
+            </div>
 
-
+            {/* View Mode Toggle */}
             <div className="flex items-center p-1 rounded-xl bg-slate-950 border border-slate-800">
               <button
                 onClick={() => setViewMode("grid")}
@@ -293,10 +349,10 @@ export default function DocumentsPage() {
 
             <button
               onClick={fetchDocuments}
-              disabled={isLoading}
+              disabled={isLoading || isSavingOrder}
               className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 text-xs font-bold border border-slate-700 transition-all cursor-pointer flex items-center gap-2 shrink-0 disabled:opacity-50"
             >
-              <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin text-cyan-400" : ""}`} />
+              <RefreshCw className={`w-3.5 h-3.5 ${isLoading || isSavingOrder ? "animate-spin text-cyan-400" : ""}`} />
               <span>รีเฟรช</span>
             </button>
           </div>
@@ -374,28 +430,21 @@ export default function DocumentsPage() {
             </div>
 
             {isLoading ? (
-              <div className="flex-1 flex flex-col items-center justify-center p-12 text-slate-400 gap-3">
+              <div className="flex-1 flex flex-col items-center justify-center p-12 text-slate-400 space-y-3">
                 <RefreshCw className="w-8 h-8 text-cyan-400 animate-spin" />
-                <span>กำลังอ่านรายการไฟล์ในโฟลเดอร์...</span>
+                <span className="text-sm">กำลังดาวน์โหลดข้อมูลเอกสาร...</span>
               </div>
             ) : currentSubfolders.length === 0 && currentFiles.length === 0 ? (
-              /* Empty Directory State */
-              <div className="flex-1 flex flex-col items-center justify-center p-10 text-center space-y-4 border border-dashed border-slate-800 rounded-2xl">
-                <div className="w-16 h-16 rounded-full bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400">
-                  <FolderPlus className="w-8 h-8" />
-                </div>
+              <div className="flex-1 flex flex-col items-center justify-center p-12 text-center text-slate-400 space-y-3 border border-dashed border-slate-800 rounded-2xl">
+                <FolderPlus className="w-10 h-10 text-cyan-500/40" />
                 <div className="space-y-1">
-                  <h3 className="text-lg font-bold text-white">
-                    โฟลเดอร์นี้ยังไม่มีรายการไฟล์หรือวิดีโอ
-                  </h3>
-                  <p className="text-xs sm:text-sm text-slate-400 max-w-md mx-auto">
-                    ไม่พบรายการเอกสารในหมวดหมู่นี้
-                  </p>
+                  <h4 className="text-base font-bold text-white">ไม่พบไฟล์ในโฟลเดอร์นี้</h4>
+                  <p className="text-xs text-slate-400">ยังไม่มีเอกสารหรือคลิปวิดีโอในหมวดหมู่นี้</p>
                 </div>
               </div>
             ) : (
-              <div className="space-y-6 flex-1">
-                {/* 1. Subfolders Grid */}
+              <div className="space-y-6">
+                {/* 1. Subfolders Display Section */}
                 {currentSubfolders.length > 0 && (
                   <div className="space-y-3">
                     <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
@@ -436,7 +485,7 @@ export default function DocumentsPage() {
                     {viewMode === "grid" ? (
                       /* GRID VIEW */
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {currentFiles.map((doc) => (
+                        {currentFiles.map((doc, idx) => (
                           <div
                             key={doc.id}
                             className="glass-panel rounded-2xl p-4 border border-cyan-500/20 flex flex-col justify-between gap-3 hover:border-cyan-400 transition-all duration-300 shadow-xl group bg-slate-950/60 overflow-hidden"
@@ -449,7 +498,7 @@ export default function DocumentsPage() {
                               >
                                 <img
                                   src={doc.youtubeThumbnail}
-                                  alt={doc.fileName}
+                                  alt={doc.cleanTitle || doc.fileName}
                                   className="w-full h-full object-cover group-hover/thumb:scale-105 transition-transform duration-300"
                                 />
                                 <div className="absolute inset-0 bg-black/40 flex items-center justify-center group-hover/thumb:bg-black/20 transition-colors">
@@ -478,8 +527,8 @@ export default function DocumentsPage() {
                                 >
                                   {doc.extension}
                                 </span>
-                                <h5 className="font-bold text-xs text-white leading-snug group-hover:text-cyan-300 transition-colors truncate" title={doc.fileName}>
-                                  {doc.fileName}
+                                <h5 className="font-bold text-xs text-white leading-snug group-hover:text-cyan-300 transition-colors truncate" title={doc.cleanTitle || doc.fileName}>
+                                  {doc.cleanTitle || doc.fileName}
                                 </h5>
                                 <div className="text-[10px] text-slate-400 flex items-center gap-2 pt-0.5">
                                   <span>{doc.fileSize}</span>
@@ -489,132 +538,184 @@ export default function DocumentsPage() {
                               </div>
                             </div>
 
-                            {/* Action Buttons */}
-                            <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-800/80">
-                              {doc.fileType === "youtube" && (
-                                <>
+                            {/* Action Buttons & Order Movement */}
+                            <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-800/80">
+                              {/* Order Movement Controls */}
+                              {sortMode === "custom" && !searchQuery ? (
+                                <div className="flex items-center gap-1 bg-slate-900/90 rounded-lg p-1 border border-slate-800">
+                                  <button
+                                    onClick={() => handleMoveFile(idx, "up")}
+                                    disabled={idx === 0 || isSavingOrder}
+                                    className="p-1 rounded text-slate-400 hover:text-cyan-300 hover:bg-slate-800 disabled:opacity-20 cursor-pointer transition-colors"
+                                    title="เลื่อนขึ้น"
+                                  >
+                                    <ArrowUp className="w-3.5 h-3.5" />
+                                  </button>
+                                  <button
+                                    onClick={() => handleMoveFile(idx, "down")}
+                                    disabled={idx === currentFiles.length - 1 || isSavingOrder}
+                                    className="p-1 rounded text-slate-400 hover:text-cyan-300 hover:bg-slate-800 disabled:opacity-20 cursor-pointer transition-colors"
+                                    title="เลื่อนลง"
+                                  >
+                                    <ArrowDown className="w-3.5 h-3.5" />
+                                  </button>
+                                </div>
+                              ) : (
+                                <div />
+                              )}
+
+                              <div className="flex items-center gap-2">
+                                {doc.fileType === "youtube" && (
+                                  <>
+                                    <button
+                                      onClick={() => setActiveMedia(doc)}
+                                      className="px-3.5 py-1.5 rounded-xl bg-red-600/20 hover:bg-red-600 text-red-300 hover:text-white text-xs font-semibold border border-red-500/30 transition-all flex items-center gap-1.5 cursor-pointer"
+                                    >
+                                      <Play className="w-3.5 h-3.5 fill-current" />
+                                      รับชมบนเว็บ
+                                    </button>
+                                    {doc.externalUrl && (
+                                      <a
+                                        href={doc.externalUrl}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs transition-colors cursor-pointer"
+                                        title="เปิดบน YouTube"
+                                      >
+                                        <ExternalLink className="w-3.5 h-3.5" />
+                                      </a>
+                                    )}
+                                  </>
+                                )}
+
+                                {doc.fileType === "video" && (
                                   <button
                                     onClick={() => setActiveMedia(doc)}
-                                    className="px-3.5 py-1.5 rounded-xl bg-red-600/20 hover:bg-red-600 text-red-300 hover:text-white text-xs font-semibold border border-red-500/30 transition-all flex items-center gap-1.5 cursor-pointer"
+                                    className="px-3.5 py-1.5 rounded-xl bg-purple-600/20 hover:bg-purple-600 text-purple-300 hover:text-white text-xs font-semibold border border-purple-500/30 transition-all flex items-center gap-1 cursor-pointer"
                                   >
                                     <Play className="w-3.5 h-3.5 fill-current" />
-                                    รับชมบนเว็บ
+                                    เล่นวิดีโอ
                                   </button>
-                                  {doc.externalUrl && (
-                                    <a
-                                      href={doc.externalUrl}
-                                      target="_blank"
-                                      rel="noreferrer"
-                                      className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs transition-colors cursor-pointer"
-                                      title="เปิดบน YouTube"
-                                    >
-                                      <ExternalLink className="w-3.5 h-3.5" />
-                                    </a>
-                                  )}
-                                </>
-                              )}
+                                )}
 
-                              {doc.fileType === "video" && (
-                                <button
-                                  onClick={() => setActiveMedia(doc)}
-                                  className="px-3.5 py-1.5 rounded-xl bg-purple-600/20 hover:bg-purple-600 text-purple-300 hover:text-white text-xs font-semibold border border-purple-500/30 transition-all flex items-center gap-1 cursor-pointer"
-                                >
-                                  <Play className="w-3.5 h-3.5 fill-current" />
-                                  เล่น VDO
-                                </button>
-                              )}
+                                {doc.fileType === "pdf" && (
+                                  <a
+                                    href={`/api/documents/file?path=${encodeURIComponent(doc.relativePath)}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 text-xs font-semibold border border-slate-700 transition-all flex items-center gap-1 cursor-pointer"
+                                  >
+                                    <Eye className="w-3.5 h-3.5" />
+                                    ดูเอกสาร
+                                  </a>
+                                )}
 
-                              {doc.fileType === "pdf" && (
-                                <a
-                                  href={`/api/documents/file?path=${encodeURIComponent(doc.relativePath)}`}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 text-xs font-semibold border border-slate-700 transition-all flex items-center gap-1 cursor-pointer"
-                                >
-                                  <Eye className="w-3.5 h-3.5" />
-                                  เปิดดู
-                                </a>
-                              )}
-
-                              {doc.fileType !== "youtube" && (
-                                <a
-                                  href={`/api/documents/file?path=${encodeURIComponent(doc.relativePath)}&download=true`}
-                                  className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:brightness-110 text-white text-xs font-bold shadow-md transition-all flex items-center gap-1 cursor-pointer"
-                                >
-                                  <Download className="w-3.5 h-3.5" />
-                                  ดาวน์โหลด
-                                </a>
-                              )}
+                                {doc.fileType !== "youtube" && (
+                                  <a
+                                    href={`/api/documents/file?path=${encodeURIComponent(doc.relativePath)}&download=true`}
+                                    className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:brightness-110 text-white text-xs font-bold shadow-md shadow-cyan-500/20 transition-all flex items-center gap-1 cursor-pointer"
+                                  >
+                                    <Download className="w-3.5 h-3.5" />
+                                    ดาวน์โหลด
+                                  </a>
+                                )}
+                              </div>
                             </div>
                           </div>
                         ))}
                       </div>
                     ) : (
                       /* TABLE LIST VIEW */
-                      <div className="rounded-2xl border border-slate-800 overflow-hidden bg-slate-950/80 shadow-xl">
-                        <table className="w-full text-left text-xs text-slate-300 font-sans">
-                          <thead className="bg-slate-900 text-slate-400 border-b border-slate-800 font-semibold">
-                            <tr>
-                              <th className="py-3 px-4">ชื่อไฟล์ / ลิงก์</th>
-                              <th className="py-3 px-4">ประเภท</th>
+                      <div className="rounded-2xl border border-slate-800 bg-slate-950/80 overflow-hidden shadow-xl">
+                        <table className="w-full text-left border-collapse">
+                          <thead>
+                            <tr className="border-b border-slate-800 text-[11px] font-bold text-slate-400 uppercase tracking-wider bg-slate-900/60">
+                              <th className="py-3 px-4">ชนิดไฟล์</th>
+                              <th className="py-3 px-4">ชื่อเอกสาร</th>
                               <th className="py-3 px-4">ขนาด</th>
+                              <th className="py-3 px-4">วันที่แก้ไข</th>
                               <th className="py-3 px-4 text-right">ดำเนินการ</th>
                             </tr>
                           </thead>
-                          <tbody className="divide-y divide-slate-800">
-                            {currentFiles.map((doc) => (
-                              <tr key={doc.id} className="hover:bg-slate-900/60 transition-colors">
+                          <tbody className="divide-y divide-slate-800/60 text-xs">
+                            {currentFiles.map((doc, idx) => (
+                              <tr key={doc.id} className="hover:bg-slate-900/50 transition-colors group">
                                 <td className="py-3 px-4">
-                                  <div className="flex items-center gap-2.5 min-w-0">
+                                  <div className="flex items-center gap-2">
                                     {getFileIcon(doc.fileType)}
-                                    <span className="font-medium text-white truncate max-w-xs" title={doc.fileName}>
-                                      {doc.fileName}
+                                    <span className="font-mono text-[10px] font-bold text-cyan-300 bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800">
+                                      {doc.extension}
                                     </span>
                                   </div>
                                 </td>
-                                <td className="py-3 px-4 font-mono font-bold">
-                                  <span className={doc.fileType === "youtube" ? "text-red-400" : "text-cyan-300"}>
-                                    {doc.extension}
-                                  </span>
+                                <td className="py-3 px-4 font-semibold text-slate-200 group-hover:text-cyan-300 transition-colors">
+                                  {doc.cleanTitle || doc.fileName}
                                 </td>
-                                <td className="py-3 px-4 font-mono text-slate-400">
+                                <td className="py-3 px-4 text-slate-400 font-mono text-[11px]">
                                   {doc.fileSize}
+                                </td>
+                                <td className="py-3 px-4 text-slate-400 font-mono text-[11px]">
+                                  {doc.modifiedDate}
                                 </td>
                                 <td className="py-3 px-4 text-right">
                                   <div className="flex items-center justify-end gap-2">
-                                    {(doc.fileType === "video" || doc.fileType === "youtube") && (
-                                      <button
-                                        onClick={() => setActiveMedia(doc)}
-                                        className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
-                                          doc.fileType === "youtube"
-                                            ? "bg-red-600/20 text-red-300 hover:bg-red-600 hover:text-white"
-                                            : "bg-purple-600/20 text-purple-300 hover:bg-purple-600 hover:text-white"
-                                        }`}
-                                        title="เล่นสื่อวิดีโอ"
-                                      >
-                                        <Play className="w-3.5 h-3.5 fill-current" />
-                                      </button>
+                                    {sortMode === "custom" && !searchQuery && (
+                                      <div className="flex items-center gap-1 bg-slate-900/90 rounded-lg p-1 border border-slate-800">
+                                        <button
+                                          onClick={() => handleMoveFile(idx, "up")}
+                                          disabled={idx === 0 || isSavingOrder}
+                                          className="p-1 rounded text-slate-400 hover:text-cyan-300 hover:bg-slate-800 disabled:opacity-20 cursor-pointer transition-colors"
+                                          title="เลื่อนขึ้น"
+                                        >
+                                          <ArrowUp className="w-3.5 h-3.5" />
+                                        </button>
+                                        <button
+                                          onClick={() => handleMoveFile(idx, "down")}
+                                          disabled={idx === currentFiles.length - 1 || isSavingOrder}
+                                          className="p-1 rounded text-slate-400 hover:text-cyan-300 hover:bg-slate-800 disabled:opacity-20 cursor-pointer transition-colors"
+                                          title="เลื่อนลง"
+                                        >
+                                          <ArrowDown className="w-3.5 h-3.5" />
+                                        </button>
+                                      </div>
                                     )}
 
+                                    {doc.fileType === "youtube" && (
+                                      <button
+                                        onClick={() => setActiveMedia(doc)}
+                                        className="px-2.5 py-1 rounded-lg bg-red-600/20 hover:bg-red-600 text-red-300 hover:text-white text-xs font-semibold border border-red-500/30 transition-all flex items-center gap-1 cursor-pointer"
+                                      >
+                                        <Play className="w-3 h-3 fill-current" />
+                                        รับชม
+                                      </button>
+                                    )}
+                                    {doc.fileType === "video" && (
+                                      <button
+                                        onClick={() => setActiveMedia(doc)}
+                                        className="px-2.5 py-1 rounded-lg bg-purple-600/20 hover:bg-purple-600 text-purple-300 hover:text-white text-xs font-semibold border border-purple-500/30 transition-all flex items-center gap-1 cursor-pointer"
+                                      >
+                                        <Play className="w-3 h-3 fill-current" />
+                                        เล่น
+                                      </button>
+                                    )}
                                     {doc.fileType === "pdf" && (
                                       <a
                                         href={`/api/documents/file?path=${encodeURIComponent(doc.relativePath)}`}
                                         target="_blank"
                                         rel="noreferrer"
-                                        className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300 transition-colors cursor-pointer"
-                                        title="เปิดดูเอกสาร"
+                                        className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300 text-xs font-semibold border border-slate-700 transition-all flex items-center gap-1 cursor-pointer"
                                       >
-                                        <Eye className="w-3.5 h-3.5" />
+                                        <Eye className="w-3 h-3" />
+                                        ดู
                                       </a>
                                     )}
-
                                     {doc.fileType !== "youtube" && (
                                       <a
                                         href={`/api/documents/file?path=${encodeURIComponent(doc.relativePath)}&download=true`}
-                                        className="p-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white transition-colors cursor-pointer"
-                                        title="ดาวน์โหลด"
+                                        className="px-2.5 py-1 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
                                       >
-                                        <Download className="w-3.5 h-3.5" />
+                                        <Download className="w-3 h-3" />
+                                        โหลด
                                       </a>
                                     )}
                                   </div>
@@ -631,83 +732,128 @@ export default function DocumentsPage() {
             )}
           </div>
         </div>
-      </div>
+      </main>
 
-      {/* Video & YouTube Modal Player */}
+      {/* Video Preview Modal */}
       {activeMedia && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="glass-panel rounded-3xl p-6 border border-cyan-500/40 max-w-4xl w-full space-y-4 shadow-2xl relative overflow-hidden bg-slate-950">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <div className="flex items-center gap-2">
-                {activeMedia.fileType === "youtube" ? (
-                  <YouTubeIcon className="w-5 h-5 text-red-500" />
-                ) : (
-                  <Video className="w-5 h-5 text-purple-400" />
-                )}
-                <h3 className="font-bold text-sm text-white truncate max-w-lg">
-                  {activeMedia.fileName}
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in">
+          <div className="relative w-full max-w-4xl bg-slate-900 rounded-3xl border border-cyan-500/40 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="flex items-center justify-between p-4 px-6 border-b border-slate-800 bg-slate-950/80">
+              <div className="flex items-center gap-2 min-w-0 pr-4">
+                {getFileIcon(activeMedia.fileType)}
+                <h3 className="font-bold text-sm text-white truncate" title={activeMedia.cleanTitle || activeMedia.fileName}>
+                  {activeMedia.cleanTitle || activeMedia.fileName}
                 </h3>
               </div>
               <button
                 onClick={() => setActiveMedia(null)}
-                className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-all cursor-pointer"
+                className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="aspect-video bg-black rounded-2xl overflow-hidden border border-slate-800 shadow-inner">
+            <div className="p-4 sm:p-6 flex-1 overflow-y-auto bg-slate-950 flex items-center justify-center">
               {activeMedia.fileType === "youtube" && activeMedia.youtubeEmbedUrl ? (
-                <iframe
-                  className="w-full h-full"
-                  src={`${activeMedia.youtubeEmbedUrl}?autoplay=1`}
-                  title={activeMedia.fileName}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-              ) : (
+                <div className="w-full aspect-video rounded-2xl overflow-hidden bg-black shadow-2xl">
+                  <iframe
+                    src={activeMedia.youtubeEmbedUrl}
+                    title={activeMedia.cleanTitle || activeMedia.fileName}
+                    className="w-full h-full border-none"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                </div>
+              ) : activeMedia.fileType === "video" ? (
                 <video
+                  src={`/api/documents/file?path=${encodeURIComponent(activeMedia.relativePath)}`}
                   controls
                   autoPlay
-                  className="w-full h-full"
-                  src={`/api/documents/file?path=${encodeURIComponent(activeMedia.relativePath)}`}
-                >
-                  เบราว์เซอร์ของคุณไม่รองรับการเล่นวิดีโอนี้
-                </video>
-              )}
-            </div>
-
-            <div className="flex items-center justify-between text-xs text-slate-400 pt-2">
-              <span>ตำแหน่งไฟล์: {activeMedia.relativePath}</span>
-              {activeMedia.fileType === "youtube" && activeMedia.externalUrl ? (
-                <a
-                  href={activeMedia.externalUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold flex items-center gap-1.5 transition-all cursor-pointer"
-                >
-                  <ExternalLink className="w-4 h-4" />
-                  ดูบน YouTube
-                </a>
-              ) : (
-                <a
-                  href={`/api/documents/file?path=${encodeURIComponent(activeMedia.relativePath)}&download=true`}
-                  className="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-bold flex items-center gap-1.5 hover:brightness-110 cursor-pointer"
-                >
-                  <Download className="w-4 h-4" />
-                  ดาวน์โหลดวิดีโอ ({activeMedia.fileSize})
-                </a>
-              )}
+                  className="w-full max-h-[70vh] rounded-2xl bg-black shadow-2xl"
+                />
+              ) : null}
             </div>
           </div>
         </div>
       )}
 
+      {/* Add YouTube Link Modal */}
+      {showAddYtModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
+          <div className="w-full max-w-md bg-slate-900 rounded-3xl border border-cyan-500/40 p-6 space-y-6 shadow-2xl relative">
+            <button
+              onClick={() => setShowAddYtModal(false)}
+              className="absolute top-4 right-4 text-slate-400 hover:text-white"
+            >
+              <X className="w-5 h-5" />
+            </button>
 
+            <div className="space-y-1">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-bold">
+                <YouTubeIcon className="w-3.5 h-3.5 fill-red-500 text-red-500" />
+                เพิ่มลิงก์ YouTube
+              </div>
+              <h3 className="text-xl font-extrabold text-white">แทรกวิดีโอ YouTube</h3>
+              <p className="text-xs text-slate-400">
+                ระบบจะสร้างไฟล์ทางลัดเพื่อแสดงผลคลิปวิดีโอในหมวดหมู่{" "}
+                <span className="text-cyan-300 font-semibold font-mono">
+                  {currentFolderPath || "Root"}
+                </span>
+              </p>
+            </div>
 
-      <div className="mt-20">
-        <Footer />
-      </div>
-    </main>
+            <form onSubmit={handleAddYouTubeLink} className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="block text-xs font-semibold text-slate-300">
+                  หัวข้อ / ชื่อคลิปวิดีโอ:
+                </label>
+                <input
+                  type="text"
+                  placeholder="เช่น คู่มือการใช้งานระบบ GTS..."
+                  value={ytTitle}
+                  onChange={(e) => setYtTitle(e.target.value)}
+                  required
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white focus:outline-none focus:border-cyan-400"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="block text-xs font-semibold text-slate-300">
+                  URL คลิปวิดีโอ YouTube:
+                </label>
+                <input
+                  type="url"
+                  placeholder="https://www.youtube.com/watch?v=..."
+                  value={ytUrl}
+                  onChange={(e) => setYtUrl(e.target.value)}
+                  required
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white focus:outline-none focus:border-cyan-400"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowAddYtModal(false)}
+                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+                >
+                  ยกเลิก
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSavingYt}
+                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-red-600 to-pink-600 hover:brightness-110 text-white text-xs font-bold shadow-lg shadow-red-600/30 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                >
+                  {isSavingYt && <RefreshCw className="w-3.5 h-3.5 animate-spin" />}
+                  <span>บันทึกวิดีโอ</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      <Footer />
+    </div>
   );
 }

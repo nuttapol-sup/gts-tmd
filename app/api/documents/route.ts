@@ -2,9 +2,13 @@ import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 
+export const dynamic = "force-dynamic";
+
 export interface DocFileItem {
   id: string;
   fileName: string;
+  cleanTitle: string;
+  numOrder: number;
   filePath: string;
   relativePath: string;
   subfolder: string;
@@ -26,6 +30,7 @@ export interface DocTreeNode {
   fileCount: number;
   children?: DocTreeNode[];
   fileItem?: DocFileItem;
+  numOrder?: number;
 }
 
 const DOC_DIR = process.env.DOC_DIR || path.join(process.cwd(), "doc");
@@ -52,7 +57,6 @@ function parseFileForYouTube(filePath: string, ext: string): { url: string; yout
     let targetUrl = "";
 
     if (e === ".url") {
-      // Windows Internet Shortcut file (.url)
       const lines = content.split(/\r?\n/);
       for (const l of lines) {
         if (l.toLowerCase().startsWith("url=")) {
@@ -100,19 +104,42 @@ function getFileType(ext: string, isYouTube: boolean): "pdf" | "video" | "youtub
   return "other";
 }
 
+function getCustomOrderMap(dirPath: string): Record<string, number> {
+  const orderFile = path.join(dirPath, "sort_order.json");
+  if (fs.existsSync(/*turbopackIgnore: true*/ orderFile)) {
+    try {
+      const content = fs.readFileSync(/*turbopackIgnore: true*/ orderFile, "utf-8");
+      const list = JSON.parse(content);
+      const map: Record<string, number> = {};
+      if (Array.isArray(list)) {
+        list.forEach((fn: string, idx: number) => {
+          map[fn] = idx;
+        });
+      }
+      return map;
+    } catch (e) {
+      // ignore
+    }
+  }
+  return {};
+}
+
 function scanDirectoryRecursively(dirPath: string, rootDir: string): DocFileItem[] {
   let items: DocFileItem[] = [];
-  if (!fs.existsSync(dirPath)) return items;
+  if (!fs.existsSync(/*turbopackIgnore: true*/ dirPath)) return items;
 
-  const entries = fs.readdirSync(dirPath, { withFileTypes: true });
+  const orderMap = getCustomOrderMap(dirPath);
+  const entries = fs.readdirSync(/*turbopackIgnore: true*/ dirPath, { withFileTypes: true });
 
   for (const entry of entries) {
+    if (entry.name === "sort_order.json") continue;
+
     const fullPath = path.join(dirPath, entry.name);
     if (entry.isDirectory()) {
       items = items.concat(scanDirectoryRecursively(fullPath, rootDir));
     } else if (entry.isFile()) {
       const ext = path.extname(entry.name);
-      const stat = fs.statSync(fullPath);
+      const stat = fs.statSync(/*turbopackIgnore: true*/ fullPath);
       const relPath = path.relative(rootDir, fullPath).replace(/\\/g, "/");
       const parts = relPath.split("/");
       const subfolder = parts.length > 1 ? parts.slice(0, -1).join("/") : "Root";
@@ -123,9 +150,22 @@ function scanDirectoryRecursively(dirPath: string, rootDir: string): DocFileItem
       const isYouTube = !!ytInfo;
       const fileType = getFileType(ext, isYouTube);
 
+      const numMatch = entry.name.match(/^(\d+)[\._\-\s]+/);
+      let numOrder = numMatch ? parseInt(numMatch[1], 10) : 999;
+      if (orderMap[entry.name] !== undefined) {
+        numOrder = orderMap[entry.name];
+      }
+
+      const cleanTitle = entry.name
+        .replace(/^(\d+)[\._\-\s]+/, "")
+        .replace(/\.(url|youtube|txt)$/i, "")
+        .replace(/\.[^/.]+$/, "");
+
       items.push({
         id: Buffer.from(relPath).toString("base64url"),
-        fileName: entry.name.replace(/\.(url|youtube|txt)$/i, ""),
+        fileName: entry.name,
+        cleanTitle: cleanTitle || entry.name,
+        numOrder,
         filePath: fullPath,
         relativePath: relPath,
         subfolder: subfolder || "Root",
@@ -146,14 +186,23 @@ function scanDirectoryRecursively(dirPath: string, rootDir: string): DocFileItem
 }
 
 function buildDirectoryTree(dirPath: string, rootDir: string): DocTreeNode[] {
-  if (!fs.existsSync(dirPath)) return [];
-  const entries = fs.readdirSync(dirPath, { withFileTypes: true });
+  if (!fs.existsSync(/*turbopackIgnore: true*/ dirPath)) return [];
+  const orderMap = getCustomOrderMap(dirPath);
+  const entries = fs.readdirSync(/*turbopackIgnore: true*/ dirPath, { withFileTypes: true });
 
   const nodes: DocTreeNode[] = [];
 
   for (const entry of entries) {
+    if (entry.name === "sort_order.json") continue;
+
     const fullPath = path.join(dirPath, entry.name);
     const relPath = path.relative(rootDir, fullPath).replace(/\\/g, "/");
+
+    const numMatch = entry.name.match(/^(\d+)[\._\-\s]+/);
+    let numOrder = numMatch ? parseInt(numMatch[1], 10) : 999;
+    if (orderMap[entry.name] !== undefined) {
+      numOrder = orderMap[entry.name];
+    }
 
     if (entry.isDirectory()) {
       const children = buildDirectoryTree(fullPath, rootDir);
@@ -165,15 +214,16 @@ function buildDirectoryTree(dirPath: string, rootDir: string): DocTreeNode[] {
       };
 
       nodes.push({
-        name: entry.name,
+        name: entry.name.replace(/^(\d+)[\._\-\s]+/, ""),
         relativePath: relPath,
         isFolder: true,
         fileCount: countFiles(children),
         children,
+        numOrder,
       });
     } else if (entry.isFile()) {
       const ext = path.extname(entry.name);
-      const stat = fs.statSync(fullPath);
+      const stat = fs.statSync(/*turbopackIgnore: true*/ fullPath);
       const modified = stat.mtime.toISOString().split("T")[0];
 
       const parentDir = path.relative(rootDir, dirPath).replace(/\\/g, "/");
@@ -181,9 +231,16 @@ function buildDirectoryTree(dirPath: string, rootDir: string): DocTreeNode[] {
       const isYouTube = !!ytInfo;
       const fileType = getFileType(ext, isYouTube);
 
+      const cleanTitle = entry.name
+        .replace(/^(\d+)[\._\-\s]+/, "")
+        .replace(/\.(url|youtube|txt)$/i, "")
+        .replace(/\.[^/.]+$/, "");
+
       const fileItem: DocFileItem = {
         id: Buffer.from(relPath).toString("base64url"),
-        fileName: entry.name.replace(/\.(url|youtube|txt)$/i, ""),
+        fileName: entry.name,
+        cleanTitle: cleanTitle || entry.name,
+        numOrder,
         filePath: fullPath,
         relativePath: relPath,
         subfolder: parentDir || "Root",
@@ -199,11 +256,12 @@ function buildDirectoryTree(dirPath: string, rootDir: string): DocTreeNode[] {
       };
 
       nodes.push({
-        name: entry.name.replace(/\.(url|youtube|txt)$/i, ""),
+        name: cleanTitle || entry.name,
         relativePath: relPath,
         isFolder: false,
         fileCount: 0,
         fileItem,
+        numOrder,
       });
     }
   }
@@ -211,18 +269,35 @@ function buildDirectoryTree(dirPath: string, rootDir: string): DocTreeNode[] {
   return nodes.sort((a, b) => {
     if (a.isFolder && !b.isFolder) return -1;
     if (!a.isFolder && b.isFolder) return 1;
+    if ((a.numOrder ?? 999) !== (b.numOrder ?? 999)) {
+      return (a.numOrder ?? 999) - (b.numOrder ?? 999);
+    }
     return a.name.localeCompare(b.name, "th");
   });
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    if (!fs.existsSync(DOC_DIR)) {
-      fs.mkdirSync(DOC_DIR, { recursive: true });
+    const { searchParams } = new URL(request.url);
+    const sortMode = searchParams.get("sort") || "custom";
+
+    if (!fs.existsSync(/*turbopackIgnore: true*/ DOC_DIR)) {
+      fs.mkdirSync(/*turbopackIgnore: true*/ DOC_DIR, { recursive: true });
     }
 
-    const files = scanDirectoryRecursively(DOC_DIR, DOC_DIR);
+    let files = scanDirectoryRecursively(DOC_DIR, DOC_DIR);
     const tree = buildDirectoryTree(DOC_DIR, DOC_DIR);
+
+    if (sortMode === "name") {
+      files.sort((a, b) => a.cleanTitle.localeCompare(b.cleanTitle, "th"));
+    } else if (sortMode === "date") {
+      files.sort((a, b) => b.modifiedDate.localeCompare(a.modifiedDate));
+    } else {
+      files.sort((a, b) => {
+        if (a.numOrder !== b.numOrder) return a.numOrder - b.numOrder;
+        return a.fileName.localeCompare(b.fileName, "th");
+      });
+    }
 
     return NextResponse.json({
       status: "success",
