@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 export interface GTSBulletin {
   id: string;
-  category: "synoptic" | "upperair" | "warning" | "metar" | "notes";
+  category: "synoptic" | "upperair" | "warning" | "metar" | "notes" | "burf";
   categoryLabel: string;
   headerLine: string;
   dataType: string;
@@ -117,8 +117,8 @@ export async function GET(request: Request) {
     // Collect target category folders to scan
     const dirsToScan: string[] = [];
 
-    // If specific category requested and not isAllData, prioritize that category's folder
-    if (categoryParam && CATEGORY_SUBFOLDERS[categoryParam] && !isAllData) {
+    // If specific category requested, prioritize scanning that category's folder
+    if (categoryParam && CATEGORY_SUBFOLDERS[categoryParam]) {
       const folderNames = CATEGORY_SUBFOLDERS[categoryParam];
       for (const fn of folderNames) {
         const catPath = path.join(yearDirToUse, fn);
@@ -129,7 +129,7 @@ export async function GET(request: Request) {
       }
     }
 
-    // If no specific category folder found or isAllData, scan all subdirectories inside year folder
+    // If no specific category folder found or no category specified, scan all subdirectories inside year folder
     if (dirsToScan.length === 0) {
       try {
         const yearSubEntries = fs.readdirSync(/*turbopackIgnore: true*/ yearDirToUse);
@@ -256,7 +256,7 @@ export async function GET(request: Request) {
           if (!dataType) continue;
 
           // Categorize bulletin type
-          let category: "synoptic" | "upperair" | "warning" | "metar" | "notes" = "notes";
+          let category: "synoptic" | "upperair" | "warning" | "metar" | "notes" | "burf" = "notes";
           let categoryLabel = "Note ท้ายข่าว (Raw GTS)";
 
           const dataTypeUpper = dataType.toUpperCase();
@@ -265,9 +265,18 @@ export async function GET(request: Request) {
           const t1t2 = dataTypeUpper.substring(0, 2);
 
           if (
+            scanDirLower.includes("burf") ||
+            scanDirLower.includes("bufr") ||
+            t1t2 === "IS" ||
+            t1t2 === "IU" ||
+            t1 === "H" ||
+            body.includes("BUFR")
+          ) {
+            category = "burf";
+            categoryLabel = "ข่าว BUFR Binary Data";
+          } else if (
             dataTypeUpper.startsWith("NOTE") ||
-            scanDirLower.includes("note") ||
-            categoryParam === "notes"
+            scanDirLower.includes("note")
           ) {
             category = "notes";
             categoryLabel = "Note ท้ายข่าว (Raw GTS)";
@@ -333,8 +342,8 @@ export async function GET(request: Request) {
             continue;
           }
 
-          // Apply Category Filter if not isAllData and specific category selected
-          if (!isAllData && categoryParam && category !== categoryParam) {
+          // Apply Category Filter if specific category tab selected (unless categoryParam is empty)
+          if (categoryParam && category !== categoryParam) {
             continue;
           }
 
