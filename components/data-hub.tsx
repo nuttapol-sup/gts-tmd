@@ -340,7 +340,7 @@ export default function DataHub() {
                   >
                     {COUNTRIES.map((c) => (
                       <option key={c.value} value={c.value}>
-                        {c.value === "zero" ? `${c.flag} ${c.name}` : `${c.flag} ${c.name} (${c.value})`}
+                        {c.value === "zero" ? c.name : `${c.name} (${c.value})`}
                       </option>
                     ))}
                   </select>
