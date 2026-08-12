@@ -24,6 +24,23 @@ const MONTH_NAMES = [
   "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
 ];
 
+function cleanBinaryText(text: string): string {
+  if (!text) return "";
+  const hasBinaryNoise = /[\uFFFD\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F]/.test(text) || /BUFR|GRIB/i.test(text);
+
+  if (hasBinaryNoise) {
+    const cleaned = text
+      .replace(/[\uFFFD\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\uFFFF]/g, " ")
+      .replace(/[^\x20-\x7E\r\n]/g, " ")
+      .replace(/  +/g, " ")
+      .trim();
+
+    return cleaned || "[ข้อมูลข่าวสารรูปแบบ BUFR Binary Data]";
+  }
+
+  return text.replace(/[\uFFFD\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F]/g, "").trim();
+}
+
 const CATEGORY_SUBFOLDERS: Record<string, string[]> = {
   synoptic: ["Synoptic", "synoptic", "SYNOPTIC"],
   notes: ["Note", "note", "Notes", "notes"],
@@ -320,6 +337,8 @@ export async function GET(request: Request) {
             continue;
           }
 
+          const sanitizedRaw = cleanBinaryText(cleanRaw);
+
           bulletins.push({
             id: `ftp-${filename}-${blockIdx}`,
             category,
@@ -330,7 +349,7 @@ export async function GET(request: Request) {
             utcTimeStr,
             dayStr,
             hourStr,
-            rawText: cleanRaw,
+            rawText: sanitizedRaw,
             filename,
             folderPath: scanDir,
           });
