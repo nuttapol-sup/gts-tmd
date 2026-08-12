@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import { GTSBulletin } from "@/app/api/ftp/route";
 
-export type WeatherCategory = "synoptic" | "upperair" | "warning" | "metar" | "notes" | "burf";
+export type WeatherCategory = "synoptic" | "upperair" | "warning" | "metar" | "notes";
 
 const UTC_HOURS = [
   { utc: "00", ict: "07:00" },
@@ -241,18 +241,6 @@ export default function DataHub() {
             <StickyNote className="w-4 h-4" />
             Note ท้ายข่าว
           </button>
-
-          <button
-            onClick={() => setActiveTab("burf")}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
-              activeTab === "burf"
-                ? "bg-gradient-to-r from-purple-500 to-indigo-600 text-white shadow-lg shadow-purple-500/25"
-                : "text-slate-400 hover:text-white hover:bg-slate-800/60"
-            }`}
-          >
-            <Database className="w-4 h-4" />
-            BUFR Data (Burf)
-          </button>
         </div>
 
         {/* GTS Query Form Control Card */}
@@ -269,15 +257,13 @@ export default function DataHub() {
                 {activeTab === "warning" && "ประกาศเตือนภัยสภาพอากาศ (Warning / War)"}
                 {activeTab === "metar" && "ข้อมูลอากาศการบิน (METAR / TAF)"}
                 {activeTab === "notes" && "Note ท้ายข่าวสภาพอากาศ (GTS Raw Notes)"}
-                {activeTab === "burf" && "ข้อมูลไบนารี (BUFR Binary Data / Burf)"}
               </div>
               <h2 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
-                สืบค้นข้อมูลข่าว {
+                ข้อมูลข่าว {
                   activeTab === "synoptic" ? "Synoptic" :
                   activeTab === "upperair" ? "Upper Air (Wind)" :
                   activeTab === "warning" ? "เตือนภัย (War)" :
-                  activeTab === "metar" ? "METAR" :
-                  activeTab === "notes" ? "Note" : "BUFR (Burf)"
+                  activeTab === "metar" ? "METAR" : "Note"
                 }
               </h2>
             </div>
@@ -288,7 +274,7 @@ export default function DataHub() {
               <div className="space-y-2">
                 <label className="block text-xs font-semibold text-slate-300 flex items-center justify-center gap-1.5">
                   <Calendar className="w-4 h-4 text-cyan-400" />
-                  เลือกวันที่ต้องการค้นหา (DD/MM/YYYY)
+                  เลือกวันที่ (DD/MM/YYYY)
                 </label>
                 <div className="max-w-xs mx-auto relative">
                   <input
@@ -604,7 +590,6 @@ export default function DataHub() {
             {activeTab === "warning" && "WARNING (Weather Warnings & SIGMET)"}
             {activeTab === "metar" && "METAR (Aviation Routine Weather Report)"}
             {activeTab === "notes" && "NOTE (GTS Bulletin Raw Text Notes)"}
-            {activeTab === "burf" && "BUFR (Binary Universal Form for Representation)"}
           </h3>
           <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-light">
             {activeTab === "synoptic" && "ข้อมูลตรวจอากาศผิวพื้นแสดงสภาพอากาศบริเวณพื้นดิน ทุก 3 ชั่วโมง (00, 03, 06, 09, 12, 15, 18, 21 UTC)"}
@@ -612,7 +597,6 @@ export default function DataHub() {
             {activeTab === "warning" && "ประกาศเตือนภัยสภาพอากาศและพายุหมุนกะทันหัน หรือสภาวะอากาศร้ายแรงทางการบิน"}
             {activeTab === "metar" && "รายงานสภาพอากาศทางการบินสำหรับสนามบินและสายการบินต่างประเทศ"}
             {activeTab === "notes" && "หมายเหตุและข่าวสารประกอบส่วนท้ายโทรสารอุตุนิยมวิทยาระหว่างประเทศ"}
-            {activeTab === "burf" && "ข้อมูลไบนารีรหัสอุตุนิยมวิทยาสากลรูปแบบ BUFR/GRIB"}
           </p>
         </div>
       </div>
