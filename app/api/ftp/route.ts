@@ -154,10 +154,13 @@ export async function GET(request: Request) {
 
         const upperFn = filename.toUpperCase();
 
-        // Filter by Date (Day, Month, Year) e.g. 08-AUG26
+        // Filter by Date (Day, Month, Year) e.g. 12-AUG26
         if (targetDay && targetMonthStr && targetYear2D) {
           const expectedPrefix = `${targetDay}-${targetMonthStr}${targetYear2D}`.toUpperCase();
-          if (!upperFn.startsWith(expectedPrefix)) {
+          const isDatePrefixed = upperFn.startsWith(expectedPrefix);
+          const isCycleShortcut = /^(SM|M|W|U|N)\d{2}\.TXT$/i.test(filename);
+
+          if (!isDatePrefixed && !isCycleShortcut) {
             continue;
           }
         }
@@ -165,10 +168,13 @@ export async function GET(request: Request) {
         // Filter by UTC Hour e.g. .T09 (only for .T files; .TXT files contain all hours)
         if (targetHour) {
           const expectedSuffix = `.T${targetHour}`.toUpperCase();
+          const isCycleShortcut = filename.toUpperCase().endsWith(`${targetHour}.TXT`);
           if (upperFn.includes(".T") && !upperFn.endsWith(".TXT")) {
             if (!upperFn.includes(expectedSuffix)) {
               continue;
             }
+          } else if (isCycleShortcut) {
+            // matched cycle shortcut file
           }
         }
 
