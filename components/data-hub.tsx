@@ -34,39 +34,39 @@ const UTC_HOURS = [
 ];
 
 const COUNTRIES = [
-  { value: "zero", name: "--- All (ทั้งหมด) ---", flag: "🌐" },
-  { value: "AMMC", name: "Australia", flag: "🇦🇺" },
-  { value: "VGDC", name: "Bangladesh", flag: "🇧🇩" },
-  { value: "WBSB", name: "Brunei", flag: "🇧🇳" },
-  { value: "BABJ", name: "China", flag: "🇨🇳" },
-  { value: "VHHH", name: "Hong Kong", flag: "🇭🇰" },
-  { value: "DEMS", name: "India", flag: "🇮🇳" },
-  { value: "WIIX", name: "Indonesia", flag: "🇮🇩" },
-  { value: "OLLL", name: "Iran", flag: "🇮🇷" },
-  { value: "RJTD", name: "Japan", flag: "🇯🇵" },
-  { value: "UAAA", name: "Kazakhstan", flag: "🇰🇿" },
-  { value: "OKBK", name: "Kuwait", flag: "🇰🇼" },
-  { value: "UAFF", name: "Kyrgyzstan", flag: "🇰🇬" },
-  { value: "VLIV", name: "Laos", flag: "🇱🇦" },
-  { value: "VMMC", name: "Macao", flag: "🇲🇴" },
-  { value: "FMMI", name: "Madagascar", flag: "🇲🇬" },
-  { value: "WMKK", name: "Malaysia", flag: "🇲🇾" },
-  { value: "VRMM", name: "Maldives", flag: "🇲🇻" },
-  { value: "MNUB", name: "Mongolia", flag: "🇲🇳" },
-  { value: "VBRR", name: "Myanmar", flag: "🇲🇲" },
-  { value: "VNKT", name: "Nepal", flag: "🇳🇵" },
-  { value: "DKPY", name: "North Korea", flag: "🇰🇵" },
-  { value: "OOMS", name: "Oman", flag: "🇴🇲" },
-  { value: "OCEAN", name: "Pacific Ocean", flag: "🌊" },
-  { value: "RPLL", name: "Philippines", flag: "🇵🇭" },
-  { value: "ROAH", name: "Ryukyu Islands", flag: "🇯🇵" },
-  { value: "RIII", name: "Russian Federation (Asia)", flag: "🇷🇺" },
-  { value: "WSSS", name: "Singapore", flag: "🇸🇬" },
-  { value: "VCCC", name: "Sri Lanka", flag: "🇱🇰" },
-  { value: "RCAA", name: "Taiwan", flag: "🇹🇼" },
-  { value: "VTBB", name: "Thailand", flag: "🇹🇭" },
-  { value: "UTTT", name: "Uzbekistan", flag: "🇺🇿" },
-  { value: "VVGL", name: "Vietnam", flag: "🇻🇳" },
+  { value: "zero", name: "--- All (ทั้งหมด) ---", flag: "🌐", iso: "" },
+  { value: "AMMC", name: "Australia", flag: "🇦🇺", iso: "au" },
+  { value: "VGDC", name: "Bangladesh", flag: "🇧🇩", iso: "bd" },
+  { value: "WBSB", name: "Brunei", flag: "🇧🇳", iso: "bn" },
+  { value: "BABJ", name: "China", flag: "🇨🇳", iso: "cn" },
+  { value: "VHHH", name: "Hong Kong", flag: "🇭🇰", iso: "hk" },
+  { value: "DEMS", name: "India", flag: "🇮🇳", iso: "in" },
+  { value: "WIIX", name: "Indonesia", flag: "🇮🇩", iso: "id" },
+  { value: "OLLL", name: "Iran", flag: "🇮🇷", iso: "ir" },
+  { value: "RJTD", name: "Japan", flag: "🇯🇵", iso: "jp" },
+  { value: "UAAA", name: "Kazakhstan", flag: "🇰🇿", iso: "kz" },
+  { value: "OKBK", name: "Kuwait", flag: "🇰🇼", iso: "kw" },
+  { value: "UAFF", name: "Kyrgyzstan", flag: "🇰🇬", iso: "kg" },
+  { value: "VLIV", name: "Laos", flag: "🇱🇦", iso: "la" },
+  { value: "VMMC", name: "Macao", flag: "🇲🇴", iso: "mo" },
+  { value: "FMMI", name: "Madagascar", flag: "🇲🇬", iso: "mg" },
+  { value: "WMKK", name: "Malaysia", flag: "🇲🇾", iso: "my" },
+  { value: "VRMM", name: "Maldives", flag: "🇲🇻", iso: "mv" },
+  { value: "MNUB", name: "Mongolia", flag: "🇲🇳", iso: "mn" },
+  { value: "VBRR", name: "Myanmar", flag: "🇲🇲", iso: "mm" },
+  { value: "VNKT", name: "Nepal", flag: "🇳🇵", iso: "np" },
+  { value: "DKPY", name: "North Korea", flag: "🇰🇵", iso: "kp" },
+  { value: "OOMS", name: "Oman", flag: "🇴🇲", iso: "om" },
+  { value: "OCEAN", name: "Pacific Ocean", flag: "🌊", iso: "un" },
+  { value: "RPLL", name: "Philippines", flag: "🇵🇭", iso: "ph" },
+  { value: "ROAH", name: "Ryukyu Islands", flag: "🇯🇵", iso: "jp" },
+  { value: "RIII", name: "Russian Federation (Asia)", flag: "🇷🇺", iso: "ru" },
+  { value: "WSSS", name: "Singapore", flag: "🇸🇬", iso: "sg" },
+  { value: "VCCC", name: "Sri Lanka", flag: "🇱🇰", iso: "lk" },
+  { value: "RCAA", name: "Taiwan", flag: "🇹🇼", iso: "tw" },
+  { value: "VTBB", name: "Thailand", flag: "🇹🇭", iso: "th" },
+  { value: "UTTT", name: "Uzbekistan", flag: "🇺🇿", iso: "uz" },
+  { value: "VVGL", name: "Vietnam", flag: "🇻🇳", iso: "vn" },
 ];
 
 export default function DataHub() {
@@ -159,9 +159,20 @@ export default function DataHub() {
     return found ? found.name : code;
   };
 
-  const getCountryFlag = (code: string) => {
+  const renderCountryFlag = (code: string, className = "w-6 h-4") => {
     const found = COUNTRIES.find((c) => c.value.toUpperCase() === code.toUpperCase());
-    return found ? found.flag : "🌐";
+    if (found && found.iso) {
+      return (
+        <img
+          src={`https://flagcdn.com/w40/${found.iso}.png`}
+          srcSet={`https://flagcdn.com/w80/${found.iso}.png 2x`}
+          alt={found.name}
+          className={`${className} object-cover rounded-[3px] border border-white/20 shadow-sm shrink-0 inline-block`}
+          loading="lazy"
+        />
+      );
+    }
+    return <span className="text-base leading-none">🌐</span>;
   };
 
   const handleCopy = (text: string, id: string) => {
@@ -406,8 +417,8 @@ export default function DataHub() {
                       return (
                         <div key={code} className="p-4 rounded-2xl bg-slate-950/90 border border-cyan-500/30 space-y-3 shadow-lg">
                           <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-                            <div className="flex items-center gap-2">
-                              <span className="text-base sm:text-lg leading-none">{getCountryFlag(code)}</span>
+                            <div className="flex items-center gap-2.5">
+                              {renderCountryFlag(code, "w-6 h-4")}
                               <span className="font-bold text-sm text-cyan-200">
                                 {countryName} ({code})
                               </span>
@@ -466,8 +477,8 @@ export default function DataHub() {
                     <span className="px-3 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 font-mono text-sm font-bold border border-cyan-500/40">
                       {selectedBulletin.headerLine}
                     </span>
-                    <span className="px-2.5 py-0.5 rounded-md bg-blue-500/20 text-blue-300 font-mono text-xs font-bold border border-blue-500/30 flex items-center gap-1.5">
-                      <span className="text-sm leading-none">{getCountryFlag(selectedBulletin.countryCode)}</span>
+                    <span className="px-2.5 py-0.5 rounded-md bg-blue-500/20 text-blue-300 font-mono text-xs font-bold border border-blue-500/30 flex items-center gap-2">
+                      {renderCountryFlag(selectedBulletin.countryCode, "w-5 h-3.5")}
                       <span>รหัสประเทศ: {getCountryName(selectedBulletin.countryCode)} ({selectedBulletin.countryCode})</span>
                     </span>
                     <span className="px-2.5 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 text-xs font-semibold border border-emerald-500/30">
@@ -530,8 +541,8 @@ export default function DataHub() {
                     return (
                       <div key={code} className="space-y-4">
                         <div className="flex items-center justify-between px-4 py-2 rounded-2xl bg-slate-900 border border-cyan-500/30 text-cyan-300 font-bold text-sm shadow-md">
-                          <div className="flex items-center gap-2">
-                            <span className="text-base sm:text-lg leading-none">{getCountryFlag(code)}</span>
+                          <div className="flex items-center gap-2.5">
+                            {renderCountryFlag(code, "w-6 h-4")}
                             <span>{countryName} ({code})</span>
                           </div>
                           <span className="text-xs text-slate-400 font-mono bg-slate-950 px-3 py-1 rounded-full border border-slate-800">
