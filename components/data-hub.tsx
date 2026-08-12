@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import { GTSBulletin } from "@/app/api/ftp/route";
 
-export type WeatherCategory = "synoptic" | "upperair" | "warning" | "metar" | "notes";
+export type WeatherCategory = "synoptic" | "upperair" | "warning" | "metar" | "notes" | "burf";
 
 const UTC_HOURS = [
   { utc: "00", ict: "07:00" },
@@ -58,45 +58,33 @@ const COUNTRIES = [
   { value: "DKPY", name: "North Korea" },
   { value: "OOMS", name: "Oman" },
   { value: "OCEAN", name: "Pacific Ocean" },
-  { value: "OPKC", name: "Pakistan" },
-  { value: "RPMM", name: "Philippines" },
-  { value: "OTBD", name: "Qatar" },
-  { value: "RUMS", name: "Russia(West)" },
-  { value: "RUNW", name: "Russia, Replublic of (East)" },
-  { value: "OEJD", name: "Saudi Arabia" },
+  { value: "RPLL", name: "Philippines" },
+  { value: "ROAH", name: "Ryukyu Islands" },
+  { value: "RIII", name: "Russian Federation (Asia)" },
   { value: "WSSS", name: "Singapore" },
-  { value: "RKSL", name: "South Korea" },
   { value: "VCCC", name: "Sri Lanka" },
-  { value: "RCTP", name: "Taiwan" },
-  { value: "UTDD", name: "Tajikistan" },
+  { value: "RCAA", name: "Taiwan" },
   { value: "VTBB", name: "Thailand" },
-  { value: "UTAA", name: "Turkmenistan" },
-  { value: "UTTW", name: "Uzbekistan" },
-  { value: "VNNN", name: "Vietnam" },
+  { value: "UTTT", name: "Uzbekistan" },
+  { value: "VVGL", name: "Vietnam" },
 ];
-
-const getTodayDateString = () => {
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, "0");
-  const day = String(today.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-};
 
 export default function DataHub() {
   const [activeTab, setActiveTab] = useState<WeatherCategory>("synoptic");
-  const [selectedDate, setSelectedDate] = useState(() => getTodayDateString());
-  const [selectedUtc, setSelectedUtc] = useState("00");
-  const [selectedCountry, setSelectedCountry] = useState("zero");
-  const [ftpBulletins, setFtpBulletins] = useState<GTSBulletin[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<string>(() => {
+    const today = new Date();
+    return today.toISOString().split("T")[0];
+  });
+  const [selectedUtc, setSelectedUtc] = useState<string>("00");
+  const [selectedCountry, setSelectedCountry] = useState<string>("zero");
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  // View modes: "headers" (Browse header index list) | "single" (Selected single header) | "all" (Expanded all bulletins)
+  const [ftpBulletins, setFtpBulletins] = useState<GTSBulletin[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [viewMode, setViewMode] = useState<"headers" | "single" | "all">("headers");
   const [selectedBulletinId, setSelectedBulletinId] = useState<string | null>(null);
 
-  const fetchFtpData = async (isAllData: boolean = false) => {
+  const fetchFtpData = async (isAllData = false) => {
     setIsLoading(true);
     try {
       const query = new URLSearchParams({
@@ -121,7 +109,6 @@ export default function DataHub() {
     }
   };
 
-  // Auto-fetch data whenever any filter changes (Country, Date, UTC hour, Active Category Tab)
   useEffect(() => {
     setViewMode("headers");
     setSelectedBulletinId(null);
@@ -135,7 +122,8 @@ export default function DataHub() {
   };
 
   const handleReset = () => {
-    setSelectedDate(getTodayDateString());
+    const today = new Date().toISOString().split("T")[0];
+    setSelectedDate(today);
     setSelectedUtc("00");
     setSelectedCountry("zero");
     setViewMode("headers");
@@ -144,20 +132,37 @@ export default function DataHub() {
 
   const handleSelectSingleHeader = (id: string) => {
     setSelectedBulletinId(id);
-    setViewMode("single");
+    setViewMode("all");
   };
 
-  const handleCopy = (text: string, id: string) => {
+  const copyToClipboard = (text: string, id: string) => {
     navigator.clipboard.writeText(text);
     setCopiedId(id);
     setTimeout(() => setCopiedId(null), 2000);
   };
+
+  // Group bulletins by country name
+  const groupedBulletins = ftpBulletins.reduce((acc, bulletin) => {
+    const matchedCountry = COUNTRIES.find((c) => c.value === bulletin.countryCode);
+    const countryName = matchedCountry ? matchedCountry.name : bulletin.countryCode;
+    if (!acc[countryName]) {
+      acc[countryName] = [];
+    }
+    acc[countryName].push(bulletin);
+    return acc;
+  }, {} as Record<string, GTSBulletin[]>);
 
   const selectedBulletin = ftpBulletins.find((b) => b.id === selectedBulletinId);
 
   const getCountryName = (code: string) => {
     const found = COUNTRIES.find((c) => c.value.toUpperCase() === code.toUpperCase());
     return found ? found.name : code;
+  };
+
+  const handleCopy = (text: string, id: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
   };
 
   // Group bulletins by countryCode
@@ -175,8 +180,8 @@ export default function DataHub() {
   return (
     <section className="py-8 relative z-10" id="data-hub">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        {/* Category Tabs Header */}
-        <div className="flex flex-wrap items-center justify-center gap-2 p-1.5 rounded-2xl bg-slate-900/80 border border-slate-800 backdrop-blur-xl">
+        {/* Category Navigation Bar */}
+        <div className="flex flex-wrap justify-center gap-2 p-1.5 rounded-2xl bg-slate-900/80 backdrop-blur-md border border-cyan-500/20 shadow-xl max-w-4xl mx-auto">
           <button
             onClick={() => setActiveTab("synoptic")}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
@@ -186,7 +191,7 @@ export default function DataHub() {
             }`}
           >
             <Satellite className="w-4 h-4" />
-            ข่าว Synoptic (ตรวจผิวพื้น)
+            ข่าว Synoptic
           </button>
 
           <button
@@ -198,7 +203,7 @@ export default function DataHub() {
             }`}
           >
             <Cloud className="w-4 h-4" />
-            ข่าว Upper Air (ชั้นบน)
+            ข่าว Upper Air (Wind)
           </button>
 
           <button
@@ -210,7 +215,7 @@ export default function DataHub() {
             }`}
           >
             <AlertTriangle className="w-4 h-4 text-amber-300" />
-            ประกาศเตือนภัย
+            ประกาศเตือนภัย (War)
           </button>
 
           <button
@@ -222,7 +227,7 @@ export default function DataHub() {
             }`}
           >
             <RadioTower className="w-4 h-4" />
-            ข่าว METAR (อากาศการบิน)
+            ข่าว METAR (การบิน)
           </button>
 
           <button
@@ -234,7 +239,19 @@ export default function DataHub() {
             }`}
           >
             <StickyNote className="w-4 h-4" />
-            Note ท้ายข่าว (Raw GTS)
+            Note ท้ายข่าว
+          </button>
+
+          <button
+            onClick={() => setActiveTab("burf")}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+              activeTab === "burf"
+                ? "bg-gradient-to-r from-purple-500 to-indigo-600 text-white shadow-lg shadow-purple-500/25"
+                : "text-slate-400 hover:text-white hover:bg-slate-800/60"
+            }`}
+          >
+            <Database className="w-4 h-4" />
+            BUFR Data (Burf)
           </button>
         </div>
 
@@ -247,10 +264,21 @@ export default function DataHub() {
             <div className="text-center space-y-2 border-b border-slate-800 pb-4">
               <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 text-xs font-bold shadow-md">
                 <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-                ข้อมูลผิวพื้น (Surface Synoptic)
+                {activeTab === "synoptic" && "ข้อมูลผิวพื้น (Surface Synoptic)"}
+                {activeTab === "upperair" && "ข้อมูลบรรยากาศชั้นบน (Upper Air / Wind)"}
+                {activeTab === "warning" && "ประกาศเตือนภัยสภาพอากาศ (Warning / War)"}
+                {activeTab === "metar" && "ข้อมูลอากาศการบิน (METAR / TAF)"}
+                {activeTab === "notes" && "Note ท้ายข่าวสภาพอากาศ (GTS Raw Notes)"}
+                {activeTab === "burf" && "ข้อมูลไบนารี (BUFR Binary Data / Burf)"}
               </div>
               <h2 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
-                สืบค้นข้อมูลข่าว {activeTab === "synoptic" ? "Synoptic" : activeTab.toUpperCase()}
+                สืบค้นข้อมูลข่าว {
+                  activeTab === "synoptic" ? "Synoptic" :
+                  activeTab === "upperair" ? "Upper Air (Wind)" :
+                  activeTab === "warning" ? "เตือนภัย (War)" :
+                  activeTab === "metar" ? "METAR" :
+                  activeTab === "notes" ? "Note" : "BUFR (Burf)"
+                }
               </h2>
             </div>
 
@@ -570,13 +598,21 @@ export default function DataHub() {
 
         {/* Category Description Box */}
         <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-2 text-center max-w-4xl mx-auto">
-          <h3 className="font-bold text-sm text-cyan-300 tracking-wider">
-            SYNOPTIC (Surface Synoptic Observations)
+          <h3 className="font-bold text-sm text-cyan-300 tracking-wider uppercase">
+            {activeTab === "synoptic" && "SYNOPTIC (Surface Synoptic Observations)"}
+            {activeTab === "upperair" && "UPPER AIR (Wind & Sounding Observations)"}
+            {activeTab === "warning" && "WARNING (Weather Warnings & SIGMET)"}
+            {activeTab === "metar" && "METAR (Aviation Routine Weather Report)"}
+            {activeTab === "notes" && "NOTE (GTS Bulletin Raw Text Notes)"}
+            {activeTab === "burf" && "BUFR (Binary Universal Form for Representation)"}
           </h3>
           <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-light">
-            ข้อมูลตรวจอากาศผิวพื้นเป็นข้อมูลรหัสตัวเลขเพื่อแสดงสภาพของอากาศบริเวณพื้นดิน
-            โดยทั่วไปจะทำการวัดตามเวลามาตรฐานทุก 3 ชั่วโมง คือ 07.00น, 10.00น, 13.00น, 16.00น, 19.00น, 22.00น, 01.00น และ 04.00น
-            ซึ่งการรายงานข้อมูลโดยเจ้าพนักงานอุตุนิยมวิทยาประจำสถานีตรวจอากาศ
+            {activeTab === "synoptic" && "ข้อมูลตรวจอากาศผิวพื้นแสดงสภาพอากาศบริเวณพื้นดิน ทุก 3 ชั่วโมง (00, 03, 06, 09, 12, 15, 18, 21 UTC)"}
+            {activeTab === "upperair" && "ข้อมูลตรวจอากาศชั้นบนรายงานทิศทาง ความเร็วลม และบรรยากาศชั้นบน"}
+            {activeTab === "warning" && "ประกาศเตือนภัยสภาพอากาศและพายุหมุนกะทันหัน หรือสภาวะอากาศร้ายแรงทางการบิน"}
+            {activeTab === "metar" && "รายงานสภาพอากาศทางการบินสำหรับสนามบินและสายการบินต่างประเทศ"}
+            {activeTab === "notes" && "หมายเหตุและข่าวสารประกอบส่วนท้ายโทรสารอุตุนิยมวิทยาระหว่างประเทศ"}
+            {activeTab === "burf" && "ข้อมูลไบนารีรหัสอุตุนิยมวิทยาสากลรูปแบบ BUFR/GRIB"}
           </p>
         </div>
       </div>
