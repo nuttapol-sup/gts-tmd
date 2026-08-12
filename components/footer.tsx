@@ -94,7 +94,7 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-cyan-400 shrink-0" />
-                <span>info@tmd.go.th</span>
+                <span>gtsbkk@metnet.tmd.go.th</span>
               </li>
               <li className="flex items-start gap-2.5 pt-1">
                 <Clock className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />

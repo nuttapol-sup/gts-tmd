@@ -126,12 +126,8 @@ export default function ContactPage() {
               <h3 className="text-lg font-bold text-white">อีเมล & เว็บไซต์</h3>
               <div className="space-y-1.5 text-xs sm:text-sm text-slate-300">
                 <div className="flex justify-between items-center">
-                  <span>อีเมลทั่วไป:</span>
-                  <span className="text-cyan-300 font-medium">info@tmd.go.th</span>
-                </div>
-                <div className="flex justify-between items-center">
                   <span>GTS Operations:</span>
-                  <span className="text-purple-300 font-mono text-[11px]">rthbangkok@tmd.go.th</span>
+                  <span className="text-purple-300 font-mono text-[11px]">gtsbkk@metnet.tmd.go.th</span>
                 </div>
                 <div className="flex justify-between items-center pt-1">
                   <span>เว็บไซต์หลัก:</span>
@@ -140,11 +136,11 @@ export default function ContactPage() {
               </div>
             </div>
             <a
-              href="mailto:info@tmd.go.th"
+              href="mailto:gtsbkk@metnet.tmd.go.th"
               className="w-full py-2.5 px-3 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-slate-700 text-xs text-purple-300 font-medium flex items-center justify-center gap-1.5 transition-all cursor-pointer text-center"
             >
               <Mail className="w-3.5 h-3.5" />
-              ส่งอีเมล info@tmd.go.th
+              ส่งอีเมล gtsbkk@metnet.tmd.go.th
             </a>
           </div>
 
