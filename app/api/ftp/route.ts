@@ -47,6 +47,7 @@ const CATEGORY_SUBFOLDERS: Record<string, string[]> = {
   metar: ["Metar", "metar", "METAR"],
   warning: ["War", "war", "Warning", "warning"],
   upperair: ["Wind", "wind", "Upperair", "upperair", "WIND"],
+  burf: ["Burf", "burf", "BUFR", "bufr", "Bufr"],
 };
 
 export async function GET(request: Request) {

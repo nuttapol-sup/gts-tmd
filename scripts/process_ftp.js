@@ -2,11 +2,12 @@
  * GTS Weather Bulletin & Note Master Processor Script
  * --------------------------------------------------
  * อ่านไฟล์ข่าวสภาพอากาศดิบทั้งหมดจาก FTP/received:
- * 1. Synoptic (SM*.*, SI*.*, SN*.*) -> เพิ่ม ZCZC...NNNN บันทึกเข้า FTP/<ปีพ.ศ.>/Synoptic/<DD-MMMYY.T<T>> และสำเนา SM<T>.TXT
- * 2. Note (NOTE*.*)               -> เพิ่ม ZCZC...NNNN บันทึกเข้า FTP/<ปีพ.ศ.>/Note/<DD-MMMYY.T<T>> และสำเนา N<T>.TXT
- * 3. Wind/UpperAir (U*.*, PR*.*)   -> เพิ่ม ZCZC...NNNN บันทึกเข้า FTP/<ปีพ.ศ.>/Wind/<DD-MMMYY.T<T>> และสำเนา U<T>.TXT
- * 4. Warning (WE*.*, WW*.*, ฯลฯ) -> เพิ่ม ZCZC...NNNN บันทึกเข้า FTP/<ปีพ.ศ.>/War/<DD-MMMYY.TXT> และสำเนา W<T>.TXT
- * 5. Metar (SA*.*, SP*.*)         -> เพิ่ม ZCZC...NNNN บันทึกเข้า FTP/<ปีพ.ศ.>/Metar/<DD-MMMYY.TXT> และสำเนา M<T>.TXT
+ * 1. Synoptic (SM*.*, SI*.*, SN*.*) -> บันทึกเข้า FTP/<ปีพ.ศ.>/Synoptic/<DD-MMMYY.T<T>> และสำเนา SM<T>.TXT
+ * 2. Note (NOTE*.*)               -> บันทึกเข้า FTP/<ปีพ.ศ.>/Note/<DD-MMMYY.T<T>> และสำเนา N<T>.TXT
+ * 3. Burf/BUFR (IS*.*, IU*.*, H*.*)-> บันทึกเข้า FTP/<ปีพ.ศ.>/Burf/<DD-MMMYY_T<T>>/<filename> และสำเนา Burf/<DD-MMMYY.TXT>
+ * 4. Wind/UpperAir (U*.*, PR*.*)   -> บันทึกเข้า FTP/<ปีพ.ศ.>/Wind/<DD-MMMYY.T<T>> และสำเนา U<T>.TXT
+ * 5. Warning (WE*.*, WW*.*, ฯลฯ) -> บันทึกเข้า FTP/<ปีพ.ศ.>/War/<DD-MMMYY.TXT> และสำเนา W<T>.TXT
+ * 6. Metar (SA*.*, SP*.*)         -> บันทึกเข้า FTP/<ปีพ.ศ.>/Metar/<DD-MMMYY.TXT> และสำเนา M<T>.TXT
  */
 
 const fs = require('fs');
@@ -53,15 +54,22 @@ function processFtpFiles() {
 
     const fileUpper = file.toUpperCase();
     const prefix2 = fileUpper.substring(0, 2);
+    const prefix1 = fileUpper.substring(0, 1);
 
     let categoryFolder = 'Metar';
     let extName = `.TXT`;
     let copyPrefix = `M`;
+    let isBurf = false;
 
     if (fileUpper.startsWith('NOTE')) {
       categoryFolder = 'Note';
       extName = `.T${utcCycle}`;
       copyPrefix = `N`;
+    } else if (['IS', 'IU'].includes(prefix2) || prefix1 === 'H' || fileUpper.startsWith('BUFR') || fileUpper.startsWith('BURF')) {
+      categoryFolder = 'Burf';
+      extName = `.TXT`;
+      copyPrefix = `B`;
+      isBurf = true;
     } else if (['SM', 'SI', 'SN'].includes(prefix2)) {
       categoryFolder = 'Synoptic';
       extName = `.T${utcCycle}`;
@@ -86,22 +94,46 @@ function processFtpFiles() {
     }
 
     try {
-      const rawContent = fs.readFileSync(filePath, 'utf-8').trim();
-      const formattedEntry = `ZCZC\r\n${rawContent}\r\n\r\nNNNN\r\n\r\n`;
+      if (isBurf) {
+        // ประมวลผลไฟล์ Burf / BUFR (IS*.*, IU*.*, H*.*)
+        // 1. สร้างโฟลเดอร์เฉพาะรอบเวลา e.g. Burf/12-AUG26_T15/
+        const burfSubDirName = `${dayStr}-${monthStr}${year2D}_T${utcCycle}`;
+        const burfSubDirPath = path.join(targetFolder, burfSubDirName);
+        if (!fs.existsSync(burfSubDirPath)) {
+          fs.mkdirSync(burfSubDirPath, { recursive: true });
+        }
 
-      // 1. บันทึกลงไฟล์หลักประจำวัน e.g. 11-AUG26.T00 หรือ 11-AUG26.TXT
-      const mainFileName = `${dayStr}-${monthStr}${year2D}${extName}`;
-      const mainPath = path.join(targetFolder, mainFileName);
-      fs.appendFileSync(mainPath, formattedEntry, 'utf-8');
+        // คัดลอกไฟล์ดิบเข้าโฟลเดอร์รอบเวลา
+        const rawCopyPath = path.join(burfSubDirPath, file);
+        fs.copyFileSync(filePath, rawCopyPath);
 
-      // 2. สำเนาลงไฟล์ประจำรอบเวลา e.g. U00.TXT, SM00.TXT, N00.TXT, W00.TXT, M00.TXT
-      const copyFileName = `${copyPrefix}${utcCycle}.TXT`;
-      const copyPath = path.join(targetFolder, copyFileName);
-      fs.copyFileSync(mainPath, copyPath);
+        // 2. บันทึกข้อความส่วนหัวลงในไฟล์รวมประจำวัน Burf/12-AUG26.TXT
+        const rawContent = fs.readFileSync(filePath, 'utf-8').trim();
+        const formattedEntry = `ZCZC\r\n${rawContent}\r\n\r\nNNNN\r\n\r\n`;
 
-      // ลบไฟล์ดิบต้นทางออก
-      fs.unlinkSync(filePath);
-      console.log(`[INGEST] Processed ${file} -> ${categoryFolder}/${mainFileName} & ${copyFileName}`);
+        const mainFileName = `${dayStr}-${monthStr}${year2D}.TXT`;
+        const mainPath = path.join(targetFolder, mainFileName);
+        fs.appendFileSync(mainPath, formattedEntry, 'utf-8');
+
+        // ลบไฟล์ดิบต้นทางออก
+        fs.unlinkSync(filePath);
+        console.log(`[INGEST BURF] Processed ${file} -> Burf/${burfSubDirName}/${file}`);
+      } else {
+        // ประมวลผลข่าวอากาศทั่วไป
+        const rawContent = fs.readFileSync(filePath, 'utf-8').trim();
+        const formattedEntry = `ZCZC\r\n${rawContent}\r\n\r\nNNNN\r\n\r\n`;
+
+        const mainFileName = `${dayStr}-${monthStr}${year2D}${extName}`;
+        const mainPath = path.join(targetFolder, mainFileName);
+        fs.appendFileSync(mainPath, formattedEntry, 'utf-8');
+
+        const copyFileName = `${copyPrefix}${utcCycle}.TXT`;
+        const copyPath = path.join(targetFolder, copyFileName);
+        fs.copyFileSync(mainPath, copyPath);
+
+        fs.unlinkSync(filePath);
+        console.log(`[INGEST] Processed ${file} -> ${categoryFolder}/${mainFileName} & ${copyFileName}`);
+      }
     } catch (err) {
       console.error(`[ERROR] Failed to process ${file}:`, err);
     }
