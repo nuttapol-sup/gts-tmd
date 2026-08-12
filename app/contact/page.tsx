@@ -96,11 +96,7 @@ export default function ContactPage() {
               <div className="space-y-1.5 text-xs sm:text-sm text-slate-300">
                 <div className="flex justify-between items-center">
                   <span>สายตรงกองสื่อสาร:</span>
-                  <span className="font-bold text-cyan-300">02-399-4568</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span>โทรสาร (Fax):</span>
-                  <span className="font-mono text-slate-300">02-399-4570</span>
+                  <span className="font-bold text-cyan-300">02-399-4596</span>
                 </div>
                 <div className="flex justify-between items-center pt-1">
                   <span>สายด่วนเตือนภัย:</span>
@@ -109,11 +105,11 @@ export default function ContactPage() {
               </div>
             </div>
             <a
-              href="tel:023994568"
+              href="tel:023994596"
               className="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 hover:brightness-110 text-xs text-white font-bold flex items-center justify-center gap-1.5 shadow-md shadow-blue-500/20 transition-all cursor-pointer text-center"
             >
               <PhoneCall className="w-3.5 h-3.5" />
-              โทรออก 02-399-4568
+              โทรออก 02-399-4596
             </a>
           </div>
 
