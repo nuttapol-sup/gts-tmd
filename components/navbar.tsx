@@ -221,12 +221,10 @@ export default function Navbar() {
           <div className="flex items-center justify-between">
             {/* Logo & Title */}
             <div className="flex items-center gap-3 group">
-              {/* Clickable Logo Avatar Button */}
-              <button
-                type="button"
-                onClick={() => setIsLogoModalOpen(true)}
-                className="relative w-11 h-11 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 p-0.5 shadow-md shadow-cyan-500/30 group-hover:scale-105 transition-transform duration-300 cursor-pointer overflow-hidden"
-                title="คลิกเพื่ออัปโหลด/เปลี่ยนโลโก้"
+              {/* Static Logo Emblem */}
+              <Link
+                href="/"
+                className="relative w-11 h-11 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 p-0.5 shadow-md shadow-cyan-500/30 group-hover:scale-105 transition-transform duration-300 overflow-hidden shrink-0"
               >
                 <div className="w-full h-full bg-[#0b132b] rounded-[10px] flex items-center justify-center relative overflow-hidden">
                   {customLogoUrl ? (
@@ -238,13 +236,8 @@ export default function Navbar() {
                   ) : (
                     <CloudSun className="w-6 h-6 text-cyan-400 animate-pulse-glow" />
                   )}
-
-                  {/* Camera overlay icon badge */}
-                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-cyan-300">
-                    <Camera className="w-4 h-4" />
-                  </div>
                 </div>
-              </button>
+              </Link>
 
               <Link href="/" className="flex flex-col">
                 <span className="font-bold text-lg tracking-wider text-white group-hover:text-cyan-300 transition-colors flex items-center gap-2">
@@ -448,90 +441,6 @@ export default function Navbar() {
           </div>
         )}
       </header>
-
-      {/* Upload Logo Modal */}
-      {isLogoModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-fade-in">
-          <div className="relative w-full max-w-md bg-[#0f172a] border border-cyan-500/30 rounded-3xl p-6 shadow-2xl space-y-6">
-            <button
-              onClick={() => setIsLogoModalOpen(false)}
-              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white rounded-full bg-slate-800/60 hover:bg-slate-700 transition-colors"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
-                <Camera className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-white">อัปโหลดโลโก้ใหม่</h3>
-                <p className="text-xs text-slate-400">เปลี่ยนรูปภาพโลโก้ประจำเว็บไซต์ GTS Thailand</p>
-              </div>
-            </div>
-
-            {/* Current Logo Preview Box */}
-            <div className="flex flex-col items-center justify-center p-6 bg-slate-900/80 border border-dashed border-slate-700 rounded-2xl space-y-3">
-              <div className="w-20 h-20 rounded-2xl bg-[#0b132b] border border-cyan-500/30 p-2 flex items-center justify-center shadow-xl relative overflow-hidden">
-                {customLogoUrl ? (
-                  <img src={customLogoUrl} alt="Logo Preview" className="w-full h-full object-contain" />
-                ) : (
-                  <CloudSun className="w-10 h-10 text-cyan-400 animate-pulse-glow" />
-                )}
-              </div>
-              <span className="text-xs text-slate-300 font-medium">
-                {customLogoUrl ? "โลโก้ปัจจุบัน (Custom Logo)" : "โลโก้เริ่มต้น (Default Icon)"}
-              </span>
-            </div>
-
-            {/* Status Message Alert */}
-            {logoStatusMsg && (
-              <div
-                className={`p-3 rounded-xl text-xs font-semibold ${
-                  logoStatusMsg.type === "success"
-                    ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
-                    : "bg-rose-500/20 text-rose-300 border border-rose-500/30"
-                }`}
-              >
-                {logoStatusMsg.text}
-              </div>
-            )}
-
-            {/* Actions Buttons */}
-            <div className="space-y-3">
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                onChange={handleLogoFileChange}
-                className="hidden"
-              />
-
-              <button
-                type="button"
-                disabled={isUploadingLogo}
-                onClick={() => fileInputRef.current?.click()}
-                className="w-full py-3.5 rounded-xl font-semibold text-sm bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
-              >
-                <Upload className="w-4 h-4" />
-                {isUploadingLogo ? "กำลังอัปโหลด..." : "เลือกไฟล์รูปภาพใหม่ (PNG, JPG, SVG)"}
-              </button>
-
-              {customLogoUrl && (
-                <button
-                  type="button"
-                  disabled={isUploadingLogo}
-                  onClick={handleResetLogo}
-                  className="w-full py-3 rounded-xl font-semibold text-xs bg-slate-800 hover:bg-rose-950/40 text-slate-300 hover:text-rose-400 border border-slate-700 hover:border-rose-500/30 transition-all cursor-pointer flex items-center justify-center gap-2"
-                >
-                  <RotateCcw className="w-3.5 h-3.5" />
-                  รีเซ็ตกลับเป็นโลโก้เริ่มต้น
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 }
