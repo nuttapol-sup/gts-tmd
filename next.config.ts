@@ -1,10 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // 1. Hide X-Powered-By: Next.js header from scanners
+  // 1. Hide X-Powered-By: Next.js header to prevent framework fingerprinting
   poweredByHeader: false,
 
-  // 2. Add Security Headers (Anti-Clickjacking, XSS Protection, MIME Sniffing Protection)
+  // 2. Comprehensive Security Headers (Anti-Clickjacking, XSS, MIME Sniffing, HSTS)
   async headers() {
     return [
       {
@@ -21,6 +21,18 @@ const nextConfig: NextConfig = {
           {
             key: "Referrer-Policy",
             value: "strict-origin-when-cross-origin",
+          },
+          {
+            key: "X-XSS-Protection",
+            value: "1; mode=block",
+          },
+          {
+            key: "Permissions-Policy",
+            value: "camera=(), microphone=(), geolocation=(), payment=()",
+          },
+          {
+            key: "Strict-Transport-Security",
+            value: "max-age=31536000; includeSubDomains; preload",
           },
         ],
       },
