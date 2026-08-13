@@ -13,9 +13,14 @@ const ICON_PRESETS: Array<{ keyword: string; icon: string; color: string }> = [
   { keyword: "ค่านิยม", icon: "Award", color: "text-amber-400" },
   { keyword: "moral", icon: "ShieldCheck", color: "text-emerald-400" },
   { keyword: "คุณธรรม", icon: "ShieldCheck", color: "text-emerald-400" },
+  { keyword: "ควบคุม", icon: "ShieldAlert", color: "text-rose-400" },
+  { keyword: "km", icon: "BookOpen", color: "text-sky-400" },
+  { keyword: "แลกเปลี่ยน", icon: "BookOpen", color: "text-sky-400" },
   { keyword: "gov4", icon: "Zap", color: "text-purple-400" },
   { keyword: "ราชการ 4.0", icon: "Zap", color: "text-purple-400" },
   { keyword: "4.0", icon: "Zap", color: "text-purple-400" },
+  { keyword: "gibfc", icon: "MapPin", color: "text-teal-400" },
+  { keyword: "แผนที่", icon: "MapPin", color: "text-teal-400" },
   { keyword: "swim", icon: "Globe", color: "text-blue-400" },
 ];
 
@@ -59,7 +64,10 @@ export async function GET() {
         if (lowerName.includes("noc")) href = "/noc";
         else if (lowerName.includes("smart") || lowerName.includes("ค่านิยม")) href = "/smart";
         else if (lowerName.includes("คุณธรรม") || lowerName.includes("moral")) href = "/moral";
+        else if (lowerName.includes("ควบคุม")) href = "/control";
+        else if (lowerName.includes("km") || lowerName.includes("แลกเปลี่ยน")) href = "/km";
         else if (lowerName.includes("4.0") || lowerName.includes("gov4") || lowerName.includes("ราชการ")) href = "/gov4";
+        else if (lowerName.includes("gibfc") || lowerName.includes("แผนที่")) href = "/gibfc";
         else if (lowerName.includes("swim")) href = "/swim";
 
         return {
