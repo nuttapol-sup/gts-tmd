@@ -1,43 +1,47 @@
-import { notFound } from "next/navigation";
+"use client";
+
+import { use, useEffect, useState } from "react";
 import ShowcaseViewer from "@/components/ShowcaseViewer";
 import { Folder } from "lucide-react";
-import fs from "fs";
-import path from "path";
-
-const ABOUT_ROOT_DIR = process.env.ABOUT_DIR || path.join(process.cwd(), "About");
 
 interface DynamicFolderPageProps {
   params: Promise<{ slug: string }>;
 }
 
-export default async function DynamicFolderPage({ params }: DynamicFolderPageProps) {
-  const { slug } = await params;
-  const decodedSlug = decodeURIComponent(slug).trim().toLowerCase();
+export default function DynamicFolderPage({ params }: DynamicFolderPageProps) {
+  const resolvedParams = use(params);
+  const rawSlug = resolvedParams?.slug || "";
 
-  if (!fs.existsSync(/*turbopackIgnore: true*/ ABOUT_ROOT_DIR)) {
-    notFound();
+  const [cleanTitle, setCleanTitle] = useState("");
+  const [folderName, setFolderName] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (!rawSlug) return;
+    let decoded = rawSlug;
+    try {
+      decoded = decodeURIComponent(rawSlug);
+    } catch (e) {
+      // ignore
+    }
+
+    const clean = decoded.replace(/^(\d+)[\._\-\s]+/, "");
+    setCleanTitle(clean);
+    setFolderName(decoded);
+    setIsLoading(false);
+  }, [rawSlug]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-[#0b132b] text-white flex items-center justify-center p-20 text-center">
+        กำลังโหลดข้อมูล...
+      </div>
+    );
   }
-
-  const entries = fs.readdirSync(/*turbopackIgnore: true*/ ABOUT_ROOT_DIR, { withFileTypes: true });
-  const subfolders = entries.filter((e) => e.isDirectory());
-
-  // Find matching subfolder in About/ by clean title or raw folder name
-  const matchedFolder = subfolders.find((f) => {
-    const rawName = f.name.toLowerCase();
-    const cleanName = f.name.replace(/^(\d+)[\._\-\s]+/, "").toLowerCase();
-    return cleanName === decodedSlug || rawName === decodedSlug;
-  });
-
-  if (!matchedFolder) {
-    notFound();
-  }
-
-  const actualFolderName = matchedFolder.name;
-  const cleanTitle = actualFolderName.replace(/^(\d+)[\._\-\s]+/, "");
 
   return (
     <ShowcaseViewer
-      folder={actualFolderName}
+      folder={folderName}
       title={cleanTitle}
       badgeText={cleanTitle}
       description={`ศูนย์รวมข้อมูลและสื่อประชาสัมพันธ์ ${cleanTitle} กรมอุตุนิยมวิทยา`}

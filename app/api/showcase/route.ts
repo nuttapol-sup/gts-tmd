@@ -261,6 +261,18 @@ export async function GET(request: Request) {
         targetDir = candidateAbout;
       } else if (fs.existsSync(/*turbopackIgnore: true*/ folderParam)) {
         targetDir = folderParam;
+      } else if (fs.existsSync(/*turbopackIgnore: true*/ ABOUT_ROOT_DIR)) {
+        const entries = fs.readdirSync(/*turbopackIgnore: true*/ ABOUT_ROOT_DIR, { withFileTypes: true });
+        const lowerFolder = folderParam.toLowerCase();
+        const found = entries.find((e) => {
+          if (!e.isDirectory()) return false;
+          const rawLower = e.name.toLowerCase();
+          const cleanLower = e.name.replace(/^(\d+)[\._\-\s]+/, "").toLowerCase();
+          return rawLower === lowerFolder || cleanLower === lowerFolder;
+        });
+        if (found) {
+          targetDir = path.join(ABOUT_ROOT_DIR, found.name);
+        }
       }
     }
 
