@@ -401,33 +401,35 @@ export default function DocumentsPage() {
           {/* Right Column: Folder Content View Area (8 cols) */}
           <div className="lg:col-span-8 glass-panel rounded-3xl p-6 border border-cyan-500/30 bg-slate-900/90 space-y-6 shadow-2xl min-h-[500px] flex flex-col">
             {/* Breadcrumb Path Bar */}
-            <div className="flex flex-wrap items-center gap-2 px-4 py-2.5 rounded-2xl bg-slate-950/80 border border-cyan-500/20 text-xs font-semibold text-slate-300">
-              <button
-                onClick={() => setCurrentFolderPath("")}
-                className="flex items-center gap-1 hover:text-cyan-300 transition-colors cursor-pointer"
-              >
-                <Home className="w-3.5 h-3.5 text-cyan-400" />
-                <span>เอกสารที่เกี่ยวข้อง</span>
-              </button>
+            {currentFolderPath !== "" && (
+              <div className="flex flex-wrap items-center gap-2 px-4 py-2.5 rounded-2xl bg-slate-950/80 border border-cyan-500/20 text-xs font-semibold text-slate-300">
+                <button
+                  onClick={() => setCurrentFolderPath("")}
+                  className="flex items-center gap-1 hover:text-cyan-300 transition-colors cursor-pointer"
+                >
+                  <Home className="w-3.5 h-3.5 text-cyan-400" />
+                  <span>เอกสารที่เกี่ยวข้อง</span>
+                </button>
 
-              {breadcrumbs.map((folderName, index) => {
-                const subPath = breadcrumbs.slice(0, index + 1).join("/");
-                const isLast = index === breadcrumbs.length - 1;
-                return (
-                  <div key={subPath} className="flex items-center gap-2">
-                    <ChevronRight className="w-3.5 h-3.5 text-slate-600" />
-                    <button
-                      onClick={() => setCurrentFolderPath(subPath)}
-                      className={`cursor-pointer hover:text-cyan-300 transition-colors ${
-                        isLast ? "text-cyan-400 font-bold" : "text-slate-300"
-                      }`}
-                    >
-                      {folderName}
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
+                {breadcrumbs.map((folderName, index) => {
+                  const subPath = breadcrumbs.slice(0, index + 1).join("/");
+                  const isLast = index === breadcrumbs.length - 1;
+                  return (
+                    <div key={subPath} className="flex items-center gap-2">
+                      <ChevronRight className="w-3.5 h-3.5 text-slate-600" />
+                      <button
+                        onClick={() => setCurrentFolderPath(subPath)}
+                        className={`cursor-pointer hover:text-cyan-300 transition-colors ${
+                          isLast ? "text-cyan-400 font-bold" : "text-slate-300"
+                        }`}
+                      >
+                        {folderName}
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
 
             {isLoading ? (
               <div className="flex-1 flex flex-col items-center justify-center p-12 text-slate-400 space-y-3">

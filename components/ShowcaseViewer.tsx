@@ -295,33 +295,35 @@ export default function ShowcaseViewer({
         {/* Main Full-Width Content Layout */}
         <div className="w-full space-y-8">
           {/* Breadcrumb Path Bar */}
-          <div className="glass-panel rounded-2xl p-4 border border-cyan-500/20 bg-slate-900/80 flex flex-wrap items-center gap-2 text-xs font-semibold text-slate-300 shadow-lg">
-            <button
-              onClick={() => setCurrentFolderPath("")}
-              className="flex items-center gap-1 hover:text-cyan-300 transition-colors cursor-pointer"
-            >
-              <Home className="w-3.5 h-3.5 text-cyan-400" />
-              <span>{displayTitle}</span>
-            </button>
+          {currentFolderPath !== "" && (
+            <div className="glass-panel rounded-2xl p-4 border border-cyan-500/20 bg-slate-900/80 flex flex-wrap items-center gap-2 text-xs font-semibold text-slate-300 shadow-lg">
+              <button
+                onClick={() => setCurrentFolderPath("")}
+                className="flex items-center gap-1 hover:text-cyan-300 transition-colors cursor-pointer"
+              >
+                <Home className="w-3.5 h-3.5 text-cyan-400" />
+                <span>{displayTitle}</span>
+              </button>
 
-            {breadcrumbs.map((folderName, index) => {
-              const subPath = breadcrumbs.slice(0, index + 1).join("/");
-              const isLast = index === breadcrumbs.length - 1;
-              return (
-                <div key={subPath} className="flex items-center gap-2">
-                  <ChevronRight className="w-3.5 h-3.5 text-slate-600" />
-                  <button
-                    onClick={() => setCurrentFolderPath(subPath)}
-                    className={`cursor-pointer hover:text-cyan-300 transition-colors ${
-                      isLast ? "text-cyan-400 font-bold" : "text-slate-300"
-                    }`}
-                  >
-                    {folderName}
-                  </button>
-                </div>
-              );
-            })}
-          </div>
+              {breadcrumbs.map((folderName, index) => {
+                const subPath = breadcrumbs.slice(0, index + 1).join("/");
+                const isLast = index === breadcrumbs.length - 1;
+                return (
+                  <div key={subPath} className="flex items-center gap-2">
+                    <ChevronRight className="w-3.5 h-3.5 text-slate-600" />
+                    <button
+                      onClick={() => setCurrentFolderPath(subPath)}
+                      className={`cursor-pointer hover:text-cyan-300 transition-colors ${
+                        isLast ? "text-cyan-400 font-bold" : "text-slate-300"
+                      }`}
+                    >
+                      {folderName}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
 
           {isLoading ? (
             <div className="glass-panel rounded-3xl p-16 text-center text-slate-400 flex flex-col items-center justify-center gap-3">
