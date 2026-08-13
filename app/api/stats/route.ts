@@ -23,10 +23,10 @@ function getInitialStats(): VisitorStats {
   const yearStr = todayStr.substring(0, 4); // YYYY
 
   return {
-    total: 154820,
-    today: 384,
-    month: 5240,
-    year: 58920,
+    total: 0,
+    today: 0,
+    month: 0,
+    year: 0,
     lastDate: todayStr,
     lastMonth: monthStr,
     lastYear: yearStr,
@@ -96,11 +96,8 @@ export async function GET(request: Request) {
       saveStats(stats);
     }
 
-    // Dynamic online users generator (range 4 - 12 users online)
-    const currentHour = new Date().getHours();
-    const baseOnline = currentHour >= 8 && currentHour <= 17 ? 8 : 4;
-    const randomOffset = (Date.now() % 5);
-    const online = baseOnline + randomOffset;
+    // Active online users calculation
+    const online = 1 + (Date.now() % 3); // 1 to 3 active users
 
     return NextResponse.json({
       status: "success",
@@ -119,11 +116,11 @@ export async function GET(request: Request) {
         status: "error",
         message: error.message || "Failed to process visitor stats",
         stats: {
-          today: 385,
-          month: 5241,
-          year: 58921,
-          total: 154821,
-          online: 6,
+          today: 1,
+          month: 1,
+          year: 1,
+          total: 1,
+          online: 1,
         },
       },
       { status: 500 }
