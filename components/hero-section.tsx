@@ -10,7 +10,7 @@ import {
 
 export default function HeroSection() {
   return (
-    <section className="relative py-4 md:py-8 overflow-hidden flex items-center justify-center">
+    <section className="relative py-20 md:py-32 overflow-hidden flex items-center justify-center">
       {/* Dynamic Meteorological Radar Glow Background */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-3xl pointer-events-none animate-pulse-glow" />
       <div className="absolute top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
