@@ -107,7 +107,7 @@ export default function ShowcaseViewer({
         if (folder) {
           const cleanName = (data.folderName || folder).replace(/^(\d+)[\._\-\s]+/, "");
           if (!title) setDynamicTitle(cleanName);
-          if (!badgeText) setDynamicBadge(`D:\\React\\gts-tmd\\About\\${data.folderName || folder}`);
+          if (!badgeText) setDynamicBadge(cleanName);
         }
       }
     } catch (e) {
@@ -214,8 +214,9 @@ export default function ShowcaseViewer({
 
   const breadcrumbs = currentFolderPath ? currentFolderPath.split("/") : [];
 
-  const displayTitle = title || dynamicTitle || folder || "ศูนย์ข้อมูลเอกสาร";
-  const displayBadge = badgeText || dynamicBadge || folderPathDisplay || `D:\\React\\gts-tmd\\About\\${folder}`;
+  const cleanFolderName = folder ? folder.replace(/^(\d+)[\._\-\s]+/, "") : "";
+  const displayTitle = title || dynamicTitle || cleanFolderName || "ศูนย์ข้อมูลเอกสาร";
+  const displayBadge = badgeText || dynamicBadge || folderPathDisplay || cleanFolderName || "ศูนย์ข้อมูลเอกสาร";
   const displayDescription = description || `ศูนย์รวมข้อมูลเอกสารและสื่อประชาสัมพันธ์ กรมอุตุนิยมวิทยา`;
 
   return (
