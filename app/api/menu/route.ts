@@ -60,7 +60,7 @@ export async function GET() {
         const { icon, iconColor } = getIconForFolder(folder.name);
 
         const lowerName = folder.name.toLowerCase();
-        let href = `/about-folder?title=${encodeURIComponent(cleanLabel)}&folder=${encodeURIComponent(folder.name)}`;
+        let href = `/${encodeURIComponent(cleanLabel)}`;
         if (lowerName.includes("noc")) href = "/noc";
         else if (lowerName.includes("smart") || lowerName.includes("ค่านิยม")) href = "/smart";
         else if (lowerName.includes("คุณธรรม") || lowerName.includes("moral")) href = "/moral";
