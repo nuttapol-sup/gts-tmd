@@ -42,6 +42,7 @@ next-env.d.ts
 
 # FTP Data directory (raw bulletin data)
 /FTP/
+/data/visitor_stats.json
 
 # Compressed archives & backup files (over GitHub 100MB file limit)
 *.rar
