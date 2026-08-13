@@ -8,19 +8,28 @@ import { Suspense, useEffect } from "react";
 function AboutFolderContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const folderName = searchParams.get("folder") || "Thailand NOC";
+  const folderName = searchParams.get("folder") || searchParams.get("title") || "Thailand NOC";
 
   useEffect(() => {
     if (!folderName) return;
     const lower = folderName.trim().toLowerCase();
-    if (lower.includes("noc")) router.replace("/noc");
-    else if (lower.includes("smart") || lower.includes("ค่านิยม")) router.replace("/smart");
-    else if (lower.includes("คุณธรรม") || lower.includes("moral")) router.replace("/moral");
-    else if (lower.includes("ควบคุม")) router.replace("/control");
-    else if (lower.includes("km") || lower.includes("แลกเปลี่ยน")) router.replace("/km");
-    else if (lower.includes("4.0") || lower.includes("gov4") || lower.includes("ราชการ")) router.replace("/gov4");
-    else if (lower.includes("gibfc") || lower.includes("แผนที่")) router.replace("/gibfc");
-    else if (lower.includes("swim")) router.replace("/swim");
+    
+    // Redirect existing preset routes
+    if (lower.includes("noc")) { router.replace("/noc"); return; }
+    if (lower.includes("smart") || lower.includes("ค่านิยม")) { router.replace("/smart"); return; }
+    if (lower.includes("คุณธรรม") || lower.includes("moral")) { router.replace("/moral"); return; }
+    if (lower.includes("ควบคุม")) { router.replace("/control"); return; }
+    if (lower.includes("km") || lower.includes("แลกเปลี่ยน")) { router.replace("/km"); return; }
+    if (lower.includes("4.0") || lower.includes("gov4") || lower.includes("ราชการ")) { router.replace("/gov4"); return; }
+    if (lower.includes("gibfc") || lower.includes("แผนที่")) { router.replace("/gibfc"); return; }
+    if (lower.includes("swim")) { router.replace("/swim"); return; }
+
+    // Automatic URL cleaning for ANY future new folder!
+    const cleanTitle = folderName.replace(/^(\d+)[\._\-\s]+/, "");
+    if (typeof window !== "undefined" && window.location.search.includes("folder=")) {
+      const cleanUrl = `${window.location.pathname}?title=${encodeURIComponent(cleanTitle)}`;
+      window.history.replaceState(null, "", cleanUrl);
+    }
   }, [folderName, router]);
 
   const cleanTitle = folderName.replace(/^(\d+)[\._\-\s]+/, "");
