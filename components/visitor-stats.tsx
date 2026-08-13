@@ -151,7 +151,7 @@ export default function VisitorStats() {
       <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[10px] text-slate-400">
         <div className="flex items-center gap-1 text-emerald-400 font-medium">
           <CheckCircle2 className="w-3 h-3" />
-          <span>บันทึกสถิติมนุษย์จริง</span>
+          <span>บันทึกสถิติการเข้าชม</span>
         </div>
         {lastUpdated && <span className="font-mono text-slate-500">อัปเดต {lastUpdated} น.</span>}
       </div>
