@@ -27,7 +27,7 @@ export default function Footer() {
                 </div>
               </div>
               <div>
-                <h3 className="font-bold text-lg text-white">RTH BANGKOK</h3>
+                <h2 className="font-bold text-lg text-white">RTH BANGKOK</h2>
                 <span className="text-xs text-cyan-400">GTS Thailand Telecommunications</span>
               </div>
             </div>
@@ -45,7 +45,7 @@ export default function Footer() {
 
           {/* Col 2: Quick Links */}
           <div className="lg:col-span-2 space-y-3">
-            <h4 className="font-bold text-sm text-white tracking-wider">ลิงก์ที่เป็นประโยชน์</h4>
+            <h3 className="font-bold text-sm text-white tracking-wider">ลิงก์ที่เป็นประโยชน์</h3>
             <ul className="space-y-2 text-xs">
               <li>
                 <Link href="/" className="text-slate-300 hover:text-cyan-300 transition-colors flex items-center gap-1">
@@ -82,7 +82,7 @@ export default function Footer() {
 
           {/* Col 3: Contact Info */}
           <div className="lg:col-span-3 space-y-3">
-            <h4 className="font-bold text-sm text-white tracking-wider">ข้อมูลการติดต่อ</h4>
+            <h3 className="font-bold text-sm text-white tracking-wider">ข้อมูลการติดต่อ</h3>
             <ul className="space-y-2.5 text-xs text-slate-300">
               <li className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
@@ -108,7 +108,7 @@ export default function Footer() {
 
           {/* Col 4: Interactive Map Embed */}
           <div className="lg:col-span-3 space-y-2">
-            <h4 className="font-bold text-sm text-white tracking-wider">ที่ตั้งสำนักงาน (บางนา)</h4>
+            <h3 className="font-bold text-sm text-white tracking-wider">ที่ตั้งสำนักงาน (บางนา)</h3>
             <div className="w-full h-36 rounded-xl overflow-hidden border border-cyan-500/20 shadow-md">
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1630.0085031789472!2d100.60535995181904!3d13.667769618527403!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30e2a01106372d9f%3A0x557fa516d8be1f96!2z4LiB4Lij4Lih4Lit4Li44LiV4Li44LiZ4Li04Lii4Lih4Lin4Li04LiX4Lii4Liy!5e0!3m2!1sth!2sth!4v1747106127484!5m2!1sth!2sth"
