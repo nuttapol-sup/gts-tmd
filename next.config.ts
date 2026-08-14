@@ -1,7 +1,6 @@
 import type { NextConfig } from "next";
 
-// Robust, battle-tested Content Security Policy for Next.js
-// Allows Next.js inline scripts & hydration without CSP script violations
+// Production & HTTP/HTTPS compatible Content Security Policy for Next.js
 const cspDirectives = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline' 'unsafe-eval' https:",
@@ -14,7 +13,6 @@ const cspDirectives = [
   "base-uri 'self'",
   "form-action 'self'",
   "frame-ancestors 'self'",
-  "upgrade-insecure-requests",
 ];
 
 const cspHeader = cspDirectives.join("; ");
@@ -23,7 +21,7 @@ const nextConfig: NextConfig = {
   // 1. Hide X-Powered-By: Next.js header to prevent framework fingerprinting
   poweredByHeader: false,
 
-  // 2. Comprehensive Security Headers (CSP, COOP, CORP, HSTS, Anti-Clickjacking, Anti-XSS)
+  // 2. Comprehensive Security Headers (CSP, COOP, CORP, Anti-Clickjacking, Anti-XSS)
   async headers() {
     return [
       {
@@ -68,11 +66,6 @@ const nextConfig: NextConfig = {
           {
             key: "Permissions-Policy",
             value: "camera=(), microphone=(), geolocation=(), payment=()",
-          },
-          // 9. Strict Transport Security (HSTS)
-          {
-            key: "Strict-Transport-Security",
-            value: "max-age=31536000; includeSubDomains; preload",
           },
         ],
       },
