@@ -224,6 +224,7 @@ export default function Navbar() {
               {/* Static Logo Emblem */}
               <Link
                 href="/"
+                aria-label="RTH Bangkok GTS Thailand"
                 className="relative w-11 h-11 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 p-0.5 shadow-md shadow-cyan-500/30 group-hover:scale-105 transition-transform duration-300 overflow-hidden shrink-0"
               >
                 <div className="w-full h-full bg-[#0b132b] rounded-[10px] flex items-center justify-center relative overflow-hidden">
