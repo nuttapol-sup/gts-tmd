@@ -187,14 +187,26 @@ export default function DataHub() {
     return parts[0] ? parts[0].toUpperCase() : "OTHER";
   };
 
-  // Filter bulletins: for Synoptic tab, strictly display only headers starting with SM or SI
-  const displayBulletins = ftpBulletins.filter((item) => {
+  // Deduplicate bulletins so identical headers per country display only 1 button
+  const displayBulletins: GTSBulletin[] = [];
+  const seenCountryHeaders = new Set<string>();
+
+  for (const item of ftpBulletins) {
     if (activeTab === "synoptic" || item.category === "synoptic") {
       const dt = (item.dataType || item.headerLine || "").trim().toUpperCase();
-      return dt.startsWith("SM") || dt.startsWith("SI");
+      if (!dt.startsWith("SM") && !dt.startsWith("SI")) {
+        continue;
+      }
     }
-    return true;
-  });
+
+    const code = item.countryCode || "OTHER";
+    const headerStr = (item.headerLine || item.dataType || "").trim();
+    const key = `${code}___${headerStr}`;
+    if (!seenCountryHeaders.has(key)) {
+      seenCountryHeaders.add(key);
+      displayBulletins.push(item);
+    }
+  }
 
   // Group bulletins by countryCode
   const groupedByCountry = displayBulletins.reduce<Record<string, GTSBulletin[]>>((acc, item) => {
@@ -478,22 +490,17 @@ export default function DataHub() {
                               return (
                                 <div
                                   key={baseKey}
-                                  className="flex flex-wrap items-center gap-2 py-1.5 border-b border-slate-800/60 last:border-0"
+                                  className="flex flex-wrap items-center gap-2.5 py-1.5 border-b border-slate-800/60 last:border-0"
                                 >
-                                  {itemsInRow.map((item, idx) => (
-                                    <div key={item.id} className="inline-flex items-center gap-1.5">
-                                      <span className="text-slate-600 font-bold">|</span>
-                                      <button
-                                        onClick={() => handleSelectSingleHeader(item.id)}
-                                        className="px-3 py-1.5 rounded-lg bg-cyan-950/80 hover:bg-cyan-600 hover:text-white text-cyan-300 font-semibold border border-cyan-500/40 hover:border-cyan-300 transition-all cursor-pointer shadow-md text-xs sm:text-sm"
-                                        title={`กดเพื่ออ่านเนื้อหาข่าว ${item.headerLine}`}
-                                      >
-                                        {item.headerLine || item.dataType}
-                                      </button>
-                                      {idx === itemsInRow.length - 1 && (
-                                        <span className="text-slate-600 font-bold">|</span>
-                                      )}
-                                    </div>
+                                  {itemsInRow.map((item) => (
+                                    <button
+                                      key={item.id}
+                                      onClick={() => handleSelectSingleHeader(item.id)}
+                                      className="px-3.5 py-1.5 rounded-xl bg-cyan-950/80 hover:bg-cyan-600 hover:text-white text-cyan-300 font-semibold border border-cyan-500/40 hover:border-cyan-300 transition-all cursor-pointer shadow-md text-xs sm:text-sm"
+                                      title={`กดเพื่ออ่านเนื้อหาข่าว ${item.headerLine}`}
+                                    >
+                                      {item.headerLine || item.dataType}
+                                    </button>
                                   ))}
                                 </div>
                               );
