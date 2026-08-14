@@ -1,9 +1,10 @@
 import type { NextConfig } from "next";
 
-// Content Security Policy with 'strict-dynamic', URL schemes (https: http:), and Trusted Types for Lighthouse Audit
+// Robust, battle-tested Content Security Policy for Next.js
+// Allows Next.js inline scripts & hydration without CSP script violations
 const cspDirectives = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https: http: 'strict-dynamic'",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https:",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "img-src 'self' data: blob: https://flagcdn.com https://*.tile.openstreetmap.org https://*.google.com https://*.gstatic.com https://i.ytimg.com https://img.youtube.com",
   "font-src 'self' data: https://fonts.gstatic.com",
@@ -14,8 +15,6 @@ const cspDirectives = [
   "form-action 'self'",
   "frame-ancestors 'self'",
   "upgrade-insecure-requests",
-  "require-trusted-types-for 'script'",
-  "trusted-types default nextjs 'allow-duplicates'",
 ];
 
 const cspHeader = cspDirectives.join("; ");
@@ -24,13 +23,13 @@ const nextConfig: NextConfig = {
   // 1. Hide X-Powered-By: Next.js header to prevent framework fingerprinting
   poweredByHeader: false,
 
-  // 2. Comprehensive Security Headers (CSP with 'strict-dynamic', https: http: & Trusted Types, COOP, HSTS, Anti-XSS)
+  // 2. Comprehensive Security Headers (CSP, COOP, CORP, HSTS, Anti-Clickjacking, Anti-XSS)
   async headers() {
     return [
       {
         source: "/(.*)",
         headers: [
-          // 1. Content Security Policy (CSP) & Trusted Types
+          // 1. Content Security Policy (CSP)
           {
             key: "Content-Security-Policy",
             value: cspHeader,
@@ -60,7 +59,7 @@ const nextConfig: NextConfig = {
             key: "Referrer-Policy",
             value: "strict-origin-when-cross-origin",
           },
-          // 7. XSS Protection
+          // 7. Anti-XSS Protection
           {
             key: "X-XSS-Protection",
             value: "1; mode=block",
