@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   Satellite,
   Cloud,
@@ -70,7 +71,21 @@ const COUNTRIES = [
 ];
 
 export default function DataHub() {
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get("tab");
+
   const [activeTab, setActiveTab] = useState<WeatherCategory>("synoptic");
+
+  useEffect(() => {
+    if (tabParam && ["synoptic", "upperair", "warning", "metar", "notes"].includes(tabParam)) {
+      setActiveTab(tabParam as WeatherCategory);
+    } else if (typeof window !== "undefined") {
+      const hash = window.location.hash.replace("#", "");
+      if (hash && ["synoptic", "upperair", "warning", "metar", "notes"].includes(hash)) {
+        setActiveTab(hash as WeatherCategory);
+      }
+    }
+  }, [tabParam]);
   const [selectedDate, setSelectedDate] = useState<string>(() => {
     const today = new Date();
     return today.toISOString().split("T")[0];

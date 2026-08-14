@@ -60,31 +60,31 @@ const DEFAULT_ABOUT_SUBMENU: MenuItem[] = [];
 export const SERVICES_SUBMENU = [
   {
     label: "ข้อมูลข่าว Synoptic",
-    href: "/services#synoptic",
+    href: "/services?tab=synoptic",
     icon: Satellite,
     iconColor: "text-cyan-400",
   },
   {
     label: "ข้อมูลข่าว UpperAir",
-    href: "/services#upperair",
+    href: "/services?tab=upperair",
     icon: Cloud,
     iconColor: "text-sky-400",
   },
   {
     label: "ข้อมูลข่าวเตือนภัย",
-    href: "/services#warning",
+    href: "/services?tab=warning",
     icon: AlertTriangle,
     iconColor: "text-amber-400",
   },
   {
     label: "ข้อมูลข่าว Metar (อากาศการบิน)",
-    href: "/services#metar",
+    href: "/services?tab=metar",
     icon: RadioTower,
     iconColor: "text-indigo-400",
   },
   {
     label: "Note ท้ายข่าว (Raw GTS Format)",
-    href: "/services#notes",
+    href: "/services?tab=notes",
     icon: StickyNote,
     iconColor: "text-pink-400",
   },
