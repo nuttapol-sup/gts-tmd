@@ -1,20 +1,31 @@
 import type { NextConfig } from "next";
 
-const cspHeader = [
+const isDev = process.env.NODE_ENV !== "production";
+
+// Content Security Policy & Trusted Types setup
+// - Production: Enforces full CSP & Trusted Types for Security Audit
+// - Development: Allows Next.js Turbopack HMR Hot-Reloading & Debugging
+const cspDirectives = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "img-src 'self' data: blob: https://flagcdn.com https://*.tile.openstreetmap.org https://*.google.com https://*.gstatic.com https://i.ytimg.com https://img.youtube.com",
   "font-src 'self' data: https://fonts.gstatic.com",
-  "connect-src 'self' https://flagcdn.com https://*.tile.openstreetmap.org https://api.open-meteo.com",
+  "connect-src 'self' https://flagcdn.com https://*.tile.openstreetmap.org https://api.open-meteo.com ws: wss:",
   "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://www.google.com https://maps.google.com",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
   "frame-ancestors 'self'",
   "upgrade-insecure-requests",
-  "require-trusted-types-for 'script'",
-].join("; ");
+  "trusted-types default nextjs 'allow-duplicates'",
+];
+
+if (!isDev) {
+  cspDirectives.push("require-trusted-types-for 'script'");
+}
+
+const cspHeader = cspDirectives.join("; ");
 
 const nextConfig: NextConfig = {
   // 1. Hide X-Powered-By: Next.js header to prevent framework fingerprinting
@@ -34,7 +45,7 @@ const nextConfig: NextConfig = {
           // 2. Cross-Origin Opener Policy (COOP)
           {
             key: "Cross-Origin-Opener-Policy",
-            value: "same-origin",
+            value: "same-origin-allow-popups",
           },
           // 3. Cross-Origin Resource Policy (CORP)
           {
