@@ -32,7 +32,7 @@ export default function Footer() {
               </div>
             </div>
 
-            <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
               ศูนย์โทรคมนาคมอุตุนิยมวิทยาแห่งภูมิภาคเอเชียตะวันออกเฉียงใต้ (สื่อสารระหว่างประเทศ)
               สังกัดกองสื่อสาร กรมอุตุนิยมวิทยา ทำหน้าที่เชื่อมโยงแลกเปลี่ยนข้อมูลข่าวสารอุตุนิยมวิทยาระดับโลก
             </p>
@@ -48,31 +48,31 @@ export default function Footer() {
             <h4 className="font-bold text-sm text-white tracking-wider">ลิงก์ที่เป็นประโยชน์</h4>
             <ul className="space-y-2 text-xs">
               <li>
-                <Link href="/" className="hover:text-cyan-400 transition-colors flex items-center gap-1">
+                <Link href="/" className="text-slate-300 hover:text-cyan-300 transition-colors flex items-center gap-1">
                   <ChevronRight className="w-3 h-3 text-cyan-400" />
                   หน้าหลัก
                 </Link>
               </li>
               <li>
-                <Link href="/services" className="hover:text-cyan-400 transition-colors flex items-center gap-1">
+                <Link href="/services" className="text-slate-300 hover:text-cyan-300 transition-colors flex items-center gap-1">
                   <ChevronRight className="w-3 h-3 text-cyan-400" />
                   บริการข้อมูล GTS สด
                 </Link>
               </li>
               <li>
-                <Link href="/documents" className="hover:text-cyan-400 transition-colors flex items-center gap-1">
+                <Link href="/documents" className="text-slate-300 hover:text-cyan-300 transition-colors flex items-center gap-1">
                   <ChevronRight className="w-3 h-3 text-cyan-400" />
                   เอกสารที่เกี่ยวข้อง
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="hover:text-cyan-400 transition-colors flex items-center gap-1">
+                <Link href="/about" className="text-slate-300 hover:text-cyan-300 transition-colors flex items-center gap-1">
                   <ChevronRight className="w-3 h-3 text-cyan-400" />
                   เกี่ยวกับเรา & NOC
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="hover:text-cyan-400 transition-colors flex items-center gap-1">
+                <Link href="/contact" className="text-slate-300 hover:text-cyan-300 transition-colors flex items-center gap-1">
                   <ChevronRight className="w-3 h-3 text-cyan-400" />
                   ติดต่อเรา
                 </Link>
@@ -83,7 +83,7 @@ export default function Footer() {
           {/* Col 3: Contact Info */}
           <div className="lg:col-span-3 space-y-3">
             <h4 className="font-bold text-sm text-white tracking-wider">ข้อมูลการติดต่อ</h4>
-            <ul className="space-y-2.5 text-xs text-slate-400">
+            <ul className="space-y-2.5 text-xs text-slate-300">
               <li className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
                 <span>4353 ถ.สุขุมวิท แขวงบางนา เขตบางนา กรุงเทพมหานคร 10260</span>
@@ -125,10 +125,10 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-300 gap-4">
           <p>© 2026 ศูนย์โทรคมนาคมอุตุนิยมวิทยาแห่งภูมิภาคเอเชียตะวันออกเฉียงใต้ (RTH Bangkok). All rights reserved.</p>
           <div className="flex items-center gap-4">
-            <a href="https://www.tmd.go.th" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 flex items-center gap-1">
+            <a href="https://www.tmd.go.th" target="_blank" rel="noopener noreferrer" className="text-slate-300 hover:text-cyan-300 flex items-center gap-1">
               เว็บไซต์หลักกรมอุตุนิยมวิทยา <ExternalLink className="w-3 h-3" />
             </a>
           </div>
