@@ -1,13 +1,9 @@
 import type { NextConfig } from "next";
 
-const isDev = process.env.NODE_ENV !== "production";
-
-// Content Security Policy & Trusted Types setup
-// - Production: Enforces full CSP & Trusted Types for Security Audit
-// - Development: Allows Next.js Turbopack HMR Hot-Reloading & Debugging
+// Content Security Policy with 'strict-dynamic' and Trusted Types for Lighthouse Audit
 const cspDirectives = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' 'strict-dynamic'",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "img-src 'self' data: blob: https://flagcdn.com https://*.tile.openstreetmap.org https://*.google.com https://*.gstatic.com https://i.ytimg.com https://img.youtube.com",
   "font-src 'self' data: https://fonts.gstatic.com",
@@ -18,12 +14,9 @@ const cspDirectives = [
   "form-action 'self'",
   "frame-ancestors 'self'",
   "upgrade-insecure-requests",
+  "require-trusted-types-for 'script'",
   "trusted-types default nextjs 'allow-duplicates'",
 ];
-
-if (!isDev) {
-  cspDirectives.push("require-trusted-types-for 'script'");
-}
 
 const cspHeader = cspDirectives.join("; ");
 
@@ -31,7 +24,7 @@ const nextConfig: NextConfig = {
   // 1. Hide X-Powered-By: Next.js header to prevent framework fingerprinting
   poweredByHeader: false,
 
-  // 2. Comprehensive Security Headers (CSP, COOP, Trusted Types, HSTS, Anti-XSS, MIME Sniffing)
+  // 2. Comprehensive Security Headers (CSP with 'strict-dynamic' & Trusted Types, COOP, HSTS, Anti-XSS)
   async headers() {
     return [
       {
