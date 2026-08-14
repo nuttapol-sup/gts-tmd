@@ -347,6 +347,14 @@ export async function GET(request: Request) {
             continue;
           }
 
+          // Synoptic filter: only allow headers starting with SM or SI
+          if (categoryParam === "synoptic" || category === "synoptic") {
+            const dtUpper = (dataType || "").trim().toUpperCase();
+            if (!dtUpper.startsWith("SM") && !dtUpper.startsWith("SI")) {
+              continue;
+            }
+          }
+
           const sanitizedRaw = cleanBinaryText(cleanRaw);
 
           bulletins.push({

@@ -181,8 +181,17 @@ export default function DataHub() {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
+  // Filter bulletins: for Synoptic tab, strictly display only headers starting with SM or SI
+  const displayBulletins = ftpBulletins.filter((item) => {
+    if (activeTab === "synoptic" || item.category === "synoptic") {
+      const dt = (item.dataType || item.headerLine || "").trim().toUpperCase();
+      return dt.startsWith("SM") || dt.startsWith("SI");
+    }
+    return true;
+  });
+
   // Group bulletins by countryCode
-  const groupedByCountry = ftpBulletins.reduce<Record<string, GTSBulletin[]>>((acc, item) => {
+  const groupedByCountry = displayBulletins.reduce<Record<string, GTSBulletin[]>>((acc, item) => {
     const code = item.countryCode || "OTHER";
     if (!acc[code]) {
       acc[code] = [];
@@ -191,7 +200,20 @@ export default function DataHub() {
     return acc;
   }, {});
 
-  const countryCodes = Object.keys(groupedByCountry);
+  // Group news by same code together and sort ascendingly (จากน้อยไปมาก)
+  Object.keys(groupedByCountry).forEach((code) => {
+    groupedByCountry[code].sort((a, b) => {
+      const hA = (a.headerLine || a.dataType || "").trim();
+      const hB = (b.headerLine || b.dataType || "").trim();
+      return hA.localeCompare(hB, undefined, { numeric: true, sensitivity: "base" });
+    });
+  });
+
+  const countryCodes = Object.keys(groupedByCountry).sort((a, b) => {
+    const nameA = getCountryName(a);
+    const nameB = getCountryName(b);
+    return nameA.localeCompare(nameB, "th");
+  });
 
   return (
     <section className="py-8 relative z-10" id="data-hub">
@@ -389,7 +411,7 @@ export default function DataHub() {
                   All Data &lt;&lt; -- แสดงข้อมูลทั้งหมด
                 </button>
                 <span className="text-xs text-slate-400 font-mono">
-                  พบ {ftpBulletins.length} รายการ (แยก {countryCodes.length} ประเทศ)
+                  พบ {displayBulletins.length} รายการ (แยก {countryCodes.length} ประเทศ)
                 </span>
               </div>
 
@@ -398,7 +420,7 @@ export default function DataHub() {
                   <RefreshCw className="w-8 h-8 text-cyan-400 animate-spin" />
                   <span>กำลังดึงรายการหัวข่าวสาร ...</span>
                 </div>
-              ) : ftpBulletins.length === 0 ? (
+              ) : displayBulletins.length === 0 ? (
                 <div className="p-8 text-center text-slate-400 space-y-2">
                   <p className="text-sm text-slate-300 font-semibold">
                     ไม่พบรายการหัวข่าวตรงตามเงื่อนไขที่เลือก (วันที่ {selectedDate}, UTC {selectedUtc}, {selectedCountry === "zero" ? "แสดงทุกประเทศ" : `ประเทศ ${selectedCountry}`})
@@ -517,7 +539,7 @@ export default function DataHub() {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-2 border-b border-slate-800 pb-3">
                 <h3 className="text-lg font-bold text-white flex items-center gap-2">
                   <Database className="w-5 h-5 text-emerald-400" />
-                  แสดงข้อมูลทั้งหมด (พบ {ftpBulletins.length} ข่าว - แยก {countryCodes.length} ประเทศ)
+                  แสดงข้อมูลทั้งหมด (พบ {displayBulletins.length} ข่าว - แยก {countryCodes.length} ประเทศ)
                 </h3>
                 <button
                   onClick={() => setViewMode("headers")}
