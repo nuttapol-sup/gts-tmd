@@ -34,6 +34,14 @@ const UTC_HOURS = [
   { utc: "21", ict: "04:00 (+1d)" },
 ];
 
+// Helper to calculate the closest/current standard 3-hour UTC observation cycle (00, 03, 06, 09, 12, 15, 18, 21)
+const getCurrentUtcCycle = (): string => {
+  const now = new Date();
+  const utcHours = now.getUTCHours();
+  const cycle = Math.floor(utcHours / 3) * 3;
+  return String(cycle).padStart(2, "0");
+};
+
 const COUNTRIES = [
   { value: "zero", name: "--- All (ทั้งหมด) ---", flag: "🌐", iso: "" },
   { value: "AMMC", name: "Australia", flag: "🇦🇺", iso: "au" },
@@ -90,7 +98,7 @@ export default function DataHub() {
     const today = new Date();
     return today.toISOString().split("T")[0];
   });
-  const [selectedUtc, setSelectedUtc] = useState<string>("00");
+  const [selectedUtc, setSelectedUtc] = useState<string>(getCurrentUtcCycle);
   const [selectedCountry, setSelectedCountry] = useState<string>("zero");
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
@@ -139,7 +147,7 @@ export default function DataHub() {
   const handleReset = () => {
     const today = new Date().toISOString().split("T")[0];
     setSelectedDate(today);
-    setSelectedUtc("00");
+    setSelectedUtc(getCurrentUtcCycle());
     setSelectedCountry("zero");
     setViewMode("headers");
     setSelectedBulletinId(null);
