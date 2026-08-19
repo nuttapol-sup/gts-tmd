@@ -93,6 +93,8 @@ export const SERVICES_SUBMENU = [
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileAboutOpen, setMobileAboutOpen] = useState(false);
+  const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const pathname = usePathname();
 
@@ -368,73 +370,116 @@ export default function Navbar() {
 
         {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
-          <div className="lg:hidden mt-3 pt-3 border-t border-slate-800 bg-[#0f172a]/95 backdrop-blur-xl rounded-2xl p-4 space-y-2 shadow-2xl">
+          <div className="lg:hidden mt-3 pt-3 border-t border-cyan-500/20 bg-[#0b132b]/98 backdrop-blur-2xl rounded-2xl p-3 space-y-2 shadow-2xl max-h-[80vh] overflow-y-auto">
+            {/* 1. หน้าหลัก */}
             <Link
               href="/"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800"
+              className="flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-semibold text-slate-200 hover:text-white hover:bg-cyan-500/20 transition-all border border-transparent hover:border-cyan-500/30"
             >
               <Home className="w-4 h-4 text-cyan-400" />
               หน้าหลัก
             </Link>
 
+            {/* 2. เอกสารที่เกี่ยวข้อง */}
             <Link
               href="/documents"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800"
+              className="flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-semibold text-slate-200 hover:text-white hover:bg-cyan-500/20 transition-all border border-transparent hover:border-cyan-500/30"
             >
               <FileText className="w-4 h-4 text-cyan-400" />
               เอกสารที่เกี่ยวข้อง
             </Link>
 
-            {/* Mobile เกี่ยวกับเรา Submenu */}
-            <div className="space-y-1 pl-3 border-l-2 border-cyan-500/30 my-2">
-              <div className="text-xs font-semibold text-cyan-400 px-3 py-1 flex items-center gap-1.5">
-                <Info className="w-3.5 h-3.5" />
-                เกี่ยวกับเรา
-              </div>
-              {aboutSubmenu.map((item) => {
-                const IconComp = (item.icon && ICON_MAP[item.icon]) || FileText;
-                return (
-                  <Link
-                    key={item.id}
-                    href={item.href}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-cyan-500/20"
-                  >
-                    <IconComp className={`w-4 h-4 ${item.iconColor || "text-cyan-400"}`} />
-                    <span className="truncate">{item.label}</span>
-                  </Link>
-                );
-              })}
+            {/* 3. เกี่ยวกับเรา (Collapsible Accordion) */}
+            <div className="rounded-xl border border-slate-800 bg-slate-900/40 overflow-hidden transition-all">
+              <button
+                type="button"
+                onClick={() => setMobileAboutOpen(!mobileAboutOpen)}
+                className="w-full flex items-center justify-between px-3.5 py-3 text-sm font-semibold text-slate-200 hover:text-white hover:bg-slate-800/80 transition-all cursor-pointer"
+              >
+                <div className="flex items-center gap-3">
+                  <Info className="w-4 h-4 text-cyan-400" />
+                  <span>เกี่ยวกับเรา</span>
+                  {aboutSubmenu.length > 0 && (
+                    <span className="text-[10px] bg-cyan-950 text-cyan-300 px-2 py-0.5 rounded-full border border-cyan-500/30 font-medium">
+                      {aboutSubmenu.length} รายการ
+                    </span>
+                  )}
+                </div>
+                <ChevronDown
+                  className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${
+                    mobileAboutOpen ? "rotate-180 text-cyan-400" : ""
+                  }`}
+                />
+              </button>
+
+              {mobileAboutOpen && (
+                <div className="p-2 space-y-1 bg-[#070d1e] border-t border-slate-800">
+                  {aboutSubmenu.map((item) => {
+                    const IconComp = (item.icon && ICON_MAP[item.icon]) || FileText;
+                    return (
+                      <Link
+                        key={item.id}
+                        href={item.href}
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white hover:bg-cyan-500/20 transition-all border border-transparent hover:border-cyan-500/30"
+                      >
+                        <IconComp className={`w-4 h-4 shrink-0 ${item.iconColor || "text-cyan-400"}`} />
+                        <span className="truncate">{item.label}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
             </div>
 
-            {/* Mobile บริการ GTS */}
-            <div className="space-y-1 pl-3 border-l-2 border-cyan-500/30 my-2">
-              <div className="text-xs font-semibold text-cyan-400 px-3 py-1 flex items-center gap-1.5">
-                <Globe className="w-3.5 h-3.5" />
-                บริการ GTS
-              </div>
-              {SERVICES_SUBMENU.map((item, idx) => {
-                const IconComp = item.icon;
-                return (
-                  <Link
-                    key={idx}
-                    href={item.href}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-cyan-500/20"
-                  >
-                    <IconComp className={`w-4 h-4 ${item.iconColor}`} />
-                    <span>{item.label}</span>
-                  </Link>
-                );
-              })}
+            {/* 4. บริการ GTS (Collapsible Accordion) */}
+            <div className="rounded-xl border border-slate-800 bg-slate-900/40 overflow-hidden transition-all">
+              <button
+                type="button"
+                onClick={() => setMobileServicesOpen(!mobileServicesOpen)}
+                className="w-full flex items-center justify-between px-3.5 py-3 text-sm font-semibold text-slate-200 hover:text-white hover:bg-slate-800/80 transition-all cursor-pointer"
+              >
+                <div className="flex items-center gap-3">
+                  <Globe className="w-4 h-4 text-cyan-400" />
+                  <span>บริการ GTS</span>
+                  <span className="text-[10px] bg-cyan-950 text-cyan-300 px-2 py-0.5 rounded-full border border-cyan-500/30 font-medium">
+                    {SERVICES_SUBMENU.length} รายการ
+                  </span>
+                </div>
+                <ChevronDown
+                  className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${
+                    mobileServicesOpen ? "rotate-180 text-cyan-400" : ""
+                  }`}
+                />
+              </button>
+
+              {mobileServicesOpen && (
+                <div className="p-2 space-y-1 bg-[#070d1e] border-t border-slate-800">
+                  {SERVICES_SUBMENU.map((item, idx) => {
+                    const IconComp = item.icon;
+                    return (
+                      <Link
+                        key={idx}
+                        href={item.href}
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white hover:bg-cyan-500/20 transition-all border border-transparent hover:border-cyan-500/30"
+                      >
+                        <IconComp className={`w-4 h-4 shrink-0 ${item.iconColor}`} />
+                        <span>{item.label}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
             </div>
 
+            {/* 5. ติดต่อเรา */}
             <Link
               href="/contact"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800"
+              className="flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-semibold text-slate-200 hover:text-white hover:bg-cyan-500/20 transition-all border border-transparent hover:border-cyan-500/30"
             >
               <PhoneCall className="w-4 h-4 text-cyan-400" />
               ติดต่อเรา
