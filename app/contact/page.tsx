@@ -149,7 +149,7 @@ export default function ContactPage() {
               <h3 className="text-lg font-bold text-white">เวลาทำการ & NOC</h3>
               <div className="space-y-2 text-xs sm:text-sm text-slate-300">
                 <div>
-                  <span className="font-semibold text-white block">งานสารบันและติดต่อราชการ:</span>
+                  <span className="font-semibold text-white block">งานสารบรรณและติดต่อราชการ:</span>
                   <span className="text-slate-300">จันทร์ - ศุกร์: 08:30 - 16:30 น.</span>
                 </div>
                 <div className="pt-1 border-t border-slate-800">
