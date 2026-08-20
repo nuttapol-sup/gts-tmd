@@ -3,7 +3,7 @@ import type { NextConfig } from "next";
 // Production & HTTP/HTTPS compatible Content Security Policy for Next.js
 const cspDirectives = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https:",
+  "script-src 'self' 'unsafe-inline' https:",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "img-src 'self' data: blob: https://flagcdn.com https://*.tile.openstreetmap.org https://*.google.com https://*.gstatic.com https://i.ytimg.com https://img.youtube.com",
   "font-src 'self' data: https://fonts.gstatic.com",
