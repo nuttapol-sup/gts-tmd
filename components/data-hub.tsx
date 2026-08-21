@@ -2,7 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
+import { convertTacToIwxxm } from "@/lib/iwxxm";
 import {
+  Code,
+  Download,
   FileText,
   X,
   Thermometer,
@@ -288,6 +291,18 @@ function parseSynopBulletin(rawText: string): DecodedSynopStation[] {
 }
 
 export default function DataHub() {
+  const handleDownloadIwxxm = (xml: string, header: string) => {
+    const blob = new Blob([xml], { type: "application/xml" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `iwxxm_${header.replace(/\s+/g, "_")}.xml`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
 
   const searchParams = useSearchParams();
   const tabParam = searchParams.get("tab");
@@ -312,6 +327,8 @@ export default function DataHub() {
   const [selectedCountry, setSelectedCountry] = useState<string>("zero");
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [decodingBulletin, setDecodingBulletin] = useState<GTSBulletin | null>(null);
+  const [iwxxmBulletin, setIwxxmBulletin] = useState<GTSBulletin | null>(null);
+  const [copiedIwxxm, setCopiedIwxxm] = useState<boolean>(false);
 
   const [ftpBulletins, setFtpBulletins] = useState<GTSBulletin[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -863,6 +880,13 @@ export default function DataHub() {
 
                                 <div className="flex items-center gap-2">
                                   <button
+                                    onClick={() => setIwxxmBulletin(bulletin)}
+                                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium bg-gradient-to-r from-purple-600 to-indigo-600 hover:brightness-110 text-white shadow-md shadow-purple-500/20 border border-purple-400/30 transition-all cursor-pointer"
+                                  >
+                                    <Code className="w-3.5 h-3.5 text-purple-200" />
+                                    <span>แปลงเป็น IWXXM (XML)</span>
+                                  </button>
+                                  <button
                                     onClick={() => setDecodingBulletin(bulletin)}
                                     className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium bg-gradient-to-r from-cyan-600 to-blue-600 hover:brightness-110 text-white shadow-md shadow-cyan-500/20 border border-cyan-400/30 transition-all cursor-pointer"
                                   >
@@ -1035,6 +1059,101 @@ export default function DataHub() {
                   className="px-5 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:brightness-110 text-white text-xs font-bold shadow-md shadow-cyan-500/20 transition-all cursor-pointer"
                 >
                   ปิดหน้าต่างถอดรหัส
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+
+        {/* IWXXM 3.0 XML Converter Modal Dialog */}
+        {iwxxmBulletin && (
+          <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 overflow-y-auto animate-in fade-in duration-200">
+            <div className="glass-panel w-full max-w-4xl rounded-3xl p-6 sm:p-8 border border-purple-500/40 bg-slate-900/95 space-y-6 shadow-2xl relative max-h-[90vh] flex flex-col justify-between">
+              
+              {/* Modal Header */}
+              <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="px-2.5 py-0.5 rounded-md bg-purple-500/20 text-purple-300 font-mono text-xs font-bold border border-purple-500/30">
+                      {iwxxmBulletin.headerLine}
+                    </span>
+                    <span className="px-2.5 py-0.5 rounded-md bg-indigo-500/20 text-indigo-300 text-xs font-semibold border border-indigo-500/30">
+                      ICAO / WMO SWIM Standard
+                    </span>
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-amber-500/20 text-amber-300 text-xs font-semibold border border-amber-500/30">
+                      <Sparkles className="w-3 h-3 text-amber-400" />
+                      IWXXM 3.0 XML GML Standard
+                    </span>
+                  </div>
+                  <h3 className="text-lg font-bold text-white tracking-tight">
+                    ผลการแปลงรหัสข่าว TAC ➔ เป็น IWXXM 3.0 XML (ICAO Annex 3)
+                  </h3>
+                </div>
+
+                <button
+                  onClick={() => setIwxxmBulletin(null)}
+                  className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-all cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* IWXXM XML Viewer */}
+              {(() => {
+                const res = convertTacToIwxxm(iwxxmBulletin.rawText);
+                return (
+                  <div className="space-y-3 flex-1 overflow-hidden flex flex-col">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold text-slate-300 flex items-center gap-2">
+                        <Code className="w-4 h-4 text-purple-400" />
+                        ไฟล์โค้ด IWXXM XML Standard (GML Schema):
+                      </span>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => {
+                            navigator.clipboard.writeText(res.xml);
+                            setCopiedIwxxm(true);
+                            setTimeout(() => setCopiedIwxxm(false), 2000);
+                          }}
+                          className="px-3 py-1 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-purple-300 border border-purple-500/30 transition-all flex items-center gap-1.5 cursor-pointer"
+                        >
+                          {copiedIwxxm ? (
+                            <>
+                              <Check className="w-3.5 h-3.5 text-emerald-400" />
+                              <span className="text-emerald-300">คัดลอก XML แล้ว</span>
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="w-3.5 h-3.5" />
+                              <span>คัดลอกโค้ด XML</span>
+                            </>
+                          )}
+                        </button>
+                        <button
+                          onClick={() => handleDownloadIwxxm(res.xml, iwxxmBulletin.headerLine)}
+                          className="px-3 py-1 rounded-lg text-xs font-bold bg-gradient-to-r from-purple-600 to-indigo-600 hover:brightness-110 text-white shadow-md shadow-purple-500/20 transition-all flex items-center gap-1.5 cursor-pointer"
+                        >
+                          <Download className="w-3.5 h-3.5" />
+                          <span>ดาวน์โหลดไฟล์ .xml</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <pre className="p-4 rounded-2xl bg-slate-950 border border-purple-500/30 font-mono text-xs text-purple-300 overflow-x-auto whitespace-pre-wrap leading-relaxed shadow-inner max-h-[45vh] overflow-y-auto flex-1">
+                      <code>{res.xml}</code>
+                    </pre>
+                  </div>
+                );
+              })()}
+
+              {/* Modal Footer */}
+              <div className="flex justify-end pt-2 border-t border-slate-800">
+                <button
+                  onClick={() => setIwxxmBulletin(null)}
+                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:brightness-110 text-white text-xs font-bold shadow-md shadow-purple-500/20 transition-all cursor-pointer"
+                >
+                  ปิดหน้าต่าง IWXXM
                 </button>
               </div>
             </div>
