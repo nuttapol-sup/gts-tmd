@@ -27,7 +27,7 @@ const nextConfig: NextConfig = {
   // 1. Hide X-Powered-By: Next.js header to prevent framework fingerprinting
   poweredByHeader: false,
 
-  // 2. Comprehensive Security Headers (CSP, COOP, CORP, Anti-Clickjacking, Anti-XSS)
+  // 2. Comprehensive Security Headers (CSP, COOP, CORP, Anti-Clickjacking, Anti-XSS, HSTS)
   async headers() {
     return [
       {
@@ -72,6 +72,11 @@ const nextConfig: NextConfig = {
           {
             key: "Permissions-Policy",
             value: "camera=(), microphone=(), geolocation=(), payment=()",
+          },
+          // 9. HTTP Strict Transport Security (HSTS)
+          {
+            key: "Strict-Transport-Security",
+            value: "max-age=31536000; includeSubDomains; preload",
           },
         ],
       },
