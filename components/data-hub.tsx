@@ -3,6 +3,13 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import {
+  FileText,
+  X,
+  Thermometer,
+  Wind,
+  Gauge,
+  Droplets,
+  CloudRain,
   Satellite,
   Cloud,
   AlertTriangle,
@@ -78,7 +85,210 @@ const COUNTRIES = [
   { value: "VVGL", name: "Vietnam", flag: "🇻🇳", iso: "vn" },
 ];
 
+
+export interface DecodedSynopStation {
+  stationId: string;
+  stationName: string;
+  countryFlag: string;
+  temp?: string;
+  dewPoint?: string;
+  seaPressure?: string;
+  stationPressure?: string;
+  windDir?: string;
+  windSpeed?: string;
+  presentWeather?: string;
+  rainAmount?: string;
+  maxTemp?: string;
+  rawLine: string;
+}
+
+const WMO_STATIONS_MAP: Record<string, { name: string; flag: string }> = {
+  "48300": { name: "แม่ฮ่องสอน", flag: "🇹🇭" },
+  "48303": { name: "เชียงราย", flag: "🇹🇭" },
+  "48327": { name: "เชียงใหม่", flag: "🇹🇭" },
+  "48330": { name: "ลำปาง", flag: "🇹🇭" },
+  "48331": { name: "พะเยา", flag: "🇹🇭" },
+  "48332": { name: "น่าน", flag: "🇹🇭" },
+  "48354": { name: "อุดรธานี", flag: "🇹🇭" },
+  "48356": { name: "สกลนคร", flag: "🇹🇭" },
+  "48357": { name: "นครพนม", flag: "🇹🇭" },
+  "48378": { name: "พิษณุโลก", flag: "🇹🇭" },
+  "48381": { name: "ขอนแก่น", flag: "🇹🇭" },
+  "48400": { name: "นครสวรรค์", flag: "🇹🇭" },
+  "48407": { name: "อุบลราชธานี", flag: "🇹🇭" },
+  "48431": { name: "นครราชสีมา", flag: "🇹🇭" },
+  "48450": { name: "ดอนเมือง", flag: "🇹🇭" },
+  "48455": { name: "กรุงเทพมหานคร (บางนา)", flag: "🇹🇭" },
+  "48456": { name: "สนามบินสุวรรณภูมิ", flag: "🇹🇭" },
+  "48475": { name: "กาญจนบุรี", flag: "🇹🇭" },
+  "48480": { name: "ชลบุรี / พัทยา", flag: "🇹🇭" },
+  "48500": { name: "ประจวบคีรีขันธ์", flag: "🇹🇭" },
+  "48517": { name: "ชุมพร", flag: "🇹🇭" },
+  "48532": { name: "ระนอง", flag: "🇹🇭" },
+  "48551": { name: "สุราษฎร์ธานี", flag: "🇹🇭" },
+  "48565": { name: "ภูเก็ต", flag: "🇹🇭" },
+  "48568": { name: "สงขลา", flag: "🇹🇭" },
+  "48583": { name: "นราธิวาส", flag: "🇹🇭" },
+  "48940": { name: "พงสาลี", flag: "🇱🇦" },
+  "48941": { name: "หลวงน้ำทา", flag: "🇱🇦" },
+  "48943": { name: "อุดมไชย", flag: "🇱🇦" },
+  "48945": { name: "หลวงพระบาง", flag: "🇱🇦" },
+  "48946": { name: "เวียงจันทน์", flag: "🇱🇦" },
+  "48947": { name: "สะหวันนะเขต", flag: "🇱🇦" },
+  "48948": { name: "ปากเซ", flag: "🇱🇦" },
+  "48952": { name: "ท่าแขก", flag: "🇱🇦" },
+  "48953": { name: "ไชยบุรี", flag: "🇱🇦" },
+  "48955": { name: "เซกอง", flag: "🇱🇦" },
+  "48957": { name: "อัตตะปือ", flag: "🇱🇦" },
+  "48808": { name: "ฮานอย", flag: "🇻🇳" },
+  "48820": { name: "ดานัง", flag: "🇻🇳" },
+  "48900": { name: "โฮจิมินห์", flag: "🇻🇳" },
+  "48601": { name: "ปีนัง", flag: "🇲🇾" },
+  "48647": { name: "กัวลาลัมเปอร์", flag: "🇲🇾" },
+  "48698": { name: "สิงคโปร์ (Changi)", flag: "🇸🇬" },
+};
+
+function decodeWindDirection(dd: number): string {
+  if (dd === 0 || dd === 36) return "เหนือ (N)";
+  if (dd > 0 && dd < 9) return "ตะวันออกเฉียงเหนือ (NE)";
+  if (dd === 9) return "ตะวันออก (E)";
+  if (dd > 9 && dd < 18) return "ตะวันออกเฉียงใต้ (SE)";
+  if (dd === 18) return "ใต้ (S)";
+  if (dd > 18 && dd < 27) return "ตะวันตกเฉียงใต้ (SW)";
+  if (dd === 27) return "ตะวันตก (W)";
+  if (dd > 27 && dd < 36) return "ตะวันตกเฉียงเหนือ (NW)";
+  if (dd === 99) return "ลมแปรปรวน (VRB)";
+  return `${dd * 10}°`;
+}
+
+function decodePresentWeather(ww: number): string {
+  if (ww === 0) return "ท้องฟ้าแจ่มใส";
+  if (ww === 1 || ww === 2) return "มีเมฆเล็กน้อย";
+  if (ww === 3) return "ท้องฟ้ามืดครึ้ม";
+  if (ww === 5) return "หมอกแดด / ฟ้าหลัว (Haze)";
+  if (ww === 10) return "หมอกบาง (Mist)";
+  if (ww >= 40 && ww <= 49) return "หมอกหนา (Fog)";
+  if (ww >= 50 && ww <= 59) return "ฝนพรำ (Drizzle)";
+  if (ww >= 60 && ww <= 69) return "ฝนตกเล็กน้อยถึงปานกลาง (Rain)";
+  if (ww >= 70 && ww <= 79) return "หิมะตก (Snow)";
+  if (ww >= 80 && ww <= 89) return "ฝนซ่า / ฝนโชก (Showers)";
+  if (ww >= 90) return "ฝนฟ้าคะนอง (Thunderstorm)";
+  return `ww=${ww}`;
+}
+
+function parseSynopBulletin(rawText: string): DecodedSynopStation[] {
+  const lines = rawText.split("\n");
+  const results: DecodedSynopStation[] = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line) continue;
+    const tokens = line.split(/\s+/);
+    if (tokens.length < 2) continue;
+
+    const firstToken = tokens[0];
+    if (!/^\d{5}$/.test(firstToken)) continue;
+
+    const stationId = firstToken;
+    const info = WMO_STATIONS_MAP[stationId] || { name: `สถานี WMO ${stationId}`, flag: "🌐" };
+
+    let temp: string | undefined;
+    let dewPoint: string | undefined;
+    let stationPressure: string | undefined;
+    let seaPressure: string | undefined;
+    let windDir: string | undefined;
+    let windSpeed: string | undefined;
+    let presentWeather: string | undefined;
+    let rainAmount: string | undefined;
+    let maxTemp: string | undefined;
+
+    // Check group 2: Nddff
+    if (tokens[2] && /^\d{5}$/.test(tokens[2])) {
+      const dd = parseInt(tokens[2].substring(1, 3), 10);
+      const ff = parseInt(tokens[2].substring(3, 5), 10);
+      windDir = decodeWindDirection(dd);
+      windSpeed = `${ff} นอต (${Math.round(ff * 1.852)} กม./ชม.)`;
+    }
+
+    for (let j = 1; j < tokens.length; j++) {
+      const tok = tokens[j].replace("=", "");
+      if (!/^\d{5}$/.test(tok)) continue;
+
+      // 1s_nT T T (Temp)
+      if (tok.startsWith("1") && tok.length === 5) {
+        const sign = tok[1] === "1" ? "-" : "+";
+        const val = (parseInt(tok.substring(2), 10) / 10).toFixed(1);
+        temp = `${sign}${val} °C`;
+      }
+      // 2s_nT_dT_dT_d (Dew Point)
+      else if (tok.startsWith("2") && tok.length === 5 && tok[1] !== "0") {
+        const sign = tok[1] === "1" ? "-" : "+";
+        const val = (parseInt(tok.substring(2), 10) / 10).toFixed(1);
+        dewPoint = `${sign}${val} °C`;
+      }
+      // 3P_0P_0P_0P_0 (Station Level Pressure)
+      else if (tok.startsWith("3") && tok.length === 5 && !tok.startsWith("333")) {
+        let rawP = parseInt(tok.substring(1), 10);
+        if (rawP < 1000) rawP += 10000;
+        stationPressure = `${(rawP / 10).toFixed(1)} hPa`;
+      }
+      // 4PPPP (Sea Level Pressure)
+      else if (tok.startsWith("4") && tok.length === 5) {
+        let rawP = parseInt(tok.substring(1), 10);
+        if (rawP < 1000) rawP += 10000;
+        seaPressure = `${(rawP / 10).toFixed(1)} hPa`;
+      }
+      // 7wwW1W2 (Present weather)
+      else if (tok.startsWith("7") && tok.length === 5) {
+        const ww = parseInt(tok.substring(1, 3), 10);
+        presentWeather = decodePresentWeather(ww);
+      }
+    }
+
+    // Check line below for Section 333 (Max Temp & 24h Rain)
+    if (i + 1 < lines.length) {
+      const nextLine = lines[i + 1].trim();
+      if (nextLine.includes("333")) {
+        const subTokens = nextLine.split(/\s+/);
+        for (const st of subTokens) {
+          const cleanSt = st.replace("=", "");
+          // 58s_nT_xT_xT_x (Max Temp)
+          if (cleanSt.startsWith("58") && cleanSt.length === 5) {
+            const sign = cleanSt[2] === "1" ? "-" : "+";
+            const val = (parseInt(cleanSt.substring(3), 10) / 10).toFixed(1);
+            maxTemp = `${sign}${val} °C`;
+          }
+          // 7RRRR (Rain 24h)
+          else if (cleanSt.startsWith("70") && cleanSt.length === 5) {
+            const rawRain = parseInt(cleanSt.substring(1), 10);
+            rainAmount = `${(rawRain / 10).toFixed(1)} มม.`;
+          }
+        }
+      }
+    }
+
+    results.push({
+      stationId,
+      stationName: info.name,
+      countryFlag: info.flag,
+      temp,
+      dewPoint,
+      stationPressure,
+      seaPressure,
+      windDir,
+      windSpeed,
+      presentWeather,
+      rainAmount,
+      maxTemp,
+      rawLine: line,
+    });
+  }
+
+  return results;
+}
+
 export default function DataHub() {
+
   const searchParams = useSearchParams();
   const tabParam = searchParams.get("tab");
 
@@ -101,6 +311,7 @@ export default function DataHub() {
   const [selectedUtc, setSelectedUtc] = useState<string>(getCurrentUtcCycle);
   const [selectedCountry, setSelectedCountry] = useState<string>("zero");
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [decodingBulletin, setDecodingBulletin] = useState<GTSBulletin | null>(null);
 
   const [ftpBulletins, setFtpBulletins] = useState<GTSBulletin[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -650,10 +861,18 @@ export default function DataHub() {
                                   </span>
                                 </div>
 
-                                <button
-                                  onClick={() => handleCopy(bulletin.rawText, bulletin.id)}
-                                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/30 transition-all cursor-pointer"
-                                >
+                                <div className="flex items-center gap-2">
+                                  <button
+                                    onClick={() => setDecodingBulletin(bulletin)}
+                                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium bg-gradient-to-r from-cyan-600 to-blue-600 hover:brightness-110 text-white shadow-md shadow-cyan-500/20 border border-cyan-400/30 transition-all cursor-pointer"
+                                  >
+                                    <FileText className="w-3.5 h-3.5" />
+                                    <span>ถอดรหัสข่าว (Decode)</span>
+                                  </button>
+                                  <button
+                                    onClick={() => handleCopy(bulletin.rawText, bulletin.id)}
+                                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/30 transition-all cursor-pointer"
+                                  >
                                   {copiedId === bulletin.id ? (
                                     <>
                                       <Check className="w-3.5 h-3.5 text-emerald-400" />
@@ -666,6 +885,7 @@ export default function DataHub() {
                                     </>
                                   )}
                                 </button>
+                              </div>
                               </div>
 
                               <pre className="p-4 rounded-xl bg-slate-950 border border-cyan-500/30 font-mono text-xs text-cyan-300 overflow-x-auto whitespace-pre-wrap leading-relaxed shadow-inner max-h-[360px] overflow-y-auto">
@@ -701,6 +921,126 @@ export default function DataHub() {
           </p>
         </div>
       </div>
+
+        {/* SYNOP / GTS Decoder Modal Dialog */}
+        {decodingBulletin && (
+          <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 overflow-y-auto animate-in fade-in duration-200">
+            <div className="glass-panel w-full max-w-4xl rounded-3xl p-6 sm:p-8 border border-cyan-500/40 bg-slate-900/95 space-y-6 shadow-2xl relative max-h-[90vh] flex flex-col justify-between">
+              
+              {/* Modal Header */}
+              <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="px-2.5 py-0.5 rounded-md bg-cyan-500/20 text-cyan-300 font-mono text-xs font-bold border border-cyan-500/30">
+                      {decodingBulletin.headerLine}
+                    </span>
+                    <span className="px-2.5 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 text-xs font-semibold border border-emerald-500/30">
+                      {decodingBulletin.categoryLabel}
+                    </span>
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-amber-500/20 text-amber-300 text-xs font-semibold border border-amber-500/30">
+                      <Sparkles className="w-3 h-3 text-amber-400" />
+                      ระบบถอดรหัสข่าวสารอุตุนิยมวิทยา WMO SYNOP
+                    </span>
+                  </div>
+                  <h3 className="text-lg font-bold text-white tracking-tight">
+                    ผลการถอดรหัสรหัสตัวเลข SYNOP 5-Digit Group
+                  </h3>
+                </div>
+
+                <button
+                  onClick={() => setDecodingBulletin(null)}
+                  className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-all cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Decoded Table */}
+              <div className="overflow-x-auto overflow-y-auto max-h-[50vh] rounded-2xl border border-slate-800 bg-slate-950/60 p-2">
+                {(() => {
+                  const decodedList = parseSynopBulletin(decodingBulletin.rawText);
+                  if (decodedList.length === 0) {
+                    return (
+                      <div className="p-8 text-center text-slate-400 space-y-2">
+                        <AlertTriangle className="w-8 h-8 text-amber-400 mx-auto" />
+                        <p className="text-sm font-medium">ไม่พบกลุ่มตัวเลขรหัส SYNOP ที่ตรงตามมาตรฐาน WMO FM 12 ในข่าวสารนี้</p>
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <table className="w-full text-left text-xs sm:text-sm text-slate-200">
+                      <thead className="bg-slate-900/90 text-cyan-300 text-xs uppercase tracking-wider border-b border-slate-800">
+                        <tr>
+                          <th className="px-4 py-3 font-semibold">สถานีตรวจอากาศ</th>
+                          <th className="px-4 py-3 font-semibold">อุณหภูมิ (Temp)</th>
+                          <th className="px-4 py-3 font-semibold">จุดน้ำค้าง (Dew Point)</th>
+                          <th className="px-4 py-3 font-semibold">ความกดอากาศ (Sea Level)</th>
+                          <th className="px-4 py-3 font-semibold">ทิศทาง & ความเร็วลม</th>
+                          <th className="px-4 py-3 font-semibold">สภาพอากาศปัจจุบัน</th>
+                          <th className="px-4 py-3 font-semibold">ฝนสะสม</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-800/60">
+                        {decodedList.map((st, idx) => (
+                          <tr key={idx} className="hover:bg-cyan-500/5 transition-all">
+                            <td className="px-4 py-3.5 font-medium whitespace-nowrap">
+                              <div className="flex items-center gap-2">
+                                <span className="text-base">{st.countryFlag}</span>
+                                <div>
+                                  <span className="text-white font-bold block">{st.stationName}</span>
+                                  <span className="text-[11px] font-mono text-cyan-400">รหัส WMO: {st.stationId}</span>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="px-4 py-3.5 font-bold text-amber-300 whitespace-nowrap">
+                              {st.temp || "---"}
+                              {st.maxTemp && <span className="text-[11px] text-amber-400/80 block font-normal">(สูงสุด {st.maxTemp})</span>}
+                            </td>
+                            <td className="px-4 py-3.5 text-sky-300 font-medium whitespace-nowrap">
+                              {st.dewPoint || "---"}
+                            </td>
+                            <td className="px-4 py-3.5 text-cyan-300 font-mono whitespace-nowrap">
+                              {st.seaPressure || st.stationPressure || "---"}
+                            </td>
+                            <td className="px-4 py-3.5 text-slate-300 whitespace-nowrap">
+                              {st.windDir ? `${st.windDir} / ${st.windSpeed}` : "---"}
+                            </td>
+                            <td className="px-4 py-3.5 text-emerald-300 font-medium whitespace-nowrap">
+                              {st.presentWeather || "ปกติ"}
+                            </td>
+                            <td className="px-4 py-3.5 text-blue-300 font-mono whitespace-nowrap">
+                              {st.rainAmount || "---"}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  );
+                })()}
+              </div>
+
+              {/* Raw Text Reference */}
+              <div className="space-y-1.5 pt-2">
+                <span className="text-xs font-semibold text-slate-400 block">ข้อความข่าวสาร GTS ดั้งเดิม (Raw Text Reference):</span>
+                <pre className="p-3 rounded-xl bg-slate-950 border border-slate-800 text-[11px] font-mono text-cyan-400/80 overflow-x-auto whitespace-pre-wrap max-h-[100px] overflow-y-auto">
+                  <code>{decodingBulletin.rawText}</code>
+                </pre>
+              </div>
+
+              {/* Modal Footer */}
+              <div className="flex justify-end pt-2 border-t border-slate-800">
+                <button
+                  onClick={() => setDecodingBulletin(null)}
+                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:brightness-110 text-white text-xs font-bold shadow-md shadow-cyan-500/20 transition-all cursor-pointer"
+                >
+                  ปิดหน้าต่างถอดรหัส
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
     </section>
   );
 }
