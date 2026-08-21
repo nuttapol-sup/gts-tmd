@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /api/
 
-Sitemap: https://gts.tmd.go.th/sitemap.xml
+Sitemap: https://telecom.tmd.go.th/sitemap.xml

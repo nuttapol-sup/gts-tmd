@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: "/api/",
     },
-    sitemap: "https://gts.tmd.go.th/sitemap.xml",
+    sitemap: "https://telecom.tmd.go.th/sitemap.xml",
   };
 }
