@@ -784,16 +784,8 @@ export default function DataHub() {
               </div>
 
               {(() => {
-                const matchingBulletins = ftpBulletins.filter(
-                  (b) =>
-                    b.countryCode === selectedBulletin.countryCode &&
-                    (b.headerLine === selectedBulletin.headerLine ||
-                      b.dataType === selectedBulletin.dataType)
-                );
-
-                // Display ONLY the single latest bulletin
-                const latestBulletin = matchingBulletins.length > 0 ? matchingBulletins[0] : selectedBulletin;
-                const listToDisplay = [latestBulletin];
+                // Display ONLY the exact bulletin that was clicked
+                const listToDisplay = [selectedBulletin];
 
                 return (
                   <div className="space-y-6">
