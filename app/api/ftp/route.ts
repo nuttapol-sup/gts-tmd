@@ -375,6 +375,19 @@ export async function GET(request: Request) {
       }
     }
 
+    // Sort bulletins so latest (newest) data appears FIRST
+    bulletins.sort((a, b) => {
+      if (b.filename !== a.filename) {
+        return b.filename.localeCompare(a.filename, undefined, { numeric: true });
+      }
+      const timeA = parseInt(a.utcTimeStr || "0", 10);
+      const timeB = parseInt(b.utcTimeStr || "0", 10);
+      if (timeB !== timeA) {
+        return timeB - timeA;
+      }
+      return parseInt(b.id.split("-").pop() || "0", 10) - parseInt(a.id.split("-").pop() || "0", 10);
+    });
+
     return NextResponse.json({
       status: "success",
       count: bulletins.length,

@@ -383,7 +383,7 @@ export default function DataHub() {
 
   const handleSelectSingleHeader = (id: string) => {
     setSelectedBulletinId(id);
-    setViewMode("all");
+    setViewMode("single");
   };
 
   const copyToClipboard = (text: string, id: string) => {
@@ -769,57 +769,103 @@ export default function DataHub() {
           {/* ----------------- MODE 2: SINGLE SELECTED HEADER VIEW (เมื่อกดเข้า หัวข่าวนั้นๆ) ----------------- */}
           {viewMode === "single" && selectedBulletin && (
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
                 <button
                   onClick={() => setViewMode("headers")}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 text-xs font-semibold border border-slate-700 transition-all cursor-pointer"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 text-xs font-semibold border border-slate-700 transition-all cursor-pointer shrink-0"
                 >
                   <ArrowLeft className="w-4 h-4 text-cyan-400" />
                   กลับไปหน้ารวมหัวข่าว (Back to Headers List)
                 </button>
 
-                <span className="text-xs text-cyan-400 font-mono font-bold bg-cyan-950/60 px-3 py-1 rounded-lg border border-cyan-800">
-                  แสดงเฉพาะหัวข่าวที่กดเลือก: {selectedBulletin.headerLine}
+                <span className="text-xs text-cyan-400 font-mono font-bold bg-cyan-950/60 px-3 py-1.5 rounded-xl border border-cyan-800">
+                  แสดงหัวข่าว: {selectedBulletin.headerLine}
                 </span>
               </div>
 
-              <div className="glass-panel rounded-3xl p-6 border border-cyan-400 space-y-4 shadow-2xl relative overflow-hidden">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
-                  <div className="flex items-center gap-2.5 flex-wrap">
-                    <span className="px-3 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 font-mono text-sm font-bold border border-cyan-500/40">
-                      {selectedBulletin.headerLine}
-                    </span>
-                    <span className="px-2.5 py-0.5 rounded-md bg-blue-500/20 text-blue-300 font-mono text-xs font-bold border border-blue-500/30 flex items-center gap-2">
-                      {renderCountryFlag(selectedBulletin.countryCode, "w-5 h-3.5")}
-                      <span>รหัสประเทศ: {getCountryName(selectedBulletin.countryCode)} ({selectedBulletin.countryCode})</span>
-                    </span>
-                    <span className="px-2.5 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 text-xs font-semibold border border-emerald-500/30">
-                      {selectedBulletin.categoryLabel}
-                    </span>
+              {(() => {
+                const matchingBulletins = ftpBulletins.filter(
+                  (b) =>
+                    b.countryCode === selectedBulletin.countryCode &&
+                    (b.headerLine === selectedBulletin.headerLine ||
+                      b.dataType === selectedBulletin.dataType)
+                );
+
+                const listToDisplay = matchingBulletins.length > 0 ? matchingBulletins : [selectedBulletin];
+
+                return (
+                  <div className="space-y-6">
+                    {listToDisplay.map((bulletin, idx) => (
+                      <div
+                        key={bulletin.id}
+                        className={`glass-panel rounded-3xl p-6 border space-y-4 shadow-2xl relative overflow-hidden transition-all ${
+                          idx === 0
+                            ? "border-emerald-500/50 bg-gradient-to-br from-[#0f2427]/90 via-[#0d1f35]/90 to-[#0b132b]/95"
+                            : "border-cyan-500/30 bg-slate-900/90"
+                        }`}
+                      >
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
+                          <div className="flex items-center gap-2.5 flex-wrap">
+                            {idx === 0 && (
+                              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-extrabold border border-emerald-500/50 shadow-md shadow-emerald-500/20 animate-pulse">
+                                <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+                                ข้อมูลตัวล่าสุด (LATEST)
+                              </span>
+                            )}
+                            <span className="px-3 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 font-mono text-sm font-bold border border-cyan-500/40">
+                              {bulletin.headerLine}
+                            </span>
+                            <span className="px-2.5 py-0.5 rounded-md bg-blue-500/20 text-blue-300 font-mono text-xs font-bold border border-blue-500/30 flex items-center gap-2">
+                              {renderCountryFlag(bulletin.countryCode, "w-5 h-3.5")}
+                              <span>รหัสประเทศ: {getCountryName(bulletin.countryCode)} ({bulletin.countryCode})</span>
+                            </span>
+                            <span className="px-2.5 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 text-xs font-semibold border border-emerald-500/30">
+                              {bulletin.categoryLabel}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <button
+                              onClick={() => setIwxxmBulletin(bulletin)}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-gradient-to-r from-purple-600 to-indigo-600 hover:brightness-110 text-white shadow-md shadow-purple-500/20 border border-purple-400/30 transition-all cursor-pointer"
+                            >
+                              <Code className="w-3.5 h-3.5 text-purple-200" />
+                              <span>แปลงเป็น IWXXM (XML)</span>
+                            </button>
+                            <button
+                              onClick={() => setDecodingBulletin(bulletin)}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-gradient-to-r from-cyan-600 to-blue-600 hover:brightness-110 text-white shadow-md shadow-cyan-500/20 border border-cyan-400/30 transition-all cursor-pointer"
+                            >
+                              <FileText className="w-3.5 h-3.5" />
+                              <span>ถอดรหัสข่าว (Decode)</span>
+                            </button>
+                            <button
+                              onClick={() => handleCopy(bulletin.rawText, bulletin.id)}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/30 transition-all cursor-pointer shrink-0"
+                            >
+                              {copiedId === bulletin.id ? (
+                                <>
+                                  <Check className="w-3.5 h-3.5 text-emerald-400" />
+                                  <span className="text-emerald-300">คัดลอกรหัสแล้ว</span>
+                                </>
+                              ) : (
+                                <>
+                                  <Copy className="w-3.5 h-3.5" />
+                                  <span>คัดลอกเนื้อหาข่าว</span>
+                                </>
+                              )}
+                            </button>
+                          </div>
+                        </div>
+
+                        <pre className="p-5 rounded-2xl bg-slate-950 border border-cyan-500/40 font-mono text-xs sm:text-sm text-cyan-300 overflow-x-auto whitespace-pre-wrap leading-relaxed shadow-inner max-h-[500px] overflow-y-auto">
+                          <code>{bulletin.rawText}</code>
+                        </pre>
+                      </div>
+                    ))}
                   </div>
-
-                  <button
-                    onClick={() => handleCopy(selectedBulletin.rawText, selectedBulletin.id)}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/30 transition-all cursor-pointer shrink-0"
-                  >
-                    {copiedId === selectedBulletin.id ? (
-                      <>
-                        <Check className="w-3.5 h-3.5 text-emerald-400" />
-                        <span className="text-emerald-300">คัดลอกรหัสแล้ว</span>
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-3.5 h-3.5" />
-                        <span>คัดลอกเนื้อหาข่าว</span>
-                      </>
-                    )}
-                  </button>
-                </div>
-
-                <pre className="p-5 rounded-2xl bg-slate-950 border border-cyan-500/40 font-mono text-xs sm:text-sm text-cyan-300 overflow-x-auto whitespace-pre-wrap leading-relaxed shadow-inner max-h-[500px] overflow-y-auto">
-                  <code>{selectedBulletin.rawText}</code>
-                </pre>
-              </div>
+                );
+              })()}
             </div>
           )}
 
