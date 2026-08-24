@@ -791,7 +791,9 @@ export default function DataHub() {
                       b.dataType === selectedBulletin.dataType)
                 );
 
-                const listToDisplay = matchingBulletins.length > 0 ? matchingBulletins : [selectedBulletin];
+                // Display ONLY the single latest bulletin
+                const latestBulletin = matchingBulletins.length > 0 ? matchingBulletins[0] : selectedBulletin;
+                const listToDisplay = [latestBulletin];
 
                 return (
                   <div className="space-y-6">
