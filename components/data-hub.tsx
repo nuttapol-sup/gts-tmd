@@ -1058,8 +1058,8 @@ export default function DataHub() {
 
         {/* SYNOP / GTS Decoder Modal Dialog */}
         {decodingBulletin && (
-          <div className="fixed inset-0 z-[99999] bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 overflow-y-auto animate-in fade-in duration-200">
-            <div className="glass-panel w-full max-w-4xl rounded-3xl p-6 sm:p-8 border border-cyan-500/40 bg-slate-900/95 space-y-6 shadow-2xl relative max-h-[90vh] flex flex-col justify-between">
+          <div className="fixed inset-0 z-[999999] bg-slate-950/95 backdrop-blur-xl flex items-center justify-center p-2 sm:p-6 animate-in fade-in duration-200 overflow-hidden">
+            <div className="glass-panel w-full h-full max-w-6xl rounded-3xl p-4 sm:p-8 border border-cyan-500/40 bg-slate-900/98 shadow-2xl relative flex flex-col justify-between overflow-hidden space-y-4">
               
               {/* Modal Header */}
               <div className="flex items-center justify-between border-b border-slate-800 pb-4">
@@ -1090,7 +1090,7 @@ export default function DataHub() {
               </div>
 
               {/* Decoded Table */}
-              <div className="overflow-x-auto overflow-y-auto max-h-[50vh] rounded-2xl border border-slate-800 bg-slate-950/60 p-2">
+              <div className="flex-1 overflow-x-auto overflow-y-auto min-h-0 rounded-2xl border border-slate-800 bg-slate-950/60 p-2">
                 {(() => {
                   const decodedList = parseSynopBulletin(decodingBulletin.rawText);
                   if (decodedList.length === 0) {
@@ -1178,8 +1178,8 @@ export default function DataHub() {
 
         {/* IWXXM 3.0 XML Converter Modal Dialog */}
         {iwxxmBulletin && (
-          <div className="fixed inset-0 z-[99999] bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 overflow-y-auto animate-in fade-in duration-200">
-            <div className="glass-panel w-full max-w-4xl rounded-3xl p-6 sm:p-8 border border-purple-500/40 bg-slate-900/95 space-y-6 shadow-2xl relative max-h-[90vh] flex flex-col justify-between">
+          <div className="fixed inset-0 z-[999999] bg-slate-950/95 backdrop-blur-xl flex items-center justify-center p-2 sm:p-6 animate-in fade-in duration-200 overflow-hidden">
+            <div className="glass-panel w-full h-full max-w-6xl rounded-3xl p-4 sm:p-8 border border-purple-500/40 bg-slate-900/98 shadow-2xl relative flex flex-col justify-between overflow-hidden space-y-4">
               
               {/* Modal Header */}
               <div className="flex items-center justify-between border-b border-slate-800 pb-4">
