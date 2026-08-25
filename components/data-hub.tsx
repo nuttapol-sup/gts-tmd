@@ -1058,7 +1058,7 @@ export default function DataHub() {
 
         {/* SYNOP / GTS Decoder Modal Dialog */}
         {decodingBulletin && (
-          <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 overflow-y-auto animate-in fade-in duration-200">
+          <div className="fixed inset-0 z-[99999] bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 overflow-y-auto animate-in fade-in duration-200">
             <div className="glass-panel w-full max-w-4xl rounded-3xl p-6 sm:p-8 border border-cyan-500/40 bg-slate-900/95 space-y-6 shadow-2xl relative max-h-[90vh] flex flex-col justify-between">
               
               {/* Modal Header */}
@@ -1178,7 +1178,7 @@ export default function DataHub() {
 
         {/* IWXXM 3.0 XML Converter Modal Dialog */}
         {iwxxmBulletin && (
-          <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 overflow-y-auto animate-in fade-in duration-200">
+          <div className="fixed inset-0 z-[99999] bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 overflow-y-auto animate-in fade-in duration-200">
             <div className="glass-panel w-full max-w-4xl rounded-3xl p-6 sm:p-8 border border-purple-500/40 bg-slate-900/95 space-y-6 shadow-2xl relative max-h-[90vh] flex flex-col justify-between">
               
               {/* Modal Header */}
