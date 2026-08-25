@@ -28,9 +28,6 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
 
   // 1. Hide X-Powered-By: Next.js header to prevent framework fingerprinting
   poweredByHeader: false,

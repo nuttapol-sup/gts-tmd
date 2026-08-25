@@ -58,13 +58,28 @@ export async function GET(request: Request) {
   const categoryParam = searchParams.get("category") || "";
   const isAllData = searchParams.get("allData") === "true";
 
-  const baseFtpDir = process.env.FTP_DIR || path.join(process.cwd(), "FTP");
+  const candidateBaseDirs = [
+    process.env.FTP_DIR,
+    path.join(process.cwd(), "FTP"),
+    "/home/rthbkk/FTP",
+    "/var/ftp",
+    "/srv/ftp",
+    "/ftp",
+  ].filter(Boolean) as string[];
+
+  let baseFtpDir = "";
+  for (const candidate of candidateBaseDirs) {
+    if (fs.existsSync(/*turbopackIgnore: true*/ candidate)) {
+      baseFtpDir = candidate;
+      break;
+    }
+  }
 
   try {
-    if (!fs.existsSync(baseFtpDir)) {
+    if (!baseFtpDir) {
       return NextResponse.json({
         status: "error",
-        message: `Directory ${baseFtpDir} not found`,
+        message: `FTP directory not found. Checked candidate paths: ${candidateBaseDirs.join(", ")}`,
         bulletins: [],
       });
     }
