@@ -316,6 +316,11 @@ export default function DataHub() {
 
   const searchParams = useSearchParams();
   const tabParam = searchParams.get("tab");
+  const dateParam = searchParams.get("date");
+  const utcParam = searchParams.get("utc");
+  const countryParam = searchParams.get("country");
+  const bulletinIdParam = searchParams.get("bulletinId");
+  const isNewTabMode = Boolean(bulletinIdParam);
 
   const [activeTab, setActiveTab] = useState<WeatherCategory>("synoptic");
 
@@ -329,12 +334,20 @@ export default function DataHub() {
       }
     }
   }, [tabParam]);
+
   const [selectedDate, setSelectedDate] = useState<string>(() => {
+    if (dateParam) return dateParam;
     const today = new Date();
     return today.toISOString().split("T")[0];
   });
-  const [selectedUtc, setSelectedUtc] = useState<string>(getCurrentUtcCycle);
-  const [selectedCountry, setSelectedCountry] = useState<string>("zero");
+  const [selectedUtc, setSelectedUtc] = useState<string>(() => {
+    if (utcParam) return utcParam;
+    return getCurrentUtcCycle();
+  });
+  const [selectedCountry, setSelectedCountry] = useState<string>(() => {
+    if (countryParam) return countryParam;
+    return "zero";
+  });
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [decodingBulletin, setDecodingBulletin] = useState<GTSBulletin | null>(null);
   const [iwxxmBulletin, setIwxxmBulletin] = useState<GTSBulletin | null>(null);
@@ -344,8 +357,6 @@ export default function DataHub() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [viewMode, setViewMode] = useState<"headers" | "single" | "all">("headers");
   const [selectedBulletinId, setSelectedBulletinId] = useState<string | null>(null);
-  const bulletinIdParam = searchParams.get("bulletinId");
-  const isNewTabMode = Boolean(bulletinIdParam);
 
   const fetchFtpData = async (isAllData = false) => {
     setIsLoading(true);
@@ -420,7 +431,7 @@ export default function DataHub() {
     return acc;
   }, {} as Record<string, GTSBulletin[]>);
 
-  const selectedBulletin = ftpBulletins.find((b) => b.id === selectedBulletinId);
+  const selectedBulletin = ftpBulletins.find((b) => b.id === selectedBulletinId) || (selectedBulletinId ? ftpBulletins.find((b) => b.id.includes(selectedBulletinId)) : undefined) || ftpBulletins[0];
 
   const getCountryName = (code: string) => {
     const upper = (code || "").toUpperCase();
@@ -803,8 +814,14 @@ export default function DataHub() {
           )}
 
           {/* ----------------- MODE 2: SINGLE SELECTED HEADER VIEW (เมื่อกดเข้า หัวข่าวนั้นๆ) ----------------- */}
-          {viewMode === "single" && selectedBulletin && (
-            <div className="space-y-4">
+          {viewMode === "single" && (
+            isLoading ? (
+              <div className="p-12 text-center text-slate-400 flex flex-col items-center justify-center gap-3 glass-panel rounded-2xl">
+                <RefreshCw className="w-8 h-8 text-cyan-400 animate-spin" />
+                <span>กำลังโหลดข้อมูลข่าวสาร...</span>
+              </div>
+            ) : selectedBulletin ? (
+              <div className="space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
                 {isNewTabMode ? (
                   <button
@@ -907,6 +924,11 @@ export default function DataHub() {
                 );
               })()}
             </div>
+            ) : (
+              <div className="p-12 text-center text-slate-400 flex flex-col items-center justify-center gap-3 glass-panel rounded-2xl">
+                <p className="text-sm text-slate-300 font-semibold">ไม่พบข้อมูลข่าวตรงตามรหัสที่เลือก</p>
+              </div>
+            )
           )}
 
           {/* ----------------- MODE 3: ALL DATA EXPANDED VIEW (เมื่อกด All Data) ----------------- */}
