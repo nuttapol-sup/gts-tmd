@@ -79,14 +79,7 @@ const COUNTRIES = [
   { value: "OCEAN", name: "Pacific Ocean", flag: "🌊", iso: "un" },
   { value: "RPLL", name: "Philippines", flag: "🇵🇭", iso: "ph" },
   { value: "ROAH", name: "Ryukyu Islands", flag: "🇯🇵", iso: "jp" },
-    { value: "RIII", name: "Russia (Russian Federation / RIII)", flag: "🇷🇺", iso: "ru" },
-  { value: "RUHB", name: "Russia (Khabarovsk / RUHB)", flag: "🇷🇺", iso: "ru" },
-  { value: "RUML", name: "Russia (Magadan / RUML)", flag: "🇷🇺", iso: "ru" },
-  { value: "RUMS", name: "Russia (Moscow / RUMS)", flag: "🇷🇺", iso: "ru" },
-  { value: "RUNW", name: "Russia (Novosibirsk / RUNW)", flag: "🇷🇺", iso: "ru" },
-  { value: "RUPK", name: "Russia (Petropavlovsk / RUPK)", flag: "🇷🇺", iso: "ru" },
-  { value: "RUSH", name: "Russia (Chita / RUSH)", flag: "🇷🇺", iso: "ru" },
-  { value: "RUVV", name: "Russia (Vladivostok / RUVV)", flag: "🇷🇺", iso: "ru" },
+    { value: "RUSSIA", name: "Russia (รัสเซีย)", flag: "🇷🇺", iso: "ru" },
   { value: "WSSS", name: "Singapore", flag: "🇸🇬", iso: "sg" },
   { value: "VCCC", name: "Sri Lanka", flag: "🇱🇰", iso: "lk" },
   { value: "RCAA", name: "Taiwan", flag: "🇹🇼", iso: "tw" },
@@ -422,12 +415,19 @@ export default function DataHub() {
   const selectedBulletin = ftpBulletins.find((b) => b.id === selectedBulletinId);
 
   const getCountryName = (code: string) => {
-    const found = COUNTRIES.find((c) => c.value.toUpperCase() === code.toUpperCase());
+    const upper = (code || "").toUpperCase();
+    if (upper === "RUSSIA" || upper.startsWith("RU") || upper === "RIII") {
+      return "Russia (รัสเซีย)";
+    }
+    const found = COUNTRIES.find((c) => c.value.toUpperCase() === upper);
     return found ? found.name : code;
   };
 
   const renderCountryFlag = (code: string, className = "w-6 h-4") => {
-    const found = COUNTRIES.find((c) => c.value.toUpperCase() === code.toUpperCase());
+    const upper = (code || "").toUpperCase();
+    const found = (upper === "RUSSIA" || upper.startsWith("RU") || upper === "RIII")
+      ? { name: "Russia (รัสเซีย)", iso: "ru" }
+      : COUNTRIES.find((c) => c.value.toUpperCase() === upper);
     if (found && found.iso) {
       return (
         <img
@@ -466,18 +466,23 @@ export default function DataHub() {
       }
     }
 
-    const code = item.countryCode || "OTHER";
+    const rawCode = (item.countryCode || "OTHER").toUpperCase();
+    const code = (rawCode.startsWith("RU") || rawCode === "RIII" || rawCode === "RUSSIA") ? "RUSSIA" : rawCode;
     const headerStr = (item.headerLine || item.dataType || "").trim();
     const key = `${code}___${headerStr}`;
     if (!seenCountryHeaders.has(key)) {
       seenCountryHeaders.add(key);
-      displayBulletins.push(item);
+      displayBulletins.push({
+        ...item,
+        countryCode: code,
+      });
     }
   }
 
   // Group bulletins by countryCode
   const groupedByCountry = displayBulletins.reduce<Record<string, GTSBulletin[]>>((acc, item) => {
-    const code = item.countryCode || "OTHER";
+    const rawCode = (item.countryCode || "OTHER").toUpperCase();
+    const code = (rawCode.startsWith("RU") || rawCode === "RIII" || rawCode === "RUSSIA") ? "RUSSIA" : rawCode;
     if (!acc[code]) {
       acc[code] = [];
     }

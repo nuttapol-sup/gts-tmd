@@ -349,12 +349,16 @@ export async function GET(request: Request) {
           }
 
           // Apply Country Code Filter (if country is selected and not "zero")
-          if (
-            countryParam &&
-            countryParam !== "zero" &&
-            countryCode.toUpperCase() !== countryParam.toUpperCase()
-          ) {
-            continue;
+          if (countryParam && countryParam !== "zero") {
+            const reqC = countryParam.toUpperCase();
+            const fileC = countryCode.toUpperCase();
+            if (reqC === "RUSSIA" || reqC === "RU") {
+              if (!fileC.startsWith("RU") && fileC !== "RIII") {
+                continue;
+              }
+            } else if (fileC !== reqC) {
+              continue;
+            }
           }
 
           // Apply Category Filter if specific category tab selected (unless categoryParam is empty)
