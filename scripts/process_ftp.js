@@ -140,5 +140,14 @@ function processFtpFiles() {
   }
 }
 
-// เรียกทำงาน
+// เรียกทำงานครั้งแรกทันที
 processFtpFiles();
+
+// ทำงานต่อเนื่องทุกๆ 10 วินาที (Daemon loop) ป้องกัน PM2 restart ค้าง
+setInterval(() => {
+  try {
+    processFtpFiles();
+  } catch (err) {
+    console.error('[CRON ERROR]', err);
+  }
+}, 10000);
