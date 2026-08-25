@@ -27,7 +27,8 @@ import {
   Check,
   Sparkles,
   RefreshCw,
-  ArrowLeft
+  ArrowLeft,
+  ExternalLink
 } from "lucide-react";
 import { GTSBulletin } from "@/app/api/ftp/route";
 
@@ -369,11 +370,18 @@ export default function DataHub() {
     }
   };
 
+  const bulletinIdParam = searchParams.get("bulletinId");
+
   useEffect(() => {
-    setViewMode("headers");
-    setSelectedBulletinId(null);
+    if (bulletinIdParam) {
+      setSelectedBulletinId(bulletinIdParam);
+      setViewMode("single");
+    } else {
+      setViewMode("headers");
+      setSelectedBulletinId(null);
+    }
     fetchFtpData(false);
-  }, [selectedCountry, selectedDate, selectedUtc, activeTab]);
+  }, [selectedCountry, selectedDate, selectedUtc, activeTab, bulletinIdParam]);
 
   const handleAllData = () => {
     setViewMode("all");
@@ -765,14 +773,17 @@ export default function DataHub() {
                                   className="flex flex-wrap items-center gap-2.5 py-1.5 border-b border-slate-800/60 last:border-0"
                                 >
                                   {itemsInRow.map((item) => (
-                                    <button
+                                    <a
                                       key={item.id}
-                                      onClick={() => handleSelectSingleHeader(item.id)}
-                                      className="px-3.5 py-1.5 rounded-xl bg-cyan-950/80 hover:bg-cyan-600 hover:text-white text-cyan-300 font-semibold border border-cyan-500/40 hover:border-cyan-300 transition-all cursor-pointer shadow-md text-xs sm:text-sm"
-                                      title={`กดเพื่ออ่านเนื้อหาข่าว ${item.headerLine}`}
+                                      href={`/services?tab=${activeTab}&date=${selectedDate}&utc=${selectedUtc}&country=${selectedCountry}&bulletinId=${encodeURIComponent(item.id)}`}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="px-3.5 py-1.5 rounded-xl bg-cyan-950/80 hover:bg-cyan-600 hover:text-white text-cyan-300 font-semibold border border-cyan-500/40 hover:border-cyan-300 transition-all cursor-pointer shadow-md text-xs sm:text-sm inline-flex items-center gap-1.5"
+                                      title={`กดเพื่อเปิดอ่านเนื้อหาข่าว ${item.headerLine} ในแท็บใหม่`}
                                     >
-                                      {item.headerLine || item.dataType}
-                                    </button>
+                                      <span>{item.headerLine || item.dataType}</span>
+                                      <ExternalLink className="w-3.5 h-3.5 text-cyan-400 opacity-80" />
+                                    </a>
                                   ))}
                                 </div>
                               );
