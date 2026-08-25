@@ -344,6 +344,8 @@ export default function DataHub() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [viewMode, setViewMode] = useState<"headers" | "single" | "all">("headers");
   const [selectedBulletinId, setSelectedBulletinId] = useState<string | null>(null);
+  const bulletinIdParam = searchParams.get("bulletinId");
+  const isNewTabMode = Boolean(bulletinIdParam);
 
   const fetchFtpData = async (isAllData = false) => {
     setIsLoading(true);
@@ -369,8 +371,6 @@ export default function DataHub() {
       setIsLoading(false);
     }
   };
-
-  const bulletinIdParam = searchParams.get("bulletinId");
 
   useEffect(() => {
     if (bulletinIdParam) {
@@ -517,6 +517,8 @@ export default function DataHub() {
     <section className="py-8 relative z-10" id="data-hub">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         {/* Category Navigation Bar */}
+        {!isNewTabMode && (
+          <>
         <div className="flex flex-wrap justify-center gap-2 p-1.5 rounded-2xl bg-slate-900/80 backdrop-blur-md border border-cyan-500/20 shadow-xl max-w-4xl mx-auto">
           <button
             onClick={() => setActiveTab("synoptic")}
@@ -694,6 +696,8 @@ export default function DataHub() {
             </div>
           </div>
         </div>
+          </>
+        )}
 
         {/* Display Area for Browse Headers List vs Single Selected Header vs All Data */}
         <div className="space-y-4 max-w-4xl mx-auto">
@@ -802,13 +806,23 @@ export default function DataHub() {
           {viewMode === "single" && selectedBulletin && (
             <div className="space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
-                <button
-                  onClick={() => setViewMode("headers")}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 text-xs font-semibold border border-slate-700 transition-all cursor-pointer shrink-0"
-                >
-                  <ArrowLeft className="w-4 h-4 text-cyan-400" />
-                  กลับไปหน้ารวมหัวข่าว (Back to Headers List)
-                </button>
+                {isNewTabMode ? (
+                  <button
+                    onClick={() => window.close()}
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-rose-900/60 hover:bg-rose-800 text-rose-300 text-xs font-bold border border-rose-700/50 transition-all cursor-pointer shrink-0"
+                  >
+                    <X className="w-4 h-4 text-rose-400" />
+                    ปิดแท็บนี้ (Close Tab)
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => setViewMode("headers")}
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 text-xs font-semibold border border-slate-700 transition-all cursor-pointer shrink-0"
+                  >
+                    <ArrowLeft className="w-4 h-4 text-cyan-400" />
+                    กลับไปหน้ารวมหัวข่าว (Back to Headers List)
+                  </button>
+                )}
 
                 <span className="text-xs text-cyan-400 font-mono font-bold bg-cyan-950/60 px-3 py-1.5 rounded-xl border border-cyan-800">
                   แสดงหัวข่าว: {selectedBulletin.headerLine}
@@ -1000,6 +1014,7 @@ export default function DataHub() {
         </div>
 
         {/* Category Description Box */}
+        {!isNewTabMode && (
         <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-2 text-center max-w-4xl mx-auto">
           <h3 className="font-bold text-sm text-cyan-300 tracking-wider uppercase">
             {activeTab === "synoptic" && "SYNOPTIC (Surface Synoptic Observations)"}
@@ -1016,6 +1031,7 @@ export default function DataHub() {
             {activeTab === "notes" && "หมายเหตุและข่าวสารประกอบส่วนท้ายโทรสารอุตุนิยมวิทยาระหว่างประเทศ"}
           </p>
         </div>
+        )}
       </div>
 
         {/* SYNOP / GTS Decoder Modal Dialog */}
