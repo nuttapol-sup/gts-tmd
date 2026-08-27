@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Prompt, Kanit, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { LanguageProvider } from "@/context/language-context";
 
 const prompt = Prompt({
   weight: ["300", "400", "500", "600", "700"],
@@ -41,10 +40,10 @@ export default function RootLayout({
       className={`${prompt.variable} ${kanit.variable} ${jetbrainsMono.variable} h-full antialiased dark`}
     >
       <body className="min-h-full flex flex-col font-sans bg-[#0b132b] text-slate-100 selection:bg-cyan-500 selection:text-white">
-        <LanguageProvider>
-          {children}
-        </LanguageProvider>
+        {children}
       </body>
     </html>
   );
 }
+
+

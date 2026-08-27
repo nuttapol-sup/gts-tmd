@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useLanguage } from "@/context/language-context";
 import {
   Award,
   Target,
@@ -13,96 +12,74 @@ import {
   Sparkles
 } from "lucide-react";
 
-export default function SmartValues() {
-  const { t } = useLanguage();
-  const [activeValue, setActiveValue] = useState<number>(0);
+const VALUES = [
+  {
+    letter: "S",
+    title: "Self development",
+    titleTh: "พัฒนาตนเอง",
+    desc: "ใฝ่หาความรู้และทักษะใหม่ๆ เพื่อพัฒนาตนเองอย่างต่อเนื่อง ให้ทันต่อเทคโนโลยีอุตุนิยมวิทยาระดับสากล",
+    icon: Award,
+    color: "from-blue-500/20 to-cyan-500/20",
+    badgeColor: "bg-blue-500/20 text-blue-300 border-blue-500/30",
+  },
+  {
+    letter: "O",
+    title: "On Target",
+    titleTh: "มุ่งผลสัมฤทธิ์",
+    desc: "ทำงานให้แล้วเสร็จตามกำหนด เกิดผลดีแก่องค์กรและส่วนรวม เน้นการประเมินผลลัพธ์ที่เป็นรูปธรรม",
+    icon: Target,
+    color: "from-emerald-500/20 to-teal-500/20",
+    badgeColor: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
+  },
+  {
+    letter: "S",
+    title: "Service mind",
+    titleTh: "มีจิตบริการ",
+    desc: "ให้บริการข้อมูลข่าวสารอุตุนิยมวิทยาที่ดี มีคุณภาพ และรวดเร็ว ด้วยความเต็มใจแก่ทุกภาคส่วน",
+    icon: HeartHandshake,
+    color: "from-pink-500/20 to-rose-500/20",
+    badgeColor: "bg-pink-500/20 text-pink-300 border-pink-500/30",
+  },
+  {
+    letter: "M",
+    title: "Moral",
+    titleTh: "มีคุณธรรม จริยธรรม",
+    desc: "ยึดมั่นในความซื่อสัตย์ สุจริต มีจิตสำนึกที่ดีในการปฏิบัติงาน และคิดถึงประโยชน์ส่วนรวมเป็นสำคัญ",
+    icon: ShieldCheck,
+    color: "from-purple-500/20 to-indigo-500/20",
+    badgeColor: "bg-purple-500/20 text-purple-300 border-purple-500/30",
+  },
+  {
+    letter: "A",
+    title: "Active",
+    titleTh: "กระตือรือร้น",
+    desc: "มีความมุ่งมั่น กระตือรือร้น พร้อมรับมือกับทุกสถานการณ์เตือนภัยเพื่อความปลอดภัยของประชาชน",
+    icon: Zap,
+    color: "from-amber-500/20 to-yellow-500/20",
+    badgeColor: "bg-amber-500/20 text-amber-300 border-amber-500/30",
+  },
+  {
+    letter: "R",
+    title: "Responsibility",
+    titleTh: "มีความรับผิดชอบ",
+    desc: "เอาใจใส่ มุ่งมั่น ปฏิบัติหน้าที่ด้วยความอดทนและรับผิดชอบต่อผลงานเพื่อปรับปรุงให้ดียิ่งขึ้น",
+    icon: CheckCircle2,
+    color: "from-sky-500/20 to-blue-500/20",
+    badgeColor: "bg-sky-500/20 text-sky-300 border-sky-500/30",
+  },
+  {
+    letter: "T",
+    title: "Team Work",
+    titleTh: "ทำงานเป็นทีม",
+    desc: "ร่วมมือร่วมใจ ประสานงานอย่างมีประสิทธิภาพระหว่างสมาชิก เพื่อบรรลุเป้าหมายเดียวกัน",
+    icon: Users2,
+    color: "from-cyan-500/20 to-teal-500/20",
+    badgeColor: "bg-cyan-500/20 text-cyan-300 border-cyan-500/30",
+  },
+];
 
-  const values = [
-    {
-      letter: "S",
-      title: "Self development",
-      titleTh: t("พัฒนาตนเอง", "Self Development"),
-      desc: t(
-        "ใฝ่หาความรู้และทักษะใหม่ๆ เพื่อพัฒนาตนเองอย่างต่อเนื่อง ให้ทันต่อเทคโนโลยีอุตุนิยมวิทยาระดับสากล",
-        "Continuously seek new knowledge and skills to keep pace with international meteorological technology."
-      ),
-      icon: Award,
-      color: "from-blue-500/20 to-cyan-500/20",
-      badgeColor: "bg-blue-500/20 text-blue-300 border-blue-500/30",
-    },
-    {
-      letter: "O",
-      title: "On Target",
-      titleTh: t("มุ่งผลสัมฤทธิ์", "On Target"),
-      desc: t(
-        "ทำงานให้แล้วเสร็จตามกำหนด เกิดผลดีแก่องค์กรและส่วนรวม เน้นการประเมินผลลัพธ์ที่เป็นรูปธรรม",
-        "Deliver results on schedule for the benefit of the organization and public, focusing on concrete outcomes."
-      ),
-      icon: Target,
-      color: "from-emerald-500/20 to-teal-500/20",
-      badgeColor: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
-    },
-    {
-      letter: "S",
-      title: "Service mind",
-      titleTh: t("มีจิตบริการ", "Service Mind"),
-      desc: t(
-        "ให้บริการข้อมูลข่าวสารอุตุนิยมวิทยาที่ดี มีคุณภาพ และรวดเร็ว ด้วยความเต็มใจแก่ทุกภาคส่วน",
-        "Provide high-quality, fast, and dedicated weather information services to all stakeholders."
-      ),
-      icon: HeartHandshake,
-      color: "from-pink-500/20 to-rose-500/20",
-      badgeColor: "bg-pink-500/20 text-pink-300 border-pink-500/30",
-    },
-    {
-      letter: "M",
-      title: "Moral",
-      titleTh: t("มีคุณธรรม จริยธรรม", "Moral & Ethics"),
-      desc: t(
-        "ยึดมั่นในความซื่อสัตย์ สุจริต มีจิตสำนึกที่ดีในการปฏิบัติงาน และคิดถึงประโยชน์ส่วนรวมเป็นสำคัญ",
-        "Uphold integrity, ethical standards, and public interest in all duties and operations."
-      ),
-      icon: ShieldCheck,
-      color: "from-purple-500/20 to-indigo-500/20",
-      badgeColor: "bg-purple-500/20 text-purple-300 border-purple-500/30",
-    },
-    {
-      letter: "A",
-      title: "Active",
-      titleTh: t("กระตือรือร้น", "Active & Ready"),
-      desc: t(
-        "มีความมุ่งมั่น กระตือรือร้น พร้อมรับมือกับทุกสถานการณ์เตือนภัยเพื่อความปลอดภัยของประชาชน",
-        "Stay proactive and prepared to handle weather warning situations for public safety."
-      ),
-      icon: Zap,
-      color: "from-amber-500/20 to-yellow-500/20",
-      badgeColor: "bg-amber-500/20 text-amber-300 border-amber-500/30",
-    },
-    {
-      letter: "R",
-      title: "Responsibility",
-      titleTh: t("มีความรับผิดชอบ", "Responsibility"),
-      desc: t(
-        "เอาใจใส่ มุ่งมั่น ปฏิบัติหน้าที่ด้วยความอดทนและรับผิดชอบต่อผลงานเพื่อปรับปรุงให้ดียิ่งขึ้น",
-        "Perform duties with dedication, patience, and accountability for continuous improvement."
-      ),
-      icon: CheckCircle2,
-      color: "from-sky-500/20 to-blue-500/20",
-      badgeColor: "bg-sky-500/20 text-sky-300 border-sky-500/30",
-    },
-    {
-      letter: "T",
-      title: "Team Work",
-      titleTh: t("ทำงานเป็นทีม", "Teamwork"),
-      desc: t(
-        "ร่วมมือร่วมใจ ประสานงานอย่างมีประสิทธิภาพระหว่างสมาชิก เพื่อบรรลุเป้าหมายเดียวกัน",
-        "Foster strong teamwork and efficient coordination to achieve shared organizational goals."
-      ),
-      icon: Users2,
-      color: "from-cyan-500/20 to-teal-500/20",
-      badgeColor: "bg-cyan-500/20 text-cyan-300 border-cyan-500/30",
-    },
-  ];
+export default function SmartValues() {
+  const [activeValue, setActiveValue] = useState<number>(0);
 
   return (
     <section className="py-20 relative z-10 bg-[#070d1e]/90 border-t border-cyan-500/10" id="smart-values">
@@ -114,22 +91,19 @@ export default function SmartValues() {
             TMD Organizational Culture
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-            {t("ค่านิยมกรมอุตุนิยมวิทยา", "TMD Core Values")}{" "}
+            ค่านิยมกรมอุตุนิยมวิทยา{" "}
             <span className="bg-gradient-to-r from-cyan-400 via-sky-300 to-amber-400 bg-clip-text text-transparent">
               SO-SMART
             </span>
           </h2>
           <p className="text-slate-400 text-sm sm:text-base">
-            {t(
-              "หลักการและค่านิยมหลักในการปฏิบัติงานของเจ้าหน้าที่กรมอุตุนิยมวิทยา เพื่อประโยชน์สูงสุดแก่ประเทศชาติ",
-              "Core values and operational principles of TMD staff dedicated to national excellence."
-            )}
+            หลักการและค่านิยมหลักในการปฏิบัติงานของเจ้าหน้าที่กรมอุตุนิยมวิทยา เพื่อประโยชน์สูงสุดแก่ประเทศชาติ
           </p>
         </div>
 
         {/* Letter Selector Bar */}
         <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-10">
-          {values.map((v, idx) => (
+          {VALUES.map((v, idx) => (
             <button
               key={idx}
               onClick={() => setActiveValue(idx)}
@@ -147,7 +121,7 @@ export default function SmartValues() {
         {/* Selected Value Card Highlight */}
         <div className="max-w-4xl mx-auto">
           {(() => {
-            const current = values[activeValue];
+            const current = VALUES[activeValue];
             const Icon = current.icon;
             return (
               <div className={`glass-panel rounded-3xl p-8 sm:p-10 border border-cyan-500/30 bg-gradient-to-br ${current.color} shadow-2xl relative overflow-hidden transition-all duration-300`}>

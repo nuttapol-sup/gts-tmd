@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useLanguage } from "@/context/language-context";
 import {
   Radio,
   Activity,
@@ -10,8 +9,6 @@ import {
 } from "lucide-react";
 
 export default function HeroSection() {
-  const { t } = useLanguage();
-
   return (
     <section className="relative py-20 md:py-32 overflow-hidden flex items-center justify-center">
       {/* Dynamic Meteorological Radar Glow Background */}
@@ -38,19 +35,17 @@ export default function HeroSection() {
 
           {/* Main Title */}
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight sm:leading-tight">
-            {t("ศูนย์โทรคมนาคมอุตุนิยมวิทยา", "Telecommunication Center")}
+            ศูนย์โทรคมนาคมอุตุนิยมวิทยา
             <br />
             <span className="bg-gradient-to-r from-cyan-400 via-sky-300 to-blue-500 bg-clip-text text-transparent">
-              {t("แห่งภูมิภาคเอเชียตะวันออกเฉียงใต้", "Regional Telecommunication Hub (RTH) Southeast Asia")}
+              แห่งภูมิภาคเอเชียตะวันออกเฉียงใต้
             </span>
           </h1>
 
           {/* Subtitle */}
           <p className="text-slate-300 text-base sm:text-lg max-w-2xl font-light leading-relaxed">
-            {t(
-              "เชื่อมโยงและให้บริการข้อมูลข่าวสารอุตุนิยมวิทยาที่แม่นยำ รวดเร็ว และเป็นสากล เพื่อความปลอดภัยในการคมนาคมขนส่ง การเตือนภัย และการพัฒนาที่ยั่งยืน",
-              "Interconnecting and delivering accurate, fast, and international meteorological data to safeguard transportation, early warning systems, and sustainable development."
-            )}
+            เชื่อมโยงและให้บริการข้อมูลข่าวสารอุตุนิยมวิทยาที่แม่นยำ รวดเร็ว และเป็นสากล
+            เพื่อความปลอดภัยในการคมนาคมขนส่ง การเตือนภัย และการพัฒนาที่ยั่งยืน
           </p>
 
           {/* Action Buttons */}
@@ -60,7 +55,7 @@ export default function HeroSection() {
               className="inline-flex items-center gap-2 px-7 py-4 rounded-xl font-semibold text-sm sm:text-base bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-xl shadow-cyan-500/25 hover:shadow-cyan-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
             >
               <Activity className="w-5 h-5" />
-              {t("เข้าสู่บริการข้อมูลข่าว GTS", "Access GTS Data Services")}
+              เข้าสู่บริการข้อมูลข่าว GTS
               <ArrowUpRight className="w-5 h-5" />
             </Link>
 
@@ -69,7 +64,7 @@ export default function HeroSection() {
               className="inline-flex items-center gap-2 px-7 py-4 rounded-xl font-semibold text-sm sm:text-base bg-slate-800/80 text-slate-200 border border-slate-700/60 hover:bg-slate-700 hover:text-white transition-all cursor-pointer backdrop-blur-md"
             >
               <Building2 className="w-5 h-5 text-cyan-400" />
-              {t("เอกสารและคู่มือการใช้งาน", "Documents & User Manuals")}
+              เอกสารและคู่มือการใช้งาน
             </Link>
           </div>
         </div>

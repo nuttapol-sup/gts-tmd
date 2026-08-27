@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useLanguage } from "@/context/language-context";
 import {
   CloudSun,
   Home,
@@ -58,8 +57,40 @@ const ICON_MAP: Record<string, any> = {
 
 const DEFAULT_ABOUT_SUBMENU: MenuItem[] = [];
 
+export const SERVICES_SUBMENU = [
+  {
+    label: "ข้อมูลข่าว Synoptic",
+    href: "/services?tab=synoptic",
+    icon: Satellite,
+    iconColor: "text-cyan-400",
+  },
+  {
+    label: "ข้อมูลข่าว UpperAir",
+    href: "/services?tab=upperair",
+    icon: Cloud,
+    iconColor: "text-sky-400",
+  },
+  {
+    label: "ข้อมูลข่าวเตือนภัย",
+    href: "/services?tab=warning",
+    icon: AlertTriangle,
+    iconColor: "text-amber-400",
+  },
+  {
+    label: "ข้อมูลข่าว Metar (อากาศการบิน)",
+    href: "/services?tab=metar",
+    icon: RadioTower,
+    iconColor: "text-indigo-400",
+  },
+  {
+    label: "Note ท้ายข่าว (Raw GTS Format)",
+    href: "/services?tab=notes",
+    icon: StickyNote,
+    iconColor: "text-pink-400",
+  },
+];
+
 export default function Navbar() {
-  const { lang, toggleLang, t } = useLanguage();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileAboutOpen, setMobileAboutOpen] = useState(false);
@@ -67,44 +98,15 @@ export default function Navbar() {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const pathname = usePathname();
 
-  const servicesSubmenu = [
-    {
-      label: t("ข้อมูลข่าว Synoptic", "Synoptic Bulletins"),
-      href: "/services?tab=synoptic",
-      icon: Satellite,
-      iconColor: "text-cyan-400",
-    },
-    {
-      label: t("ข้อมูลข่าว UpperAir", "Upper Air Bulletins (Wind)"),
-      href: "/services?tab=upperair",
-      icon: Cloud,
-      iconColor: "text-sky-400",
-    },
-    {
-      label: t("ข้อมูลข่าวเตือนภัย", "Weather Warnings"),
-      href: "/services?tab=warning",
-      icon: AlertTriangle,
-      iconColor: "text-amber-400",
-    },
-    {
-      label: t("ข้อมูลข่าว Metar (อากาศการบิน)", "METAR Bulletins (Aeronautical)"),
-      href: "/services?tab=metar",
-      icon: RadioTower,
-      iconColor: "text-indigo-400",
-    },
-    {
-      label: t("Note ท้ายข่าว (Raw GTS Format)", "Raw GTS Notes"),
-      href: "/services?tab=notes",
-      icon: StickyNote,
-      iconColor: "text-pink-400",
-    },
-  ];
-
   // Submenu Items for "เกี่ยวกับเรา" (Read-Only)
   const [aboutSubmenu, setAboutSubmenu] = useState<MenuItem[]>(DEFAULT_ABOUT_SUBMENU);
 
   // Dynamic Logo State
   const [customLogoUrl, setCustomLogoUrl] = useState<string | null>(null);
+  const [isLogoModalOpen, setIsLogoModalOpen] = useState(false);
+  const [isUploadingLogo, setIsUploadingLogo] = useState(false);
+  const [logoStatusMsg, setLogoStatusMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const fetchLogo = async () => {
     try {
@@ -151,6 +153,63 @@ export default function Navbar() {
     setActiveDropdown(activeDropdown === name ? null : name);
   };
 
+  const handleLogoFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setLogoStatusMsg({ type: "error", text: "กรุณาเลือกไฟล์รูปภาพเท่านั้น (PNG, JPG, SVG, WEBP)" });
+      return;
+    }
+
+    setIsUploadingLogo(true);
+    setLogoStatusMsg(null);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch("/api/logo", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (data.status === "success" && data.logoUrl) {
+        setCustomLogoUrl(data.logoUrl);
+        setLogoStatusMsg({ type: "success", text: "อัปโหลดโลโก้ใหม่สำเร็จแล้ว!" });
+        setTimeout(() => setIsLogoModalOpen(false), 1200);
+      } else {
+        setLogoStatusMsg({ type: "error", text: data.message || "ไม่สามารถอัปโหลดโลโก้ได้" });
+      }
+    } catch (err: any) {
+      setLogoStatusMsg({ type: "error", text: "เกิดข้อผิดพลาดขณะอัปโหลดโลโก้" });
+    } finally {
+      setIsUploadingLogo(false);
+    }
+  };
+
+  const handleResetLogo = async () => {
+    if (!confirm("คุณต้องการรีเซ็ตโลโก้กลับเป็นค่าเริ่มต้นใช่หรือไม่?")) return;
+
+    setIsUploadingLogo(true);
+    setLogoStatusMsg(null);
+
+    try {
+      const res = await fetch("/api/logo", { method: "DELETE" });
+      const data = await res.json();
+      if (data.status === "success") {
+        setCustomLogoUrl(null);
+        setLogoStatusMsg({ type: "success", text: "รีเซ็ตกลับเป็นโลโก้เริ่มต้นเรียบร้อยแล้ว" });
+        setTimeout(() => setIsLogoModalOpen(false), 1200);
+      }
+    } catch (err) {
+      setLogoStatusMsg({ type: "error", text: "เกิดข้อผิดพลาดในการรีเซ็ตโลโก้" });
+    } finally {
+      setIsUploadingLogo(false);
+    }
+  };
+
   return (
     <>
       <header
@@ -192,10 +251,7 @@ export default function Navbar() {
                   </span>
                 </span>
                 <span className="text-[11px] text-slate-400 font-light truncate max-w-[240px] sm:max-w-none">
-                  {t(
-                    "ศูนย์โทรคมนาคมอุตุนิยมวิทยาแห่งภูมิภาคเอเชียตะวันออกเฉียงใต้",
-                    "Regional Telecommunication Hub Southeast Asia"
-                  )}
+                  ศูนย์โทรคมนาคมอุตุนิยมวิทยาแห่งภูมิภาคเอเชียตะวันออกเฉียงใต้
                 </span>
               </Link>
             </div>
@@ -211,7 +267,7 @@ export default function Navbar() {
                 }`}
               >
                 <Home className="w-4 h-4 text-cyan-400" />
-                {t("หน้าหลัก", "Home")}
+                หน้าหลัก
               </Link>
 
               <Link
@@ -223,7 +279,7 @@ export default function Navbar() {
                 }`}
               >
                 <FileText className="w-4 h-4 text-cyan-400" />
-                {t("เอกสารที่เกี่ยวข้อง", "Documents")}
+                เอกสารที่เกี่ยวข้อง
               </Link>
 
               {/* Dropdown: เกี่ยวกับเรา (Read-Only Menu) */}
@@ -233,7 +289,7 @@ export default function Navbar() {
                   className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition-all cursor-pointer"
                 >
                   <Info className="w-4 h-4 text-cyan-400" />
-                  {t("เกี่ยวกับเรา", "About Us")}
+                  เกี่ยวกับเรา
                   <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover:rotate-180 transition-transform" />
                 </button>
 
@@ -263,13 +319,13 @@ export default function Navbar() {
                   className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition-all cursor-pointer"
                 >
                   <Globe className="w-4 h-4 text-cyan-400" />
-                  {t("บริการ GTS", "GTS Services")}
+                  บริการ GTS
                   <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover:rotate-180 transition-transform" />
                 </button>
 
                 <div className="absolute right-0 top-full pt-2 w-64 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform group-hover:translate-y-0 translate-y-2">
                   <div className="bg-[#0f172a]/95 backdrop-blur-xl border border-cyan-500/20 rounded-xl shadow-2xl p-2 space-y-1">
-                    {servicesSubmenu.map((item, idx) => {
+                    {SERVICES_SUBMENU.map((item, idx) => {
                       const IconComp = item.icon;
                       return (
                         <Link
@@ -295,33 +351,12 @@ export default function Navbar() {
                 }`}
               >
                 <PhoneCall className="w-4 h-4 text-cyan-400" />
-                {t("ติดต่อเรา", "Contact Us")}
+                ติดต่อเรา
               </Link>
-
-              {/* TH / EN Language Switcher Pill */}
-              <button
-                onClick={toggleLang}
-                className="flex items-center gap-1.5 px-3 py-1.5 ml-2 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-cyan-500/40 text-xs font-bold text-cyan-300 shadow-md hover:shadow-cyan-500/20 transition-all cursor-pointer"
-                title={lang === "th" ? "Switch to English" : "เปลี่ยนเป็นภาษาไทย"}
-              >
-                <Globe className="w-3.5 h-3.5 text-cyan-400" />
-                <span className={lang === "th" ? "text-cyan-300 font-black" : "text-slate-500"}>TH</span>
-                <span className="text-slate-600 font-normal">/</span>
-                <span className={lang === "en" ? "text-cyan-300 font-black" : "text-slate-500"}>EN</span>
-              </button>
             </nav>
 
-            {/* Mobile Menu & Language Button */}
+            {/* Mobile Menu Button */}
             <div className="lg:hidden flex items-center gap-2">
-              <button
-                onClick={toggleLang}
-                className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-slate-900/90 border border-cyan-500/40 text-xs font-bold text-cyan-300 cursor-pointer shadow-sm"
-              >
-                <Globe className="w-3.5 h-3.5 text-cyan-400 mr-0.5" />
-                <span className={lang === "th" ? "text-cyan-300 font-black" : "text-slate-500"}>TH</span>
-                <span className="text-slate-600">/</span>
-                <span className={lang === "en" ? "text-cyan-300 font-black" : "text-slate-500"}>EN</span>
-              </button>
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 className="p-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/50 transition-colors"
@@ -343,7 +378,7 @@ export default function Navbar() {
               className="flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-semibold text-slate-200 hover:text-white hover:bg-cyan-500/20 transition-all border border-transparent hover:border-cyan-500/30"
             >
               <Home className="w-4 h-4 text-cyan-400" />
-              {t("หน้าหลัก", "Home")}
+              หน้าหลัก
             </Link>
 
             {/* 2. เอกสารที่เกี่ยวข้อง */}
@@ -353,10 +388,10 @@ export default function Navbar() {
               className="flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-semibold text-slate-200 hover:text-white hover:bg-cyan-500/20 transition-all border border-transparent hover:border-cyan-500/30"
             >
               <FileText className="w-4 h-4 text-cyan-400" />
-              {t("เอกสารที่เกี่ยวข้อง", "Documents")}
+              เอกสารที่เกี่ยวข้อง
             </Link>
 
-            {/* 3. เกี่ยวกับเรา */}
+            {/* 3. เกี่ยวกับเรา (Collapsible Accordion) */}
             <div className="rounded-xl border border-slate-800 bg-slate-900/40 overflow-hidden transition-all">
               <button
                 type="button"
@@ -365,10 +400,10 @@ export default function Navbar() {
               >
                 <div className="flex items-center gap-3">
                   <Info className="w-4 h-4 text-cyan-400" />
-                  <span>{t("เกี่ยวกับเรา", "About Us")}</span>
+                  <span>เกี่ยวกับเรา</span>
                   {aboutSubmenu.length > 0 && (
                     <span className="text-[10px] bg-cyan-950 text-cyan-300 px-2 py-0.5 rounded-full border border-cyan-500/30 font-medium">
-                      {aboutSubmenu.length}
+                      {aboutSubmenu.length} รายการ
                     </span>
                   )}
                 </div>
@@ -399,7 +434,7 @@ export default function Navbar() {
               )}
             </div>
 
-            {/* 4. บริการ GTS */}
+            {/* 4. บริการ GTS (Collapsible Accordion) */}
             <div className="rounded-xl border border-slate-800 bg-slate-900/40 overflow-hidden transition-all">
               <button
                 type="button"
@@ -408,9 +443,9 @@ export default function Navbar() {
               >
                 <div className="flex items-center gap-3">
                   <Globe className="w-4 h-4 text-cyan-400" />
-                  <span>{t("บริการ GTS", "GTS Services")}</span>
+                  <span>บริการ GTS</span>
                   <span className="text-[10px] bg-cyan-950 text-cyan-300 px-2 py-0.5 rounded-full border border-cyan-500/30 font-medium">
-                    {servicesSubmenu.length}
+                    {SERVICES_SUBMENU.length} รายการ
                   </span>
                 </div>
                 <ChevronDown
@@ -422,7 +457,7 @@ export default function Navbar() {
 
               {mobileServicesOpen && (
                 <div className="p-2 space-y-1 bg-[#070d1e] border-t border-slate-800">
-                  {servicesSubmenu.map((item, idx) => {
+                  {SERVICES_SUBMENU.map((item, idx) => {
                     const IconComp = item.icon;
                     return (
                       <Link
@@ -447,7 +482,7 @@ export default function Navbar() {
               className="flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-semibold text-slate-200 hover:text-white hover:bg-cyan-500/20 transition-all border border-transparent hover:border-cyan-500/30"
             >
               <PhoneCall className="w-4 h-4 text-cyan-400" />
-              {t("ติดต่อเรา", "Contact Us")}
+              ติดต่อเรา
             </Link>
           </div>
         )}

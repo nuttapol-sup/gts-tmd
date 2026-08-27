@@ -2,7 +2,6 @@
 
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
-import { useLanguage } from "@/context/language-context";
 import {
   PhoneCall,
   MapPin,
@@ -23,7 +22,6 @@ import {
 import { useState } from "react";
 
 export default function ContactPage() {
-  const { lang, t } = useLanguage();
   const [copiedText, setCopiedText] = useState<string | null>(null);
 
   const handleCopy = (text: string, label: string) => {
@@ -41,23 +39,17 @@ export default function ContactPage() {
         <div className="text-center max-w-4xl mx-auto space-y-4">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs sm:text-sm font-semibold backdrop-blur-md shadow-lg">
             <PhoneCall className="w-4 h-4 text-cyan-400" />
-            {t(
-              "ศูนย์บริการและติดต่อประสานงานข้อมูลอุตุนิยมวิทยา",
-              "Meteorological Data Service & Coordination Center"
-            )}
+            ศูนย์บริการและติดต่อประสานงานข้อมูลอุตุนิยมวิทยา
           </div>
           <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
-            {t("ติดต่อศูนย์โทรคมนาคมอุตุนิยมวิทยา", "Contact Telecommunication Center")}
+            ติดต่อศูนย์โทรคมนาคมอุตุนิยมวิทยา
             <br />
             <span className="bg-gradient-to-r from-cyan-400 via-sky-300 to-blue-500 bg-clip-text text-transparent">
               (RTH Bangkok / GTS Thailand)
             </span>
           </h1>
           <p className="text-slate-300 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-            {t(
-              "กองสื่อสาร กรมอุตุนิยมวิทยา 4353 ถนนสุขุมวิท แขวงบางนา เขตบางนา กรุงเทพมหานคร 10260",
-              "Telecommunication Division, Thai Meteorological Department, 4353 Sukhumvit Road, Bangna, Bangkok 10260, Thailand"
-            )}
+            กองสื่อสาร กรมอุตุนิยมวิทยา 4353 ถนนสุขุมวิท แขวงบางนา เขตบางนา กรุงเทพมหานคร 10260
           </p>
         </div>
 
@@ -69,33 +61,26 @@ export default function ContactPage() {
               <div className="w-12 h-12 rounded-2xl bg-cyan-500/15 text-cyan-400 flex items-center justify-center border border-cyan-500/30">
                 <MapPin className="w-6 h-6" />
               </div>
-              <h3 className="text-lg font-bold text-white">
-                {t("ที่อยู่สำนักงานหลัก", "Head Office Address")}
-              </h3>
+              <h3 className="text-lg font-bold text-white">ที่อยู่สำนักงานหลัก</h3>
               <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                {t("กองสื่อสาร กรมอุตุนิยมวิทยา", "Telecommunication Division, TMD")} <br />
-                {t("4353 ถนนสุขุมวิท แขวงบางนา", "4353 Sukhumvit Road, Bangna")} <br />
-                {t("เขตบางนา กรุงเทพฯ 10260", "Bangna, Bangkok 10260")}
+                กองสื่อสาร กรมอุตุนิยมวิทยา <br />
+                4353 ถนนสุขุมวิท แขวงบางนา <br />
+                เขตบางนา กรุงเทพฯ 10260
               </p>
             </div>
             <button
-              onClick={() => handleCopy(
-                lang === "th" 
-                  ? "4353 ถนนสุขุมวิท แขวงบางนา เขตบางนา กรุงเทพมหานคร 10260" 
-                  : "4353 Sukhumvit Road, Bangna, Bangkok 10260, Thailand",
-                "address"
-              )}
+              onClick={() => handleCopy("4353 ถนนสุขุมวิท แขวงบางนา เขตบางนา กรุงเทพมหานคร 10260", "address")}
               className="w-full py-2.5 px-3 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-slate-700 text-xs text-cyan-300 font-medium flex items-center justify-center gap-1.5 transition-all cursor-pointer"
             >
               {copiedText === "address" ? (
                 <>
                   <Check className="w-3.5 h-3.5 text-emerald-400" />
-                  <span className="text-emerald-300">{t("คัดลอกที่อยู่แล้ว", "Address Copied!")}</span>
+                  <span className="text-emerald-300">คัดลอกที่อยู่แล้ว</span>
                 </>
               ) : (
                 <>
                   <Copy className="w-3.5 h-3.5" />
-                  <span>{t("คัดลอกที่อยู่ภาษาไทย", "Copy Address")}</span>
+                  <span>คัดลอกที่อยู่ภาษาไทย</span>
                 </>
               )}
             </button>
@@ -107,16 +92,14 @@ export default function ContactPage() {
               <div className="w-12 h-12 rounded-2xl bg-blue-500/15 text-blue-400 flex items-center justify-center border border-blue-500/30">
                 <Phone className="w-6 h-6" />
               </div>
-              <h3 className="text-lg font-bold text-white">
-                {t("โทรศัพท์ & สายด่วน", "Phone & Hotlines")}
-              </h3>
+              <h3 className="text-lg font-bold text-white">โทรศัพท์ & สายด่วน</h3>
               <div className="space-y-1.5 text-xs sm:text-sm text-slate-300">
                 <div className="flex justify-between items-center">
-                  <span>{t("สายตรงกองสื่อสาร:", "Direct Line:")}</span>
+                  <span>สายตรงกองสื่อสาร:</span>
                   <span className="font-bold text-cyan-300">02-399-4596</span>
                 </div>
                 <div className="flex justify-between items-center pt-1">
-                  <span>{t("สายด่วนเตือนภัย:", "Emergency Hotline:")}</span>
+                  <span>สายด่วนเตือนภัย:</span>
                   <span className="font-bold text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30">1182</span>
                 </div>
               </div>
@@ -126,7 +109,7 @@ export default function ContactPage() {
               className="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 hover:brightness-110 text-xs text-white font-bold flex items-center justify-center gap-1.5 shadow-md shadow-blue-500/20 transition-all cursor-pointer text-center"
             >
               <PhoneCall className="w-3.5 h-3.5" />
-              {t("โทรออก 02-399-4596", "Call 02-399-4596")}
+              โทรออก 02-399-4596
             </a>
           </div>
 
@@ -136,16 +119,14 @@ export default function ContactPage() {
               <div className="w-12 h-12 rounded-2xl bg-purple-500/15 text-purple-400 flex items-center justify-center border border-purple-500/30">
                 <Mail className="w-6 h-6" />
               </div>
-              <h3 className="text-lg font-bold text-white">
-                {t("อีเมล & เว็บไซต์", "Email & Website")}
-              </h3>
+              <h3 className="text-lg font-bold text-white">อีเมล & เว็บไซต์</h3>
               <div className="space-y-1.5 text-xs sm:text-sm text-slate-300">
                 <div className="flex justify-between items-center">
                   <span>GTS Operations:</span>
                   <span className="text-purple-300 font-mono text-[11px]">gtsbkk@metnet.tmd.go.th</span>
                 </div>
                 <div className="flex justify-between items-center pt-1">
-                  <span>{t("เว็บไซต์หลัก:", "Official Website:")}</span>
+                  <span>เว็บไซต์หลัก:</span>
                   <span className="text-slate-300 font-medium">gts.tmd.go.th</span>
                 </div>
               </div>
@@ -155,7 +136,7 @@ export default function ContactPage() {
               className="w-full py-2.5 px-3 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-slate-700 text-xs text-purple-300 font-medium flex items-center justify-center gap-1.5 transition-all cursor-pointer text-center"
             >
               <Mail className="w-3.5 h-3.5" />
-              {t("ส่งอีเมล gtsbkk@metnet.tmd.go.th", "Email gtsbkk@metnet.tmd.go.th")}
+              ส่งอีเมล gtsbkk@metnet.tmd.go.th
             </a>
           </div>
 
@@ -165,34 +146,30 @@ export default function ContactPage() {
               <div className="w-12 h-12 rounded-2xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center border border-emerald-500/30">
                 <Clock className="w-6 h-6" />
               </div>
-              <h3 className="text-lg font-bold text-white">
-                {t("เวลาทำการ & NOC", "Office Hours & NOC")}
-              </h3>
+              <h3 className="text-lg font-bold text-white">เวลาทำการ & NOC</h3>
               <div className="space-y-2 text-xs sm:text-sm text-slate-300">
                 <div>
-                  <span className="font-semibold text-white block">
-                    {t("งานสารบรรณและติดต่อราชการ:", "Administration & Government Contact:")}
-                  </span>
-                  <span className="text-slate-300">
-                    {t("จันทร์ - ศุกร์: 08:30 - 16:30 น.", "Monday - Friday: 08:30 - 16:30 hrs")}
-                  </span>
+                  <span className="font-semibold text-white block">งานสารบรรณและติดต่อราชการ:</span>
+                  <span className="text-slate-300">จันทร์ - ศุกร์: 08:30 - 16:30 น.</span>
                 </div>
                 <div className="pt-1 border-t border-slate-800">
                   <span className="font-semibold text-emerald-300 flex items-center gap-1">
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                    {t("ศูนย์ RTH Bangkok NOC:", "RTH Bangkok NOC Center:")}
+                    ศูนย์ RTH Bangkok NOC:
                   </span>
-                  <span className="text-xs text-emerald-200">
-                    {t("ปฏิบัติงานรับส่งข่าวสด 24 ชั่วโมง (24/7)", "24/7 Continuous Live Operations")}
-                  </span>
+                  <span className="text-xs text-emerald-200">ปฏิบัติงานรับส่งข่าวสด 24 ชั่วโมง (24/7)</span>
                 </div>
               </div>
             </div>
             <div className="px-3 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-[11px] text-emerald-300 text-center font-medium">
-              {t("ศูนย์โทรคมนาคมเปิดให้บริการทุกวัน", "Telecommunication Center Open Daily")}
+              ศูนย์โทรคมนาคมเปิดให้บริการทุกวัน
             </div>
           </div>
         </div>
+
+
+
+
 
         {/* Full-Width Interactive Google Maps Frame */}
         <div className="glass-panel rounded-3xl p-6 sm:p-8 border border-cyan-500/30 space-y-4">
@@ -200,16 +177,10 @@ export default function ContactPage() {
             <div>
               <h2 className="text-xl font-bold text-white flex items-center gap-2">
                 <Compass className="w-5 h-5 text-cyan-400" />
-                {t(
-                  "แผนที่เดินทางและพิกัดสำนักงาน (กรมอุตุนิยมวิทยา บางนา)",
-                  "Location Map & Coordinates (Thai Meteorological Dept, Bangna)"
-                )}
+                แผนที่เดินทางและพิกัดสำนักงาน (กรมอุตุนิยมวิทยา บางนา)
               </h2>
               <p className="text-xs text-slate-400 mt-0.5">
-                {t(
-                  "พิกัดละติจูด: 13.6677° N, ลองจิจูด: 100.6053° E",
-                  "Latitude: 13.6677° N, Longitude: 100.6053° E"
-                )}
+                พิกัดละติจูด: 13.6677° N, ลองจิจูด: 100.6053° E
               </p>
             </div>
 
@@ -219,7 +190,7 @@ export default function ContactPage() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md hover:brightness-110 transition-all cursor-pointer shrink-0"
             >
-              {t("เปิดใน Google Maps แอปพลิเคชัน", "Open in Google Maps App")}
+              เปิดใน Google Maps แอปพลิเคชัน
               <ExternalLink className="w-3.5 h-3.5" />
             </a>
           </div>

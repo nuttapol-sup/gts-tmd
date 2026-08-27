@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { useLanguage } from "@/context/language-context";
 import { convertTacToIwxxm } from "@/lib/iwxxm";
 import {
   Code,
@@ -302,7 +301,6 @@ function parseSynopBulletin(rawText: string): DecodedSynopStation[] {
 }
 
 export default function DataHub() {
-  const { lang, t } = useLanguage();
   const handleDownloadIwxxm = (xml: string, header: string) => {
     const blob = new Blob([xml], { type: "application/xml" });
     const url = URL.createObjectURL(blob);
@@ -542,7 +540,7 @@ export default function DataHub() {
             }`}
           >
             <Satellite className="w-4 h-4" />
-            {t("ข่าว Synoptic", "Synoptic Bulletins")}
+            ข่าว Synoptic
           </button>
 
           <button
@@ -554,7 +552,7 @@ export default function DataHub() {
             }`}
           >
             <Cloud className="w-4 h-4" />
-            {t("ข่าว Upper Air (Wind)", "Upper Air (Wind)")}
+            ข่าว Upper Air (Wind)
           </button>
 
           <button
@@ -566,7 +564,7 @@ export default function DataHub() {
             }`}
           >
             <AlertTriangle className="w-4 h-4 text-amber-300" />
-            {t("ประกาศเตือนภัย (War)", "Weather Warnings")}
+            ประกาศเตือนภัย (War)
           </button>
 
           <button
@@ -578,7 +576,7 @@ export default function DataHub() {
             }`}
           >
             <RadioTower className="w-4 h-4" />
-            {t("ข่าว METAR (การบิน)", "METAR (Aviation)")}
+            ข่าว METAR (การบิน)
           </button>
 
           <button
@@ -590,7 +588,7 @@ export default function DataHub() {
             }`}
           >
             <StickyNote className="w-4 h-4" />
-            {t("Note ท้ายข่าว", "GTS Raw Notes")}
+            Note ท้ายข่าว
           </button>
         </div>
 

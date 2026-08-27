@@ -32,7 +32,6 @@ import {
   ArrowUpDown,
 } from "lucide-react";
 import { DocFileItem, DocTreeNode } from "@/app/api/documents/route";
-import { useLanguage } from "@/context/language-context";
 
 const YouTubeIcon = ({ className = "w-5 h-5" }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="currentColor">
@@ -41,7 +40,6 @@ const YouTubeIcon = ({ className = "w-5 h-5" }: { className?: string }) => (
 );
 
 export default function DocumentsPage() {
-  const { lang, t } = useLanguage();
   const [tree, setTree] = useState<DocTreeNode[]>([]);
   const [allFiles, setAllFiles] = useState<DocFileItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -281,16 +279,13 @@ export default function DocumentsPage() {
         <div className="text-center space-y-3 relative z-10">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-bold shadow-lg">
             <Sparkles className="w-4 h-4 text-cyan-400" />
-            {t("คลังเอกสาร & สื่อประชาสัมพันธ์ (Document Repository)", "Document Repository & Media")}
+            คลังเอกสาร & สื่อประชาสัมพันธ์ (Document Repository)
           </div>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-            {t("เอกสารที่เกี่ยวข้อง", "Related Documents")}
+            เอกสารที่เกี่ยวข้อง
           </h1>
           <p className="text-sm sm:text-base text-slate-400 max-w-2xl mx-auto font-light">
-            {t(
-              "รวบรวมคู่มือ เอกสารวิชาการ รายงานการประชุม แบบฟอร์ม และคลิปวิดีโอแนะนำการใช้งาน",
-              "Collection of manuals, technical documents, meeting reports, forms, and video tutorials"
-            )}
+            รวบรวมคู่มือ เอกสารวิชาการ รายงานการประชุม แบบฟอร์ม และคลิปวิดีโอแนะนำการใช้งาน
           </p>
         </div>
 
@@ -300,7 +295,7 @@ export default function DocumentsPage() {
             <Search className="w-4 h-4 text-cyan-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
-              placeholder={t("ค้นหาชื่อไฟล์ โฟลเดอร์ หรือคลิป YouTube...", "Search file name, folder, or YouTube video...")}
+              placeholder="ค้นหาชื่อไฟล์ โฟลเดอร์ หรือคลิป YouTube..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-2 rounded-xl bg-slate-950/80 border border-cyan-500/30 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-cyan-400"
