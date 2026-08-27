@@ -246,6 +246,58 @@ function buildDirectoryTree(dirPath: string, rootDir: string): DocTreeNode[] {
   return nodes.sort((a, b) => a.name.localeCompare(b.name, "th"));
 }
 
+export function resolveTargetDir(folderParam?: string | null, typeParam?: string | null): string {
+  let targetDir = "";
+
+  if (folderParam) {
+    const candidateAbout = path.normalize(path.join(ABOUT_ROOT_DIR, folderParam));
+    if (fs.existsSync(/*turbopackIgnore: true*/ candidateAbout)) {
+      targetDir = candidateAbout;
+    } else if (fs.existsSync(/*turbopackIgnore: true*/ folderParam)) {
+      targetDir = folderParam;
+    } else if (fs.existsSync(/*turbopackIgnore: true*/ ABOUT_ROOT_DIR)) {
+      const entries = fs.readdirSync(/*turbopackIgnore: true*/ ABOUT_ROOT_DIR, { withFileTypes: true });
+      const lowerFolder = folderParam.toLowerCase();
+      const prefixMatch = folderParam.match(/^(\d+)[\._\-\s]+/);
+      const targetPrefix = prefixMatch ? parseInt(prefixMatch[1], 10) : null;
+
+      const found = entries.find((e) => {
+        if (!e.isDirectory()) return false;
+        const rawLower = e.name.toLowerCase();
+        const cleanLower = e.name.replace(/^(\d+)[\._\-\s]+/, "").toLowerCase();
+
+        // 1. Exact match
+        if (rawLower === lowerFolder || cleanLower === lowerFolder) return true;
+
+        // 2. Prefix number match (e.g. "06" matches "06_การยกระดับสู่ราชการ 4.0")
+        if (targetPrefix !== null) {
+          const eMatch = e.name.match(/^(\d+)[\._\-\s]+/);
+          if (eMatch && parseInt(eMatch[1], 10) === targetPrefix) return true;
+        }
+
+        // 3. Keyword fuzzy match
+        if (rawLower.includes("ราชการ") && lowerFolder.includes("ราชการ")) return true;
+
+        return false;
+      });
+
+      if (found) {
+        targetDir = path.join(ABOUT_ROOT_DIR, found.name);
+      }
+    }
+  }
+
+  if (!targetDir && typeParam) {
+    targetDir = SHOWCASE_DIRS[typeParam] || SHOWCASE_DIRS["noc"];
+  }
+
+  if (!targetDir) {
+    targetDir = SHOWCASE_DIRS["noc"];
+  }
+
+  return targetDir;
+}
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -253,36 +305,7 @@ export async function GET(request: Request) {
     const folderParam = searchParams.get("folder");
     const sortMode = searchParams.get("sort") || "custom";
 
-    let targetDir = "";
-
-    if (folderParam) {
-      const candidateAbout = path.normalize(path.join(ABOUT_ROOT_DIR, folderParam));
-      if (fs.existsSync(/*turbopackIgnore: true*/ candidateAbout)) {
-        targetDir = candidateAbout;
-      } else if (fs.existsSync(/*turbopackIgnore: true*/ folderParam)) {
-        targetDir = folderParam;
-      } else if (fs.existsSync(/*turbopackIgnore: true*/ ABOUT_ROOT_DIR)) {
-        const entries = fs.readdirSync(/*turbopackIgnore: true*/ ABOUT_ROOT_DIR, { withFileTypes: true });
-        const lowerFolder = folderParam.toLowerCase();
-        const found = entries.find((e) => {
-          if (!e.isDirectory()) return false;
-          const rawLower = e.name.toLowerCase();
-          const cleanLower = e.name.replace(/^(\d+)[\._\-\s]+/, "").toLowerCase();
-          return rawLower === lowerFolder || cleanLower === lowerFolder;
-        });
-        if (found) {
-          targetDir = path.join(ABOUT_ROOT_DIR, found.name);
-        }
-      }
-    }
-
-    if (!targetDir && typeParam) {
-      targetDir = SHOWCASE_DIRS[typeParam] || SHOWCASE_DIRS["noc"];
-    }
-
-    if (!targetDir) {
-      targetDir = SHOWCASE_DIRS["noc"];
-    }
+    const targetDir = resolveTargetDir(folderParam, typeParam);
 
     if (!fs.existsSync(/*turbopackIgnore: true*/ targetDir)) {
       fs.mkdirSync(/*turbopackIgnore: true*/ targetDir, { recursive: true });

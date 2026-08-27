@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
-import { SHOWCASE_DIRS, ABOUT_ROOT_DIR } from "../route";
+import { SHOWCASE_DIRS, ABOUT_ROOT_DIR, resolveTargetDir } from "../route";
 
 export const dynamic = "force-dynamic";
 
@@ -17,36 +17,7 @@ export async function GET(request: Request) {
       return NextResponse.json({ status: "error", message: "Path is required" }, { status: 400 });
     }
 
-    let baseDir = "";
-
-    if (folderParam) {
-      const candidateAbout = path.normalize(path.join(ABOUT_ROOT_DIR, folderParam));
-      if (fs.existsSync(/*turbopackIgnore: true*/ candidateAbout)) {
-        baseDir = candidateAbout;
-      } else if (fs.existsSync(/*turbopackIgnore: true*/ folderParam)) {
-        baseDir = folderParam;
-      } else if (fs.existsSync(/*turbopackIgnore: true*/ ABOUT_ROOT_DIR)) {
-        const entries = fs.readdirSync(/*turbopackIgnore: true*/ ABOUT_ROOT_DIR, { withFileTypes: true });
-        const lowerFolder = folderParam.toLowerCase();
-        const found = entries.find((e) => {
-          if (!e.isDirectory()) return false;
-          const rawLower = e.name.toLowerCase();
-          const cleanLower = e.name.replace(/^(\d+)[\._\-\s]+/, "").toLowerCase();
-          return rawLower === lowerFolder || cleanLower === lowerFolder;
-        });
-        if (found) {
-          baseDir = path.join(ABOUT_ROOT_DIR, found.name);
-        }
-      }
-    }
-
-    if (!baseDir && typeParam) {
-      baseDir = SHOWCASE_DIRS[typeParam] || SHOWCASE_DIRS["noc"];
-    }
-
-    if (!baseDir) {
-      baseDir = SHOWCASE_DIRS["noc"];
-    }
+    const baseDir = resolveTargetDir(folderParam, typeParam);
 
     const fullPath = path.normalize(path.join(baseDir, relPath));
 

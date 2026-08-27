@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
-import { SHOWCASE_DIRS, ABOUT_ROOT_DIR } from "../route";
+import { SHOWCASE_DIRS, ABOUT_ROOT_DIR, resolveTargetDir } from "../route";
 
 export const dynamic = "force-dynamic";
 
@@ -10,24 +10,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { type, folder, orderedFileNames, subfolder } = body;
 
-    let baseDir = "";
-
-    if (folder) {
-      const candidateAbout = path.normalize(path.join(ABOUT_ROOT_DIR, folder));
-      if (fs.existsSync(/*turbopackIgnore: true*/ candidateAbout)) {
-        baseDir = candidateAbout;
-      } else if (fs.existsSync(/*turbopackIgnore: true*/ folder)) {
-        baseDir = folder;
-      }
-    }
-
-    if (!baseDir && type) {
-      baseDir = SHOWCASE_DIRS[type] || SHOWCASE_DIRS["noc"];
-    }
-
-    if (!baseDir) {
-      baseDir = SHOWCASE_DIRS["noc"];
-    }
+    const baseDir = resolveTargetDir(folder, type);
 
     if (!Array.isArray(orderedFileNames)) {
       return NextResponse.json(
