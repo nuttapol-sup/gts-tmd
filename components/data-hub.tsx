@@ -821,37 +821,49 @@ export default function DataHub() {
                 <span>กำลังโหลดข้อมูลข่าวสาร...</span>
               </div>
             ) : selectedBulletin ? (
-              <div className="space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
-                {isNewTabMode ? (
-                  <button
-                    onClick={() => window.close()}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-rose-900/60 hover:bg-rose-800 text-rose-300 text-xs font-bold border border-rose-700/50 transition-all cursor-pointer shrink-0"
-                  >
-                    <X className="w-4 h-4 text-rose-400" />
-                    ปิดแท็บนี้ (Close Tab)
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => setViewMode("headers")}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 text-xs font-semibold border border-slate-700 transition-all cursor-pointer shrink-0"
-                  >
-                    <ArrowLeft className="w-4 h-4 text-cyan-400" />
-                    กลับไปหน้ารวมหัวข่าว (Back to Headers List)
-                  </button>
-                )}
+              (() => {
+                const normCode = (c: string) => {
+                  const upper = (c || "OTHER").toUpperCase();
+                  return (upper.startsWith("RU") || upper === "RIII" || upper === "RUSSIA") ? "RUSSIA" : upper;
+                };
+                const selHeader = (selectedBulletin.headerLine || selectedBulletin.dataType || "").trim();
+                const selCode = normCode(selectedBulletin.countryCode);
 
-                <span className="text-xs text-cyan-400 font-mono font-bold bg-cyan-950/60 px-3 py-1.5 rounded-xl border border-cyan-800">
-                  แสดงหัวข่าว: {selectedBulletin.headerLine}
-                </span>
-              </div>
+                const matchingBulletins = ftpBulletins.filter((b) => {
+                  const bHeader = (b.headerLine || b.dataType || "").trim();
+                  const bCode = normCode(b.countryCode);
+                  return bHeader === selHeader && bCode === selCode;
+                });
 
-              {(() => {
-                // Display ONLY the exact bulletin that was clicked
-                const listToDisplay = [selectedBulletin];
+                const listToDisplay = matchingBulletins.length > 0 ? matchingBulletins : [selectedBulletin];
 
                 return (
-                  <div className="space-y-6">
+                  <div className="space-y-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
+                      {isNewTabMode ? (
+                        <button
+                          onClick={() => window.close()}
+                          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-rose-900/60 hover:bg-rose-800 text-rose-300 text-xs font-bold border border-rose-700/50 transition-all cursor-pointer shrink-0"
+                        >
+                          <X className="w-4 h-4 text-rose-400" />
+                          ปิดแท็บนี้ (Close Tab)
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => setViewMode("headers")}
+                          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 text-xs font-semibold border border-slate-700 transition-all cursor-pointer shrink-0"
+                        >
+                          <ArrowLeft className="w-4 h-4 text-cyan-400" />
+                          กลับไปหน้ารวมหัวข่าว (Back to Headers List)
+                        </button>
+                      )}
+
+                      <span className="text-xs text-cyan-400 font-mono font-bold bg-cyan-950/60 px-3 py-1.5 rounded-xl border border-cyan-800">
+                        แสดงหัวข่าว: {selectedBulletin.headerLine} ({listToDisplay.length} รายการ)
+                      </span>
+                    </div>
+
+                    <div className="space-y-6">
                     {listToDisplay.map((bulletin, idx) => (
                       <div
                         key={bulletin.id}
@@ -921,9 +933,9 @@ export default function DataHub() {
                       </div>
                     ))}
                   </div>
-                );
-              })()}
-            </div>
+                </div>
+              );
+            })()
             ) : (
               <div className="p-12 text-center text-slate-400 flex flex-col items-center justify-center gap-3 glass-panel rounded-2xl">
                 <p className="text-sm text-slate-300 font-semibold">ไม่พบข้อมูลข่าวตรงตามรหัสที่เลือก</p>
