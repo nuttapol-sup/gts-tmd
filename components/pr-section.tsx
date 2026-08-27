@@ -1,5 +1,6 @@
 "use client";
 
+import { useLanguage } from "@/context/language-context";
 import {
   Megaphone,
   Calendar,
@@ -10,34 +11,45 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-const NEWS_ITEMS = [
-  {
-    id: 1,
-    title: "ประกาศนโยบาย No Gift Policy จากการปฏิบัติหน้าที่ ประจำปี พ.ศ. 2569",
-    category: "นโยบายองค์กร",
-    date: "2026-01-15",
-    desc: "กรมอุตุนิยมวิทยา งดรับ งดให้ ของขวัญและของกำนัลทุกชนิดในฤดูกาลและโอกาสต่างๆ เพื่อสร้างวัฒนธรรมองค์กรที่ซื่อสัตย์สุจริต",
-    badgeColor: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
-  },
-  {
-    id: 2,
-    title: "กิจกรรมแลกเปลี่ยนเรียนรู้ Knowledge Management (KM) ด้านสื่อสารอุตุนิยมวิทยา",
-    category: "กิจกรรม KM",
-    date: "2026-03-10",
-    desc: "ถ่ายทอดความรู้เทคโนโลยีการรับส่งข้อมูลผ่านระบบ SWIM และมาตรฐานการเชื่อมโยงข้อมูลข่าวสาร GTS ยุคใหม่",
-    badgeColor: "bg-cyan-500/20 text-cyan-300 border-cyan-500/30",
-  },
-  {
-    id: 3,
-    title: "การจัดทำแผนที่และการใช้งานระบบ GIBFC สำหรับเจ้าหน้าที่อุตุนิยมวิทยา",
-    category: "ระบบสารสนเทศ",
-    date: "2026-04-22",
-    desc: "การอบรมการประยุกต์ใช้ภูมิสารสนเทศและการวิเคราะห์ข้อมูลพายุเขตร้อนเพื่อเพิ่มประสิทธิภาพการเตือนภัย",
-    badgeColor: "bg-purple-500/20 text-purple-300 border-purple-500/30",
-  },
-];
-
 export default function PRSection() {
+  const { t } = useLanguage();
+
+  const newsItems = [
+    {
+      id: 1,
+      title: t("ประกาศนโยบาย No Gift Policy จากการปฏิบัติหน้าที่ ประจำปี พ.ศ. 2569", "No Gift Policy Announcement 2026"),
+      category: t("นโยบายองค์กร", "Corporate Policy"),
+      date: "2026-01-15",
+      desc: t(
+        "กรมอุตุนิยมวิทยา งดรับ งดให้ ของขวัญและของกำนัลทุกชนิดในฤดูกาลและโอกาสต่างๆ เพื่อสร้างวัฒนธรรมองค์กรที่ซื่อสัตย์สุจริต",
+        "Thai Meteorological Department enforces No Gift Policy on all occasions to foster corporate integrity and transparency."
+      ),
+      badgeColor: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
+    },
+    {
+      id: 2,
+      title: t("กิจกรรมแลกเปลี่ยนเรียนรู้ Knowledge Management (KM) ด้านสื่อสารอุตุนิยมวิทยา", "Knowledge Management (KM) Activity on Weather Telecommunications"),
+      category: t("กิจกรรม KM", "KM Activity"),
+      date: "2026-03-10",
+      desc: t(
+        "ถ่ายทอดความรู้เทคโนโลยีการรับส่งข้อมูลผ่านระบบ SWIM และมาตรฐานการเชื่อมโยงข้อมูลข่าวสาร GTS ยุคใหม่",
+        "Knowledge sharing session on SWIM data exchange technology and next-generation GTS data connectivity standards."
+      ),
+      badgeColor: "bg-cyan-500/20 text-cyan-300 border-cyan-500/30",
+    },
+    {
+      id: 3,
+      title: t("การจัดทำแผนที่และการใช้งานระบบ GIBFC สำหรับเจ้าหน้าที่อุตุนิยมวิทยา", "GIBFC System & Mapping Training for Meteorological Staff"),
+      category: t("ระบบสารสนเทศ", "IT Systems"),
+      date: "2026-04-22",
+      desc: t(
+        "การอบรมการประยุกต์ใช้ภูมิสารสนเทศและการวิเคราะห์ข้อมูลพายุเขตร้อนเพื่อเพิ่มประสิทธิภาพการเตือนภัย",
+        "Training on GIS applications and tropical cyclone analysis to enhance early warning capabilities."
+      ),
+      badgeColor: "bg-purple-500/20 text-purple-300 border-purple-500/30",
+    },
+  ];
+
   return (
     <section className="py-20 relative z-10" id="pr-news">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -49,10 +61,10 @@ export default function PRSection() {
               Public Relations & Announcements
             </div>
             <h2 className="text-3xl font-extrabold text-white tracking-tight">
-              ข่าวประชาสัมพันธ์ & ประกาศสำคัญ
+              {t("ข่าวประชาสัมพันธ์ & ประกาศสำคัญ", "PR News & Announcements")}
             </h2>
             <p className="text-slate-400 text-sm mt-1">
-              ติดตามข่าวสาร นโยบายองค์กรใสสะอาด และกิจกรรมการแลกเปลี่ยนเรียนรู้ (KM)
+              {t("ติดตามข่าวสาร นโยบายองค์กรใสสะอาด และกิจกรรมการแลกเปลี่ยนเรียนรู้ (KM)", "Stay updated with corporate news, integrity policies, and Knowledge Management (KM) activities")}
             </p>
           </div>
 
@@ -60,14 +72,14 @@ export default function PRSection() {
             href="/documents"
             className="inline-flex items-center gap-1.5 text-xs font-semibold text-cyan-400 hover:text-cyan-300 transition-colors"
           >
-            ดูเอกสารและประกาศทั้งหมด
+            {t("ดูเอกสารและประกาศทั้งหมด", "View All Documents & Announcements")}
             <ChevronRight className="w-4 h-4" />
           </Link>
         </div>
 
         {/* News Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {NEWS_ITEMS.map((item) => (
+          {newsItems.map((item) => (
             <div
               key={item.id}
               className="glass-panel rounded-2xl p-6 border border-cyan-500/20 flex flex-col justify-between hover:scale-[1.02] transition-all duration-300 shadow-xl"
@@ -93,9 +105,9 @@ export default function PRSection() {
               </div>
 
               <div className="pt-4 mt-4 border-t border-slate-800 flex items-center justify-between text-xs">
-                <span className="text-slate-400">กองสื่อสาร กรมอุตุนิยมวิทยา</span>
+                <span className="text-slate-400">{t("กองสื่อสาร กรมอุตุนิยมวิทยา", "Telecommunication Division, TMD")}</span>
                 <span className="text-cyan-400 hover:underline flex items-center gap-1 cursor-pointer font-medium">
-                  อ่านเพิ่มเติม <ExternalLink className="w-3 h-3" />
+                  {t("อ่านเพิ่มเติม", "Read More")} <ExternalLink className="w-3 h-3" />
                 </span>
               </div>
             </div>
