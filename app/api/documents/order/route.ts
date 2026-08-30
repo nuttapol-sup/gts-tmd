@@ -4,7 +4,7 @@ import path from "path";
 
 export const dynamic = "force-dynamic";
 
-const DOC_DIR = process.env.DOC_DIR || path.join(process.cwd(), "doc");
+const DOC_DIR = process.env.DOC_DIR || path.join(/*turbopackIgnore: true*/ process.cwd(), "doc");
 
 export async function POST(request: Request) {
   try {
@@ -19,14 +19,14 @@ export async function POST(request: Request) {
     }
 
     const targetDir = subfolder && subfolder !== "Root"
-      ? path.join(DOC_DIR, subfolder)
+      ? path.join(/*turbopackIgnore: true*/ DOC_DIR, subfolder)
       : DOC_DIR;
 
     if (!fs.existsSync(/*turbopackIgnore: true*/ targetDir)) {
       fs.mkdirSync(/*turbopackIgnore: true*/ targetDir, { recursive: true });
     }
 
-    const orderFile = path.join(targetDir, "sort_order.json");
+    const orderFile = path.join(/*turbopackIgnore: true*/ targetDir, "sort_order.json");
     fs.writeFileSync(/*turbopackIgnore: true*/ orderFile, JSON.stringify(orderedFileNames, null, 2), "utf-8");
 
     return NextResponse.json({

@@ -27,6 +27,16 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
 
+  // Exclude data directories from build tracing to prevent scanning 600,000+ files during build
+  outputFileTracingExcludes: {
+    "*": [
+      "./FTP/**/*",
+      "./About/**/*",
+      "./doc/**/*",
+      "./Thailand NOC/**/*",
+    ],
+  },
+
   // 1. Hide X-Powered-By: Next.js header to prevent framework fingerprinting
   poweredByHeader: false,
 
