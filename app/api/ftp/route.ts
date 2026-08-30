@@ -407,9 +407,22 @@ export async function GET(request: Request) {
       return parseInt(b.id.split("-").pop() || "0", 10) - parseInt(a.id.split("-").pop() || "0", 10);
     });
 
+    // Deduplicate bulletins having exact same headerLine, countryCode, and rawText content
+    const uniqueBulletins: GTSBulletin[] = [];
+    const seenContentKeys = new Set<string>();
+
+    for (const b of bulletins) {
+      const normText = (b.rawText || "").trim().replace(/\r?\n/g, "\n");
+      const key = `${b.headerLine || ""}_${b.countryCode || ""}_${normText}`;
+      if (!seenContentKeys.has(key)) {
+        seenContentKeys.add(key);
+        uniqueBulletins.push(b);
+      }
+    }
+
     return NextResponse.json({
       status: "success",
-      count: bulletins.length,
+      count: uniqueBulletins.length,
       targetDay,
       targetMonthStr,
       targetYearBE,
@@ -417,7 +430,7 @@ export async function GET(request: Request) {
       countryParam,
       isAllData,
       scannedFolders: dirsToScan,
-      bulletins,
+      bulletins: uniqueBulletins,
     });
   } catch (error: any) {
     return NextResponse.json({

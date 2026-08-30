@@ -837,7 +837,19 @@ export default function DataHub() {
                   return bHeader === selHeader && bCode === selCode;
                 });
 
-                const listToDisplay = matchingBulletins.length > 0 ? matchingBulletins : [selectedBulletin];
+                // Deduplicate items with identical text content
+                const uniqueMatching: GTSBulletin[] = [];
+                const seenTextContent = new Set<string>();
+
+                for (const b of matchingBulletins) {
+                  const contentKey = (b.rawText || "").trim().replace(/\r?\n/g, "\n");
+                  if (!seenTextContent.has(contentKey)) {
+                    seenTextContent.add(contentKey);
+                    uniqueMatching.push(b);
+                  }
+                }
+
+                const listToDisplay = uniqueMatching.length > 0 ? uniqueMatching : [selectedBulletin];
 
                 return (
                   <div className="space-y-4">
