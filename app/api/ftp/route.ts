@@ -51,6 +51,10 @@ const CATEGORY_SUBFOLDERS: Record<string, string[]> = {
 };
 
 export async function GET(request: Request) {
+  if (process.env.NEXT_PHASE === "phase-production-build" || process.env.IS_BUILD === "true") {
+    return NextResponse.json({ status: "success", count: 0, bulletins: [] });
+  }
+
   const { searchParams } = new URL(request.url);
   const dateParam = searchParams.get("date") || "";
   const utcParam = searchParams.get("utc") || "";

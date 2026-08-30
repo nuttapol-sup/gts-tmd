@@ -299,6 +299,10 @@ export function resolveTargetDir(folderParam?: string | null, typeParam?: string
 }
 
 export async function GET(request: Request) {
+  if (process.env.NEXT_PHASE === "phase-production-build" || process.env.IS_BUILD === "true") {
+    return NextResponse.json({ status: "success", count: 0, targetDir: "", folderName: "", tree: [], files: [] });
+  }
+
   try {
     const { searchParams } = new URL(request.url);
     const typeParam = searchParams.get("type");

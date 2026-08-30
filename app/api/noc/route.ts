@@ -231,6 +231,10 @@ function buildDirectoryTree(dirPath: string, rootDir: string): DocTreeNode[] {
 }
 
 export async function GET(request: Request) {
+  if (process.env.NEXT_PHASE === "phase-production-build" || process.env.IS_BUILD === "true") {
+    return NextResponse.json({ status: "success", count: 0, tree: [], files: [] });
+  }
+
   try {
     const { searchParams } = new URL(request.url);
     const sortMode = searchParams.get("sort") || "custom";
