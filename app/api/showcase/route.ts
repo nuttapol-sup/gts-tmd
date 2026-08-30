@@ -250,7 +250,7 @@ export function resolveTargetDir(folderParam?: string | null, typeParam?: string
   let targetDir = "";
 
   if (folderParam) {
-    const candidateAbout = path.normalize(path.join(ABOUT_ROOT_DIR, folderParam));
+    const candidateAbout = path.normalize(path.join(/*turbopackIgnore: true*/ ABOUT_ROOT_DIR, folderParam));
     if (fs.existsSync(/*turbopackIgnore: true*/ candidateAbout)) {
       targetDir = candidateAbout;
     } else if (fs.existsSync(/*turbopackIgnore: true*/ folderParam)) {
@@ -282,7 +282,7 @@ export function resolveTargetDir(folderParam?: string | null, typeParam?: string
       });
 
       if (found) {
-        targetDir = path.join(ABOUT_ROOT_DIR, found.name);
+        targetDir = path.join(/*turbopackIgnore: true*/ ABOUT_ROOT_DIR, found.name);
       }
     }
   }

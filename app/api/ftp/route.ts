@@ -60,7 +60,7 @@ export async function GET(request: Request) {
 
   const candidateBaseDirs = [
     process.env.FTP_DIR,
-    path.join(process.cwd(), "FTP"),
+    path.join(/*turbopackIgnore: true*/ process.cwd(), "FTP"),
     "/home/rthbkk/FTP",
     "/var/ftp",
     "/srv/ftp",
@@ -115,9 +115,9 @@ export async function GET(request: Request) {
 
     // Determine target year folder: check BE (e.g. 2569), AD (e.g. 2026), or 2D (e.g. 26)
     const possibleYearFolders = [
-      path.join(baseFtpDir, targetYearBE),
-      path.join(baseFtpDir, targetYearAD),
-      path.join(baseFtpDir, targetYear2D),
+      path.join(/*turbopackIgnore: true*/ baseFtpDir, targetYearBE),
+      path.join(/*turbopackIgnore: true*/ baseFtpDir, targetYearAD),
+      path.join(/*turbopackIgnore: true*/ baseFtpDir, targetYear2D),
       baseFtpDir,
     ];
 
