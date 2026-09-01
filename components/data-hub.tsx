@@ -909,13 +909,6 @@ export default function DataHub() {
 
                           <div className="flex items-center gap-2 flex-wrap">
                             <button
-                              onClick={() => setIwxxmBulletin(bulletin)}
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-gradient-to-r from-purple-600 to-indigo-600 hover:brightness-110 text-white shadow-md shadow-purple-500/20 border border-purple-400/30 transition-all cursor-pointer"
-                            >
-                              <Code className="w-3.5 h-3.5 text-purple-200" />
-                              <span>แปลงเป็น IWXXM (XML)</span>
-                            </button>
-                            <button
                               onClick={() => setDecodingBulletin(bulletin)}
                               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-gradient-to-r from-cyan-600 to-blue-600 hover:brightness-110 text-white shadow-md shadow-cyan-500/20 border border-cyan-400/30 transition-all cursor-pointer"
                             >
@@ -1013,13 +1006,6 @@ export default function DataHub() {
                                 </div>
 
                                 <div className="flex items-center gap-2">
-                                  <button
-                                    onClick={() => setIwxxmBulletin(bulletin)}
-                                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium bg-gradient-to-r from-purple-600 to-indigo-600 hover:brightness-110 text-white shadow-md shadow-purple-500/20 border border-purple-400/30 transition-all cursor-pointer"
-                                  >
-                                    <Code className="w-3.5 h-3.5 text-purple-200" />
-                                    <span>แปลงเป็น IWXXM (XML)</span>
-                                  </button>
                                   <button
                                     onClick={() => setDecodingBulletin(bulletin)}
                                     className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium bg-gradient-to-r from-cyan-600 to-blue-600 hover:brightness-110 text-white shadow-md shadow-cyan-500/20 border border-cyan-400/30 transition-all cursor-pointer"
