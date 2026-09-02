@@ -87,8 +87,24 @@ const COUNTRIES = [
   { value: "RCAA", name: "Taiwan", flag: "🇹🇼", iso: "tw" },
   { value: "VTBB", name: "Thailand", flag: "🇹🇭", iso: "th" },
   { value: "UTTT", name: "Uzbekistan", flag: "🇺🇿", iso: "uz" },
-  { value: "VVGL", name: "Vietnam", flag: "🇻🇳", iso: "vn" },
 ];
+
+function isSynopticBulletin(b: GTSBulletin): boolean {
+  if (!b) return false;
+  const cat = (b.category || "").toLowerCase();
+  const label = (b.categoryLabel || "").toLowerCase();
+  const header = (b.headerLine || b.dataType || "").toUpperCase();
+  const raw = (b.rawText || "");
+  return (
+    cat === "synoptic" ||
+    label.includes("synoptic") ||
+    header.startsWith("SM") ||
+    header.startsWith("SI") ||
+    header.startsWith("SN") ||
+    raw.includes("AAXX") ||
+    raw.includes("BBXX")
+  );
+}
 
 
 export interface DecodedSynopStation {
@@ -908,13 +924,15 @@ export default function DataHub() {
                           </div>
 
                           <div className="flex items-center gap-2 flex-wrap">
-                            <button
-                              onClick={() => setDecodingBulletin(bulletin)}
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-gradient-to-r from-cyan-600 to-blue-600 hover:brightness-110 text-white shadow-md shadow-cyan-500/20 border border-cyan-400/30 transition-all cursor-pointer"
-                            >
-                              <FileText className="w-3.5 h-3.5" />
-                              <span>ถอดรหัสข่าว (Decode)</span>
-                            </button>
+                            {isSynopticBulletin(bulletin) && (
+                              <button
+                                onClick={() => setDecodingBulletin(bulletin)}
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-gradient-to-r from-cyan-600 to-blue-600 hover:brightness-110 text-white shadow-md shadow-cyan-500/20 border border-cyan-400/30 transition-all cursor-pointer"
+                              >
+                                <FileText className="w-3.5 h-3.5" />
+                                <span>ถอดรหัสข่าว (Decode)</span>
+                              </button>
+                            )}
                             <button
                               onClick={() => handleCopy(bulletin.rawText, bulletin.id)}
                               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/30 transition-all cursor-pointer shrink-0"
@@ -1006,13 +1024,15 @@ export default function DataHub() {
                                 </div>
 
                                 <div className="flex items-center gap-2">
-                                  <button
-                                    onClick={() => setDecodingBulletin(bulletin)}
-                                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium bg-gradient-to-r from-cyan-600 to-blue-600 hover:brightness-110 text-white shadow-md shadow-cyan-500/20 border border-cyan-400/30 transition-all cursor-pointer"
-                                  >
-                                    <FileText className="w-3.5 h-3.5" />
-                                    <span>ถอดรหัสข่าว (Decode)</span>
-                                  </button>
+                                  {isSynopticBulletin(bulletin) && (
+                                    <button
+                                      onClick={() => setDecodingBulletin(bulletin)}
+                                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium bg-gradient-to-r from-cyan-600 to-blue-600 hover:brightness-110 text-white shadow-md shadow-cyan-500/20 border border-cyan-400/30 transition-all cursor-pointer"
+                                    >
+                                      <FileText className="w-3.5 h-3.5" />
+                                      <span>ถอดรหัสข่าว (Decode)</span>
+                                    </button>
+                                  )}
                                   <button
                                     onClick={() => handleCopy(bulletin.rawText, bulletin.id)}
                                     className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/30 transition-all cursor-pointer"
