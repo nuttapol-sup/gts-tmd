@@ -241,67 +241,68 @@ function parseSynopBulletin(rawText: string): DecodedSynopStation[] {
     let rainAmount: string | undefined;
     let maxTemp: string | undefined;
 
-    // Check group 2: Nddff
-    if (tokens[2] && /^\d{5}$/.test(tokens[2])) {
-      const dd = parseInt(tokens[2].substring(1, 3), 10);
-      const ff = parseInt(tokens[2].substring(3, 5), 10);
-      windDir = decodeWindDirection(dd);
-      windSpeed = `${ff} นอต (${Math.round(ff * 1.852)} กม./ชม.)`;
+    // Collect all lines belonging to this station report
+    const stationLines = [line];
+    let k = i + 1;
+    while (k < lines.length) {
+      const nextLine = lines[k].trim();
+      if (!nextLine) {
+        k++;
+        continue;
+      }
+      const nextFirst = nextLine.split(/\s+/)[0];
+      if (/^\d{5}$/.test(nextFirst)) break;
+      stationLines.push(nextLine);
+      if (nextLine.endsWith("=")) {
+        k++;
+        break;
+      }
+      k++;
     }
 
-    for (let j = 1; j < tokens.length; j++) {
-      const tok = tokens[j].replace("=", "");
-      if (!/^\d{5}$/.test(tok)) continue;
+    const allStationTokens = stationLines.join(" ").split(/\s+/);
 
-      // 1s_nT T T (Temp)
-      if (tok.startsWith("1") && tok.length === 5) {
-        const sign = tok[1] === "1" ? "-" : "+";
-        const val = (parseInt(tok.substring(2), 10) / 10).toFixed(1);
-        temp = `${sign}${val} °C`;
-      }
-      // 2s_nT_dT_dT_d (Dew Point)
-      else if (tok.startsWith("2") && tok.length === 5 && tok[1] !== "0") {
-        const sign = tok[1] === "1" ? "-" : "+";
-        const val = (parseInt(tok.substring(2), 10) / 10).toFixed(1);
-        dewPoint = `${sign}${val} °C`;
-      }
-      // 3P_0P_0P_0P_0 (Station Level Pressure)
-      else if (tok.startsWith("3") && tok.length === 5 && !tok.startsWith("333")) {
-        let rawP = parseInt(tok.substring(1), 10);
-        if (rawP < 1000) rawP += 10000;
-        stationPressure = `${(rawP / 10).toFixed(1)} hPa`;
-      }
-      // 4PPPP (Sea Level Pressure)
-      else if (tok.startsWith("4") && tok.length === 5) {
-        let rawP = parseInt(tok.substring(1), 10);
-        if (rawP < 1000) rawP += 10000;
-        seaPressure = `${(rawP / 10).toFixed(1)} hPa`;
-      }
-      // 7wwW1W2 (Present weather)
-      else if (tok.startsWith("7") && tok.length === 5) {
-        const ww = parseInt(tok.substring(1, 3), 10);
-        presentWeather = decodePresentWeather(ww);
-      }
-    }
+    let isSection333 = false;
 
-    // Check line below for Section 333 (Max Temp & 24h Rain)
-    if (i + 1 < lines.length) {
-      const nextLine = lines[i + 1].trim();
-      if (nextLine.includes("333")) {
-        const subTokens = nextLine.split(/\s+/);
-        for (const st of subTokens) {
-          const cleanSt = st.replace("=", "");
-          // 58s_nT_xT_xT_x (Max Temp)
-          if (cleanSt.startsWith("58") && cleanSt.length === 5) {
-            const sign = cleanSt[2] === "1" ? "-" : "+";
-            const val = (parseInt(cleanSt.substring(3), 10) / 10).toFixed(1);
-            maxTemp = `${sign}${val} °C`;
-          }
-          // 7RRRR (Rain 24h)
-          else if (cleanSt.startsWith("70") && cleanSt.length === 5) {
-            const rawRain = parseInt(cleanSt.substring(1), 10);
-            rainAmount = `${(rawRain / 10).toFixed(1)} มม.`;
-          }
+    for (let j = 1; j < allStationTokens.length; j++) {
+      const tok = allStationTokens[j].replace("=", "");
+      if (!tok) continue;
+
+      if (tok === "333") {
+        isSection333 = true;
+        continue;
+      }
+
+      if (!isSection333) {
+        if (tok.startsWith("1") && tok.length === 5) {
+          const sign = tok[1] === "1" ? "-" : "+";
+          const val = (parseInt(tok.substring(2), 10) / 10).toFixed(1);
+          temp = `${sign}${val} °C`;
+        } else if (tok.startsWith("2") && tok.length === 5 && tok[1] !== "0") {
+          const sign = tok[1] === "1" ? "-" : "+";
+          const val = (parseInt(tok.substring(2), 10) / 10).toFixed(1);
+          dewPoint = `${sign}${val} °C`;
+        } else if (tok.startsWith("3") && tok.length === 5) {
+          let rawP = parseInt(tok.substring(1), 10);
+          if (rawP < 1000) rawP += 10000;
+          stationPressure = `${(rawP / 10).toFixed(1)} hPa`;
+        } else if (tok.startsWith("4") && tok.length === 5) {
+          let rawP = parseInt(tok.substring(1), 10);
+          if (rawP < 1000) rawP += 10000;
+          seaPressure = `${(rawP / 10).toFixed(1)} hPa`;
+        } else if (tok.startsWith("7") && tok.length === 5) {
+          const ww = parseInt(tok.substring(1, 3), 10);
+          presentWeather = decodePresentWeather(ww);
+        }
+      } else {
+        if ((tok.startsWith("1") || tok.startsWith("58")) && tok.length === 5) {
+          const startIdx = tok.startsWith("58") ? 2 : 1;
+          const sign = tok[startIdx] === "1" ? "-" : "+";
+          const val = (parseInt(tok.substring(startIdx + 1), 10) / 10).toFixed(1);
+          maxTemp = `${sign}${val} °C`;
+        } else if ((tok.startsWith("6") || tok.startsWith("7")) && tok.length === 5) {
+          const rawRain = parseInt(tok.substring(1, 4), 10);
+          rainAmount = `${(rawRain / 10).toFixed(1)} มม.`;
         }
       }
     }
