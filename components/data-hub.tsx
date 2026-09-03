@@ -35,7 +35,7 @@ import { GTSBulletin } from "@/app/api/ftp/route";
 
 export type WeatherCategory = "synoptic" | "upperair" | "warning" | "metar" | "notes";
 
-const UTC_HOURS = [
+const STANDARD_UTC_HOURS = [
   { utc: "00", ict: "07:00" },
   { utc: "03", ict: "10:00" },
   { utc: "06", ict: "13:00" },
@@ -46,10 +46,20 @@ const UTC_HOURS = [
   { utc: "21", ict: "04:00 (+1d)" },
 ];
 
-// Helper to calculate the closest/current standard 3-hour UTC observation cycle (00, 03, 06, 09, 12, 15, 18, 21)
-const getCurrentUtcCycle = (): string => {
+const METAR_UTC_HOURS = Array.from({ length: 24 }, (_, i) => {
+  const utcStr = String(i).padStart(2, "0");
+  const ictHour = (i + 7) % 24;
+  const isNextDay = i + 7 >= 24;
+  const ictStr = `${String(ictHour).padStart(2, "0")}:00${isNextDay ? " (+1d)" : ""}`;
+  return { utc: utcStr, ict: ictStr };
+});
+
+const getCurrentUtcCycle = (isHourly = false): string => {
   const now = new Date();
   const utcHours = now.getUTCHours();
+  if (isHourly) {
+    return String(utcHours).padStart(2, "0");
+  }
   const cycle = Math.floor(utcHours / 3) * 3;
   return String(cycle).padStart(2, "0");
 };
@@ -674,24 +684,33 @@ export default function DataHub() {
               <div className="space-y-2">
                 <label className="block text-xs font-semibold text-slate-300 text-center flex items-center justify-center gap-1.5">
                   <Clock className="w-4 h-4 text-cyan-400" />
-                  รอบเวลาตรวจวัดมาตรฐาน (UTC Cycle Time)
+                  รอบเวลาตรวจวัดมาตรฐาน (UTC Cycle Time{activeTab === "metar" ? " - ราย 1 ชม." : ""})
                 </label>
-                <div className="grid grid-cols-4 sm:grid-cols-8 gap-2 max-w-2xl mx-auto">
-                  {UTC_HOURS.map((item) => (
-                    <button
-                      key={item.utc}
-                      onClick={() => setSelectedUtc(item.utc)}
-                      className={`p-2 rounded-xl text-center border transition-all cursor-pointer flex flex-col items-center justify-center ${
-                        selectedUtc === item.utc
-                          ? "bg-gradient-to-tr from-cyan-500 to-blue-600 text-white border-cyan-300 shadow-md shadow-cyan-500/30 scale-105"
-                          : "bg-slate-900/70 text-slate-300 border-slate-800 hover:border-slate-700 hover:text-white"
-                      }`}
-                    >
-                      <span className="text-xs font-bold font-mono">{item.utc}. UTC</span>
-                      <span className="text-[10px] opacity-75 font-mono">({item.ict})</span>
-                    </button>
-                  ))}
-                </div>
+                {(() => {
+                  const utcHoursToDisplay = activeTab === "metar" ? METAR_UTC_HOURS : STANDARD_UTC_HOURS;
+                  const gridColsClass = activeTab === "metar"
+                    ? "grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-12 max-w-4xl"
+                    : "grid-cols-4 sm:grid-cols-8 max-w-2xl";
+
+                  return (
+                    <div className={`grid ${gridColsClass} gap-1.5 mx-auto`}>
+                      {utcHoursToDisplay.map((item) => (
+                        <button
+                          key={item.utc}
+                          onClick={() => setSelectedUtc(item.utc)}
+                          className={`p-1.5 rounded-xl text-center border transition-all cursor-pointer flex flex-col items-center justify-center ${
+                            selectedUtc === item.utc
+                              ? "bg-gradient-to-tr from-cyan-500 to-blue-600 text-white border-cyan-300 shadow-md shadow-cyan-500/30 scale-105"
+                              : "bg-slate-900/70 text-slate-300 border-slate-800 hover:border-slate-700 hover:text-white"
+                          }`}
+                        >
+                          <span className="text-[11px] font-bold font-mono">{item.utc}. UTC</span>
+                          <span className="text-[9px] opacity-75 font-mono">({item.ict})</span>
+                        </button>
+                      ))}
+                    </div>
+                  );
+                })()}
               </div>
 
               {/* 3. Country Select Dropdown */}
