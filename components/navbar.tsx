@@ -98,6 +98,12 @@ export default function Navbar() {
       icon: StickyNote,
       iconColor: "text-pink-400",
     },
+    {
+      label: t("บริการ API (API Developer Hub)", "API Developer Hub"),
+      href: "/api-docs",
+      icon: Zap,
+      iconColor: "text-emerald-400",
+    },
   ];
 
   // Submenu Items for "เกี่ยวกับเรา" (Read-Only)
@@ -224,6 +230,18 @@ export default function Navbar() {
               >
                 <FileText className="w-4 h-4 text-cyan-400" />
                 {t("เอกสารที่เกี่ยวข้อง", "Documents")}
+              </Link>
+
+              <Link
+                href="/api-docs"
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                  pathname === "/api-docs"
+                    ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-bold"
+                    : "text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10"
+                }`}
+              >
+                <Zap className="w-4 h-4 text-emerald-400 animate-pulse" />
+                <span>{t("บริการ API", "API Services")}</span>
               </Link>
 
               {/* Dropdown: เกี่ยวกับเรา (Read-Only Menu) */}
