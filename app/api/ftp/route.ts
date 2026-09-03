@@ -14,9 +14,27 @@ export interface GTSBulletin {
   utcTimeStr: string;
   dayStr: string;
   hourStr: string;
+  stations: string[];
   rawText: string;
   filename: string;
   folderPath: string;
+}
+
+function extractStationIds(rawText: string): string[] {
+  const stations: string[] = [];
+  const seen = new Set<string>();
+  const lines = rawText.split(/\r?\n/);
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+    const tokens = trimmed.split(/\s+/);
+    const firstToken = tokens[0];
+    if (/^\d{5}$/.test(firstToken) && !seen.has(firstToken)) {
+      seen.add(firstToken);
+      stations.push(firstToken);
+    }
+  }
+  return stations;
 }
 
 const MONTH_NAMES = [
@@ -401,6 +419,7 @@ export async function GET(request: Request) {
               utcTimeStr,
               dayStr,
               hourStr,
+              stations: extractStationIds(sanitizedRaw),
               rawText: sanitizedRaw,
               filename,
               folderPath: scanDir,
