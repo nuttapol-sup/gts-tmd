@@ -5,13 +5,11 @@ import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import {
   Zap,
-  Code,
   Check,
   Copy,
   Terminal,
   ShieldCheck,
   Globe,
-  Radio,
   Plane,
   AlertTriangle,
   Cloud,
@@ -96,7 +94,6 @@ const API_ENDPOINTS: ApiEndpointInfo[] = [
 
 export default function ApiDocsPage() {
   const { lang, t } = useLanguage();
-  const [activeTab, setActiveTab] = useState<string>("tryout");
   const [selectedEndpoint, setSelectedEndpoint] = useState<ApiEndpointInfo>(API_ENDPOINTS[0]);
   const [paramDate, setParamDate] = useState<string>("");
   const [paramCountry, setParamCountry] = useState<string>("");
@@ -104,9 +101,7 @@ export default function ApiDocsPage() {
 
   const [testResult, setTestResult] = useState<any | null>(null);
   const [isExecuting, setIsExecuting] = useState<boolean>(false);
-  const [copiedCodeLang, setCopiedCodeLang] = useState<string | null>(null);
   const [copiedResponse, setCopiedResponse] = useState<boolean>(false);
-  const [codeLang, setCodeLang] = useState<"curl" | "javascript" | "python" | "php" | "csharp">("curl");
 
   // Construct query string for tester
   const buildQueryUrl = (path: string) => {
@@ -144,78 +139,10 @@ export default function ApiDocsPage() {
     }
   };
 
-  const getCodeSnippet = (endpoint: ApiEndpointInfo, langType: typeof codeLang) => {
-    const fullUrl = `https://telecom.tmd.go.th${buildQueryUrl(endpoint.path)}`;
-
-    switch (langType) {
-      case "curl":
-        return `curl -X GET "${fullUrl}" \\
-  -H "Accept: application/json"`;
-
-      case "javascript":
-        return `// JavaScript (Fetch API)
-async function fetchWeatherData() {
-  const response = await fetch("${fullUrl}");
-  const data = await response.json();
-  console.log("Total bulletins:", data.count);
-  console.log("Bulletins:", data.bulletins);
-}
-
-fetchWeatherData();`;
-
-      case "python":
-        return `# Python (Requests Library)
-import requests
-
-url = "${fullUrl}"
-response = requests.get(url)
-
-if response.status_code == 200:
-    data = response.json()
-    print(f"Total count: {data.get('count')}")
-    for item in data.get("bulletins", []):
-        print(f"ID: {item['id']} | Header: {item['headerLine']}")
-        for st in item.get("stations", []):
-            print(f"  Station {st['stationId']}: {st['rawLine']}")`;
-
-      case "php":
-        return `<?php
-// PHP cURL / file_get_contents
-$url = "${fullUrl}";
-$json = file_get_contents($url);
-$data = json_decode($json, true);
-
-echo "Total count: " . $data['count'] . "\n";
-foreach ($data['bulletins'] as $b) {
-    echo "Header: " . $b['headerLine'] . "\n";
-    foreach ($b['stations'] as $st) {
-        echo " - " . $st['stationId'] . ": " . $st['rawLine'] . "\n";
-    }
-}
-?>`;
-
-      case "csharp":
-        return `// C# (.NET HttpClient)
-using System;
-using System.Net.Http;
-using System.Threading.Tasks;
-
-class Program
-{
-    static async Task Main()
-    {
-        using HttpClient client = new HttpClient();
-        string json = await client.GetStringAsync("${fullUrl}");
-        Console.WriteLine(json);
-    }
-}`;
-    }
-  };
-
-  const handleCopyCode = (text: string, langName: string) => {
+  const handleCopyJson = (text: string) => {
     navigator.clipboard.writeText(text);
-    setCopiedCodeLang(langName);
-    setTimeout(() => setCopiedCodeLang(null), 2000);
+    setCopiedResponse(true);
+    setTimeout(() => setCopiedResponse(false), 2000);
   };
 
   return (
@@ -276,10 +203,7 @@ class Program
               return (
                 <div
                   key={idx}
-                  onClick={() => {
-                    setSelectedEndpoint(endpoint);
-                    setActiveTab("tryout");
-                  }}
+                  onClick={() => setSelectedEndpoint(endpoint)}
                   className={`glass-panel rounded-2xl p-6 border transition-all duration-300 cursor-pointer flex flex-col justify-between space-y-4 hover:border-cyan-400/60 ${
                     isSelected
                       ? "border-cyan-400 bg-gradient-to-b from-[#0f2b45]/90 to-[#0b132b]/95 shadow-xl shadow-cyan-500/20 scale-[1.02]"
@@ -311,7 +235,7 @@ class Program
                   <div className="pt-3 border-t border-slate-800 flex items-center justify-between text-xs">
                     <span className="text-cyan-400 font-semibold flex items-center gap-1">
                       <Play className="w-3 h-3" />
-                      {t("คลิกเพื่อยิงทดสอบ (Try Out)", "Click to Try Out")}
+                      {t("คลิกเพื่อทดสอบยิง API", "Click to Test API")}
                     </span>
                     <ExternalLink className="w-3.5 h-3.5 text-slate-500" />
                   </div>
@@ -321,9 +245,9 @@ class Program
           </div>
         </div>
 
-        {/* Interactive Try-It-Out & Code Generator Workspace */}
+        {/* Interactive Try-It-Out Developer Console Workspace */}
         <div className="glass-panel rounded-3xl p-6 sm:p-8 border border-cyan-500/30 space-y-6 bg-slate-900/90 shadow-2xl">
-          {/* Workspace Tabs Header */}
+          {/* Workspace Header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
             <div className="flex items-center gap-2">
               <Terminal className="w-6 h-6 text-emerald-400" />
@@ -337,198 +261,115 @@ class Program
                 </p>
               </div>
             </div>
-
-            {/* Mode Switcher */}
-            <div className="flex items-center p-1 bg-slate-950 rounded-xl border border-cyan-500/30 self-start sm:self-auto">
-              <button
-                onClick={() => setActiveTab("tryout")}
-                className={`px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                  activeTab === "tryout"
-                    ? "bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-md"
-                    : "text-slate-400 hover:text-white"
-                }`}
-              >
-                <Play className="w-3.5 h-3.5" />
-                <span>{t("ทดสอบยิง API สด (Live Try Out)", "Live Tester")}</span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab("code")}
-                className={`px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                  activeTab === "code"
-                    ? "bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-md"
-                    : "text-slate-400 hover:text-white"
-                }`}
-              >
-                <Code className="w-3.5 h-3.5" />
-                <span>{t("ตัวอย่างโค้ด (Code Snippets)", "Code Snippets")}</span>
-              </button>
-            </div>
           </div>
 
-          {/* TAB 1: LIVE TESTER */}
-          {activeTab === "tryout" && (
-            <div className="space-y-6">
-              {/* Parameters Input Form */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-slate-950/80 p-5 rounded-2xl border border-cyan-500/30">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                    {t("1. วันที่ (date - YYYY-MM-DD)", "1. Date (YYYY-MM-DD)")}
-                  </label>
-                  <input
-                    type="date"
-                    value={paramDate}
-                    onChange={(e) => setParamDate(e.target.value)}
-                    placeholder="เช่น 2026-09-03"
-                    className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-cyan-400"
-                  />
-                  <span className="text-[10px] text-slate-500 mt-1 block">* ละเว้นเพื่อดึงวันปัจจุบัน</span>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                    {t("2. รหัสประเทศ (country)", "2. Country Code")}
-                  </label>
-                  <input
-                    type="text"
-                    value={paramCountry}
-                    onChange={(e) => setParamCountry(e.target.value.toUpperCase())}
-                    placeholder="เช่น VLIV (สปป.ลาว), VTBB (ไทย)"
-                    className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-cyan-400"
-                  />
-                  <span className="text-[10px] text-slate-500 mt-1 block">* ละเว้นเพื่อดึงทุกประเทศ</span>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                    {t("3. รหัสเวลา UTC (utc)", "3. UTC Hour (00, 06, 12)")}
-                  </label>
-                  <input
-                    type="text"
-                    value={paramUtc}
-                    onChange={(e) => setParamUtc(e.target.value)}
-                    placeholder="เช่น 00, 06, 12, 18"
-                    className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-cyan-400"
-                  />
-                  <span className="text-[10px] text-slate-500 mt-1 block">* ละเว้นเพื่อดึงทุกช่วงเวลา</span>
-                </div>
+          {/* LIVE TESTER */}
+          <div className="space-y-6">
+            {/* Parameters Input Form */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-slate-950/80 p-5 rounded-2xl border border-cyan-500/30">
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                  {t("1. วันที่ (date - YYYY-MM-DD)", "1. Date (YYYY-MM-DD)")}
+                </label>
+                <input
+                  type="date"
+                  value={paramDate}
+                  onChange={(e) => setParamDate(e.target.value)}
+                  placeholder="เช่น 2026-09-03"
+                  className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-cyan-400"
+                />
+                <span className="text-[10px] text-slate-500 mt-1 block">* ละเว้นเพื่อดึงวันปัจจุบัน</span>
               </div>
 
-              {/* Action Bar */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-900 p-4 rounded-2xl border border-cyan-500/20">
-                <div className="font-mono text-xs text-cyan-300 overflow-x-auto py-1">
-                  <span className="text-emerald-400 font-bold">GET</span> {buildQueryUrl(selectedEndpoint.path)}
-                </div>
-
-                <button
-                  onClick={handleExecuteTest}
-                  disabled={isExecuting}
-                  className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-xs font-extrabold bg-gradient-to-r from-emerald-500 to-teal-600 hover:brightness-110 text-white shadow-lg shadow-emerald-500/20 cursor-pointer disabled:opacity-50 shrink-0"
-                >
-                  {isExecuting ? (
-                    <>
-                      <RefreshCw className="w-4 h-4 animate-spin" />
-                      <span>กำลังยิง API...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Play className="w-4 h-4" />
-                      <span>{t("ยิงคำสั่งทดสอบ (Execute Request)", "Execute Request")}</span>
-                    </>
-                  )}
-                </button>
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                  {t("2. รหัสประเทศ (country)", "2. Country Code")}
+                </label>
+                <input
+                  type="text"
+                  value={paramCountry}
+                  onChange={(e) => setParamCountry(e.target.value.toUpperCase())}
+                  placeholder="เช่น VLIV (สปป.ลาว), VTBB (ไทย)"
+                  className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-cyan-400"
+                />
+                <span className="text-[10px] text-slate-500 mt-1 block">* ละเว้นเพื่อดึงทุกประเทศ</span>
               </div>
 
-              {/* Test Result JSON Window */}
-              {testResult && (
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="px-2.5 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 font-mono text-xs font-bold border border-emerald-500/40">
-                        Status: {testResult.status} {testResult.statusText}
-                      </span>
-                      <span className="text-xs text-slate-400">Response JSON</span>
-                    </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                  {t("3. รหัสเวลา UTC (utc)", "3. UTC Hour (00, 06, 12)")}
+                </label>
+                <input
+                  type="text"
+                  value={paramUtc}
+                  onChange={(e) => setParamUtc(e.target.value)}
+                  placeholder="เช่น 00, 06, 12, 18"
+                  className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-cyan-400"
+                />
+                <span className="text-[10px] text-slate-500 mt-1 block">* ละเว้นเพื่อดึงทุกช่วงเวลา</span>
+              </div>
+            </div>
 
-                    <button
-                      onClick={() => handleCopyCode(JSON.stringify(testResult.data, null, 2), "json")}
-                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-cyan-300 border border-cyan-500/30 cursor-pointer"
-                    >
-                      {copiedCodeLang === "json" ? (
-                        <>
-                          <Check className="w-3.5 h-3.5 text-emerald-400" />
-                          <span className="text-emerald-300">คัดลอก JSON แล้ว</span>
-                        </>
-                      ) : (
-                        <>
-                          <Copy className="w-3.5 h-3.5" />
-                          <span>คัดลอกผลลัพธ์ JSON</span>
-                        </>
-                      )}
-                    </button>
+            {/* Action Bar */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-900 p-4 rounded-2xl border border-cyan-500/20">
+              <div className="font-mono text-xs text-cyan-300 overflow-x-auto py-1">
+                <span className="text-emerald-400 font-bold">GET</span> {buildQueryUrl(selectedEndpoint.path)}
+              </div>
+
+              <button
+                onClick={handleExecuteTest}
+                disabled={isExecuting}
+                className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-xs font-extrabold bg-gradient-to-r from-emerald-500 to-teal-600 hover:brightness-110 text-white shadow-lg shadow-emerald-500/20 cursor-pointer disabled:opacity-50 shrink-0"
+              >
+                {isExecuting ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                    <span>กำลังยิง API...</span>
+                  </>
+                ) : (
+                  <>
+                    <Play className="w-4 h-4" />
+                    <span>{t("ยิงคำสั่งทดสอบ (Execute Request)", "Execute Request")}</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* Test Result JSON Window */}
+            {testResult && (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="px-2.5 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 font-mono text-xs font-bold border border-emerald-500/40">
+                      Status: {testResult.status} {testResult.statusText}
+                    </span>
+                    <span className="text-xs text-slate-400">Response JSON</span>
                   </div>
 
-                  <pre className="p-5 rounded-2xl bg-slate-950 border border-cyan-500/40 font-mono text-xs text-cyan-300 overflow-x-auto whitespace-pre-wrap leading-relaxed shadow-inner max-h-[500px] overflow-y-auto">
-                    <code>{JSON.stringify(testResult.data, null, 2)}</code>
-                  </pre>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* TAB 2: CODE SNIPPETS GENERATOR */}
-          {activeTab === "code" && (
-            <div className="space-y-4">
-              {/* Language Switcher */}
-              <div className="flex flex-wrap items-center gap-2 border-b border-slate-800 pb-3">
-                {[
-                  { id: "curl", label: "cURL (Terminal)" },
-                  { id: "javascript", label: "JavaScript (Fetch)" },
-                  { id: "python", label: "Python (Requests)" },
-                  { id: "php", label: "PHP (cURL)" },
-                  { id: "csharp", label: "C# (.NET)" },
-                ].map((item) => (
                   <button
-                    key={item.id}
-                    onClick={() => setCodeLang(item.id as any)}
-                    className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                      codeLang === item.id
-                        ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 shadow-md"
-                        : "text-slate-400 hover:text-white hover:bg-slate-800"
-                    }`}
+                    onClick={() => handleCopyJson(JSON.stringify(testResult.data, null, 2))}
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-cyan-300 border border-cyan-500/30 cursor-pointer"
                   >
-                    {item.label}
+                    {copiedResponse ? (
+                      <>
+                        <Check className="w-3.5 h-3.5 text-emerald-400" />
+                        <span className="text-emerald-300">คัดลอก JSON แล้ว</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3.5 h-3.5" />
+                        <span>คัดลอกผลลัพธ์ JSON</span>
+                      </>
+                    )}
                   </button>
-                ))}
-              </div>
+                </div>
 
-              {/* Code Box */}
-              <div className="relative">
-                <button
-                  onClick={() =>
-                    handleCopyCode(getCodeSnippet(selectedEndpoint, codeLang), codeLang)
-                  }
-                  className="absolute top-3 right-3 z-10 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-cyan-300 border border-cyan-500/40 cursor-pointer shadow-lg"
-                >
-                  {copiedCodeLang === codeLang ? (
-                    <>
-                      <Check className="w-3.5 h-3.5 text-emerald-400" />
-                      <span className="text-emerald-300">คัดลอกโค้ดแล้ว</span>
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-3.5 h-3.5" />
-                      <span>คัดลอกโค้ด</span>
-                    </>
-                  )}
-                </button>
-
-                <pre className="p-6 rounded-2xl bg-slate-950 border border-cyan-500/40 font-mono text-xs sm:text-sm text-cyan-300 overflow-x-auto leading-relaxed shadow-inner">
-                  <code>{getCodeSnippet(selectedEndpoint, codeLang)}</code>
+                <pre className="p-5 rounded-2xl bg-slate-950 border border-cyan-500/40 font-mono text-xs text-cyan-300 overflow-x-auto whitespace-pre-wrap leading-relaxed shadow-inner max-h-[500px] overflow-y-auto">
+                  <code>{JSON.stringify(testResult.data, null, 2)}</code>
                 </pre>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
 
