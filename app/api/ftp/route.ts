@@ -7,6 +7,7 @@ export const dynamic = "force-dynamic";
 export interface GTSStationItem {
   stationId: string;
   rawLine: string;
+  isStation: boolean;
 }
 
 export interface GTSBulletin {
@@ -30,6 +31,7 @@ function extractStationObjects(rawText: string): GTSStationItem[] {
 
   let currentStationId: string | null = null;
   let currentLines: string[] = [];
+  let currentIsStation = false;
 
   for (const line of lines) {
     const trimmed = line.trim();
@@ -67,28 +69,34 @@ function extractStationObjects(rawText: string): GTSStationItem[] {
         stations.push({
           stationId: currentStationId,
           rawLine: currentLines.join(" "),
+          isStation: currentIsStation,
         });
         currentStationId = null;
         currentLines = [];
+        currentIsStation = false;
       }
     } else if (isWmoId || isIcaoId) {
       // Start a new station report
       currentStationId = isWmoId ? firstToken : extractedId;
       currentLines = [trimmed];
+      currentIsStation = true;
 
       if (trimmed.endsWith("=") || trimmed.includes("=")) {
         stations.push({
           stationId: currentStationId,
           rawLine: currentLines.join(" "),
+          isStation: currentIsStation,
         });
         currentStationId = null;
         currentLines = [];
+        currentIsStation = false;
       }
     } else {
       // General body line before any station block (e.g., "AAXX 01001")
       stations.push({
         stationId: firstToken.toUpperCase(),
         rawLine: trimmed,
+        isStation: false,
       });
     }
   }
@@ -97,6 +105,7 @@ function extractStationObjects(rawText: string): GTSStationItem[] {
     stations.push({
       stationId: currentStationId,
       rawLine: currentLines.join(" "),
+      isStation: currentIsStation,
     });
   }
 
