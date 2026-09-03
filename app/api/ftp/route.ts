@@ -4,6 +4,11 @@ import path from "path";
 
 export const dynamic = "force-dynamic";
 
+export interface GTSStationItem {
+  stationId: string;
+  rawLine: string;
+}
+
 export interface GTSBulletin {
   id: string;
   category: "synoptic" | "upperair" | "warning" | "metar" | "notes" | "burf";
@@ -14,14 +19,14 @@ export interface GTSBulletin {
   utcTimeStr: string;
   dayStr: string;
   hourStr: string;
-  stations: string[];
+  stations: GTSStationItem[];
   rawText: string;
   filename: string;
   folderPath: string;
 }
 
-function extractStationIds(rawText: string): string[] {
-  const stations: string[] = [];
+function extractStationObjects(rawText: string): GTSStationItem[] {
+  const stations: GTSStationItem[] = [];
   const seen = new Set<string>();
   const lines = rawText.split(/\r?\n/);
   for (const line of lines) {
@@ -31,7 +36,10 @@ function extractStationIds(rawText: string): string[] {
     const firstToken = tokens[0];
     if (/^\d{5}$/.test(firstToken) && !seen.has(firstToken)) {
       seen.add(firstToken);
-      stations.push(firstToken);
+      stations.push({
+        stationId: firstToken,
+        rawLine: trimmed,
+      });
     }
   }
   return stations;
@@ -419,7 +427,7 @@ export async function GET(request: Request) {
               utcTimeStr,
               dayStr,
               hourStr,
-              stations: extractStationIds(sanitizedRaw),
+              stations: extractStationObjects(sanitizedRaw),
               rawText: sanitizedRaw,
               filename,
               folderPath: scanDir,
