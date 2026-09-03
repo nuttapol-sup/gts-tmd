@@ -571,8 +571,6 @@ export async function GET(request: Request) {
           dataType: b.dataType,
           countryCode: b.countryCode,
           utcTimeStr: b.utcTimeStr,
-          dayStr: b.dayStr,
-          hourStr: b.hourStr,
           stations: b.stations,
         });
       }
