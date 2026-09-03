@@ -844,7 +844,7 @@ export default function DataHub() {
                                   {itemsInRow.map((item) => (
                                     <a
                                       key={item.id}
-                                      href={`/services?tab=${activeTab}&date=${selectedDate}&utc=${selectedUtc}&country=${selectedCountry}&bulletinId=${encodeURIComponent(item.id)}`}
+                                      href={`/services?tab=${activeTab}&date=${selectedDate}&utc=${selectedUtc}&country=${selectedCountry}&bulletinId=${encodeURIComponent(item.id)}&bulletinHeader=${encodeURIComponent(item.headerLine || item.dataType)}`}
                                       target="_blank"
                                       rel="noopener noreferrer"
                                       className="px-3.5 py-1.5 rounded-xl bg-cyan-950/80 hover:bg-cyan-600 hover:text-white text-cyan-300 font-semibold border border-cyan-500/40 hover:border-cyan-300 transition-all cursor-pointer shadow-md text-xs sm:text-sm inline-flex items-center gap-1.5"
