@@ -45,18 +45,31 @@ function extractStationObjects(rawText: string): GTSStationItem[] {
       continue;
     }
 
+    const upperFirst = firstToken.toUpperCase();
+
     // Pattern 1: 5-digit WMO station ID (e.g., 48921, 36104)
-    const isWmoId = /^\d{5}$/.test(firstToken);
+    let isWmoId = /^\d{5}$/.test(firstToken);
+    let extractedId = firstToken;
+
+    // Pattern 1b: Upper Air Report Header (e.g., "TTDD 0100/ 20744", "TTAA 03121 48455", "PILOT 03121 48455")
+    const isUpperAirHeader = /^(TT|PP)[A-D]{2}$/i.test(upperFirst) || ["PILOT", "TEMP"].includes(upperFirst);
+    if (isUpperAirHeader) {
+      if (tokens[2] && /^\d{5}$/.test(tokens[2])) {
+        isWmoId = true;
+        extractedId = tokens[2];
+      } else if (tokens[1] && /^\d{5}$/.test(tokens[1])) {
+        isWmoId = true;
+        extractedId = tokens[1];
+      }
+    }
 
     // Pattern 2: 4-letter ICAO station ID (e.g., VTBD, VTBS, WMKK, WSSS) or METAR/SPECI/TAF
     let isIcaoId = false;
-    let extractedId = firstToken;
 
-    const upperFirst = firstToken.toUpperCase();
     if (["METAR", "SPECI", "TAF"].includes(upperFirst) && tokens[1] && /^[A-Z]{4}$/i.test(tokens[1])) {
       isIcaoId = true;
       extractedId = tokens[1].toUpperCase();
-    } else if (/^[A-Z]{4}$/i.test(firstToken) && upperFirst !== "AUTO" && upperFirst !== "NIL" && upperFirst !== "COR" && upperFirst !== "AMD" && upperFirst !== "AAXX") {
+    } else if (/^[A-Z]{4}$/i.test(firstToken) && upperFirst !== "AUTO" && upperFirst !== "NIL" && upperFirst !== "COR" && upperFirst !== "AMD" && upperFirst !== "AAXX" && !isUpperAirHeader) {
       isIcaoId = true;
       extractedId = upperFirst;
     }
@@ -77,7 +90,7 @@ function extractStationObjects(rawText: string): GTSStationItem[] {
       }
     } else if (isWmoId || isIcaoId) {
       // Start a new station report
-      currentStationId = isWmoId ? firstToken : extractedId;
+      currentStationId = extractedId;
       currentLines = [trimmed];
       currentIsStation = true;
 
