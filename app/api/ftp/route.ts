@@ -38,8 +38,31 @@ function extractStationObjects(rawText: string): GTSStationItem[] {
     const tokens = trimmed.split(/\s+/);
     const firstToken = tokens[0];
 
-    // Check if line starts a new 5-digit WMO station ID
-    if (/^\d{5}$/.test(firstToken)) {
+    // Skip bulletin header line (e.g., "FTTH20 VTBB 030500", "SMLA01 VLIV 010000")
+    if (tokens.length === 3 && /^[A-Z0-9]{4,6}$/i.test(tokens[0]) && /^\d{6}$/.test(tokens[2])) {
+      continue;
+    }
+    if (trimmed === "AAXX" || trimmed.startsWith("AAXX ")) {
+      continue;
+    }
+
+    // Pattern 1: 5-digit WMO station ID (e.g., 48921)
+    const isWmoId = /^\d{5}$/.test(firstToken);
+
+    // Pattern 2: 4-letter ICAO station ID (e.g., VTBD, VTBS, WMKK, WSSS) or METAR/SPECI/TAF
+    let isIcaoId = false;
+    let extractedId = firstToken;
+
+    const upperFirst = firstToken.toUpperCase();
+    if (["METAR", "SPECI", "TAF"].includes(upperFirst) && tokens[1] && /^[A-Z]{4}$/i.test(tokens[1])) {
+      isIcaoId = true;
+      extractedId = tokens[1].toUpperCase();
+    } else if (/^[A-Z]{4}$/i.test(firstToken) && upperFirst !== "AUTO" && upperFirst !== "NIL" && upperFirst !== "COR" && upperFirst !== "AMD") {
+      isIcaoId = true;
+      extractedId = upperFirst;
+    }
+
+    if (isWmoId || isIcaoId) {
       if (currentStationId && currentLines.length > 0) {
         stations.push({
           stationId: currentStationId,
@@ -47,7 +70,7 @@ function extractStationObjects(rawText: string): GTSStationItem[] {
         });
       }
 
-      currentStationId = firstToken;
+      currentStationId = isWmoId ? firstToken : extractedId;
       currentLines = [trimmed];
 
       if (trimmed.endsWith("=")) {
@@ -59,7 +82,7 @@ function extractStationObjects(rawText: string): GTSStationItem[] {
         currentLines = [];
       }
     } else if (currentStationId) {
-      // Continuation line (e.g., Section 333 58000 60017 70012=)
+      // Continuation line for active station
       currentLines.push(trimmed);
 
       if (trimmed.endsWith("=")) {
@@ -70,6 +93,12 @@ function extractStationObjects(rawText: string): GTSStationItem[] {
         currentStationId = null;
         currentLines = [];
       }
+    } else {
+      // General body line (for bulletins without WMO/ICAO station headers)
+      stations.push({
+        stationId: firstToken.toUpperCase(),
+        rawLine: trimmed,
+      });
     }
   }
 
