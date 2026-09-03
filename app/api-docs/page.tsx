@@ -92,6 +92,49 @@ const API_ENDPOINTS: ApiEndpointInfo[] = [
   },
 ];
 
+const COUNTRY_OPTIONS = [
+  { value: "", label: "ทุกประเทศ (All Countries)" },
+  { value: "VTBB", label: "🇹🇭 ประเทศไทย (Thailand - VTBB)" },
+  { value: "VLIV", label: "🇱🇦 สปป.ลาว (Laos - VLIV)" },
+  { value: "VVGL", label: "🇻🇳 เวียดนาม (Vietnam - VVGL)" },
+  { value: "VYYY", label: "🇲🇲 เมียนมา (Myanmar - VYYY)" },
+  { value: "WMKK", label: "🇲🇾 มาเลเซีย (Malaysia - WMKK)" },
+  { value: "WSSS", label: "🇸🇬 สิงคโปร์ (Singapore - WSSS)" },
+  { value: "RPLL", label: "🇵🇭 ฟิลิปปินส์ (Philippines - RPLL)" },
+  { value: "VDPP", label: "🇰🇭 กัมพูชา (Cambodia - VDPP)" },
+  { value: "WBKK", label: "🇧🇳 บรูไน (Brunei - WBKK)" },
+  { value: "RJTD", label: "🇯🇵 ญี่ปุ่น (Japan - RJTD)" },
+  { value: "RKSL", label: "🇰🇷 เกาหลีใต้ (South Korea - RKSL)" },
+  { value: "ZBBB", label: "🇨🇳 จีน (China - ZBBB)" },
+  { value: "VMMC", label: "🇲🇴 มาเก๊า (Macau - VMMC)" },
+  { value: "VHHH", label: "🇭🇰 ฮ่องกง (Hong Kong - VHHH)" },
+  { value: "RCSS", label: "🇹🇼 ไต้หวัน (Taiwan - RCSS)" },
+  { value: "VIDP", label: "🇮🇳 อินเดีย (India - VIDP)" },
+  { value: "VGHS", label: "🇧🇩 บังกลาเทศ (Bangladesh - VGHS)" },
+  { value: "VNSD", label: "🇳🇵 เนปาล (Nepal - VNSD)" },
+  { value: "VRMM", label: "🇲🇻 มัลดีฟส์ (Maldives - VRMM)" },
+  { value: "OPKC", label: "🇵🇰 ปากีสถาน (Pakistan - OPKC)" },
+  { value: "VCBI", label: "🇱🇰 ศรีลังกา (Sri Lanka - VCBI)" },
+  { value: "AMMC", label: "🇦🇺 ออสเตรเลีย (Australia - AMMC)" },
+  { value: "NZKL", label: "🇳🇿 นิวซีแลนด์ (New Zealand - NZKL)" },
+  { value: "RUEP", label: "🇷🇺 รัสเซีย (Russia - RUEP)" },
+  { value: "EGGY", label: "🇬🇧 สหราชอาณาจักร (United Kingdom - EGGY)" },
+  { value: "KWBC", label: "🇺🇸 สหรัฐอเมริกา (United States - KWBC)" },
+  { value: "SABE", label: "🇦🇷 อาร์เจนตินา (Argentina - SABE)" },
+  { value: "SBBR", label: "🇧🇷 บราซิล (Brazil - SBBR)" },
+  { value: "HECA", label: "🇪🇬 อียิปต์ (Egypt - HECA)" },
+  { value: "FAOR", label: "🇿🇦 แอฟริกาใต้ (South Africa - FAOR)" },
+  { value: "OKBK", label: "🇰🇼 คูเวต (Kuwait - OKBK)" },
+  { value: "OMDB", label: "🇦🇪 สหรัฐอาหรับเอมิเรตส์ (UAE - OMDB)" },
+  { value: "OEJD", label: "🇸🇦 ซาอุดีอาระเบีย (Saudi Arabia - OEJD)" },
+  { value: "OIII", label: "🇮🇷 อิหร่าน (Iran - OIII)" },
+  { value: "ORBI", label: "🇮🇶 อิรัก (Iraq - ORBI)" },
+  { value: "LLBG", label: "🇮🇱 อิสราเอล (Israel - LLBG)" },
+  { value: "LTAC", label: "🇹🇷 ตุรกี (Turkey - LTAC)" },
+  { value: "UAAA", label: "🇰🇿 คาซัคสถาน (Kazakhstan - UAAA)" },
+  { value: "UTTT", label: "🇺🇿 อุซเบกิสถาน (Uzbekistan - UTTT)" },
+];
+
 export default function ApiDocsPage() {
   const { lang, t } = useLanguage();
   const [selectedEndpoint, setSelectedEndpoint] = useState<ApiEndpointInfo>(API_ENDPOINTS[0]);
@@ -285,14 +328,18 @@ export default function ApiDocsPage() {
                 <label className="block text-xs font-semibold text-slate-300 mb-1.5">
                   {t("2. รหัสประเทศ (country)", "2. Country Code")}
                 </label>
-                <input
-                  type="text"
+                <select
                   value={paramCountry}
-                  onChange={(e) => setParamCountry(e.target.value.toUpperCase())}
-                  placeholder="เช่น VLIV (สปป.ลาว), VTBB (ไทย)"
-                  className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-cyan-400"
-                />
-                <span className="text-[10px] text-slate-500 mt-1 block">* ละเว้นเพื่อดึงทุกประเทศ</span>
+                  onChange={(e) => setParamCountry(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-cyan-400 cursor-pointer"
+                >
+                  {COUNTRY_OPTIONS.map((c) => (
+                    <option key={c.value} value={c.value} className="bg-slate-900 text-white py-1">
+                      {c.label}
+                    </option>
+                  ))}
+                </select>
+                <span className="text-[10px] text-slate-500 mt-1 block">* เลือกประเทศที่ต้องการกรอง</span>
               </div>
 
               <div>
