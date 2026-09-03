@@ -8,6 +8,7 @@ const prompt = Prompt({
   subsets: ["thai", "latin"],
   variable: "--font-prompt",
   display: "swap",
+  adjustFontFallback: false,
 });
 
 const kanit = Kanit({
@@ -15,6 +16,7 @@ const kanit = Kanit({
   subsets: ["thai", "latin"],
   variable: "--font-kanit",
   display: "swap",
+  adjustFontFallback: false,
 });
 
 const jetbrainsMono = JetBrains_Mono({
@@ -22,6 +24,7 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-jetbrains",
   display: "swap",
+  adjustFontFallback: false,
 });
 
 export const metadata: Metadata = {
