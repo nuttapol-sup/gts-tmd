@@ -440,6 +440,102 @@ export async function GET(request: Request) {
       }
     }
 
+    // If no bulletins found for today's date (e.g. local test environment), fallback to scanning recent files
+    if (bulletins.length === 0 && !dateParam) {
+      for (const scanDir of dirsToScan) {
+        if (!fs.existsSync(scanDir)) continue;
+        let filesInDir: string[] = [];
+        try {
+          filesInDir = fs.readdirSync(scanDir);
+        } catch (e) {
+          continue;
+        }
+
+        filesInDir.sort((a, b) => b.localeCompare(a, undefined, { numeric: true }));
+        const recentFiles = filesInDir.slice(0, 15);
+
+        for (const filename of recentFiles) {
+          const filePath = path.join(scanDir, filename);
+          let stat;
+          try {
+            stat = fs.statSync(filePath);
+          } catch (e) {
+            continue;
+          }
+          if (!stat.isFile()) continue;
+
+          try {
+            if (stat.size > 5 * 1024 * 1024) continue;
+            const fileContent = fs.readFileSync(filePath, "utf-8");
+            const blocks = fileContent.split(/ZCZC/i);
+
+            let blockIdx = 0;
+            for (const block of blocks) {
+              blockIdx++;
+              if (!block.trim()) continue;
+
+              let nnnnIdx = block.indexOf("NNNN");
+              let body = nnnnIdx !== -1 ? block.substring(0, nnnnIdx) : block;
+              const cleanRaw = body.replace(/ZCZC/gi, "").replace(/NNNN/gi, "").trim();
+
+              const lines = body.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+              if (lines.length === 0) continue;
+
+              let headerLine = "";
+              let dataType = "";
+              let countryCode = "";
+              let utcTimeStr = "";
+              let dayStr = "";
+              let hourStr = "";
+
+              for (const l of lines) {
+                const parts = l.split(/\s+/);
+                if (parts.length >= 3 && /^[A-Z0-9]{4,6}$/i.test(parts[0]) && /^\d{6}$/.test(parts[2])) {
+                  headerLine = l;
+                  dataType = parts[0];
+                  countryCode = parts[1];
+                  utcTimeStr = parts[2];
+                  dayStr = parts[2].substring(0, 2);
+                  hourStr = parts[2].substring(2, 4);
+                  break;
+                }
+              }
+
+              let category: GTSBulletin["category"] = "synoptic";
+              let categoryLabel = "ข่าว Synoptic (Surface)";
+
+              if (categoryParam === "synoptic" || category === "synoptic") {
+                const dtUpper = (dataType || "").trim().toUpperCase();
+                if (!dtUpper.startsWith("SM") && !dtUpper.startsWith("SI")) {
+                  continue;
+                }
+              }
+
+              const sanitizedRaw = cleanBinaryText(cleanRaw);
+
+              bulletins.push({
+                id: `ftp-${filename}-${blockIdx}`,
+                category,
+                categoryLabel,
+                headerLine,
+                dataType,
+                countryCode,
+                utcTimeStr,
+                dayStr,
+                hourStr,
+                stations: extractStationObjects(sanitizedRaw),
+                rawText: sanitizedRaw,
+                filename,
+                folderPath: scanDir,
+              });
+            }
+          } catch (e) {
+            continue;
+          }
+        }
+      }
+    }
+
     // Sort bulletins so latest (newest) data appears FIRST
     bulletins.sort((a, b) => {
       if (b.filename !== a.filename) {
