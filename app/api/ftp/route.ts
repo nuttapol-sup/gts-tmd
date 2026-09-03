@@ -92,11 +92,18 @@ export async function GET(request: Request) {
     let targetDay = "";
     let targetMonthStr = "";
     let targetYear2D = "";
-    let targetYearBE = "2569"; // default 2026 -> พ.ศ. 2569
+    let targetYearBE = "2569";
     let targetYearAD = "2026";
+    const now = new Date();
+    const defaultYyyy = now.getUTCFullYear();
+    const defaultMm = String(now.getUTCMonth() + 1).padStart(2, "0");
+    const defaultDd = String(now.getUTCDate()).padStart(2, "0");
+    const todayStr = `${defaultYyyy}-${defaultMm}-${defaultDd}`;
 
-    if (dateParam) {
-      const parts = dateParam.split("-");
+    const activeDateParam = dateParam || todayStr;
+
+    if (activeDateParam) {
+      const parts = activeDateParam.split("-");
       if (parts.length === 3) {
         const yyyyNum = parseInt(parts[0], 10);
         const mmNum = parseInt(parts[1], 10);
@@ -111,7 +118,7 @@ export async function GET(request: Request) {
           targetMonthStr = MONTH_NAMES[mmNum - 1];
         }
       } else {
-        targetDay = dateParam.padStart(2, "0");
+        targetDay = activeDateParam.padStart(2, "0");
       }
     }
 
