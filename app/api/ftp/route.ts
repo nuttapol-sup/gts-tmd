@@ -38,15 +38,12 @@ function extractStationObjects(rawText: string): GTSStationItem[] {
     const tokens = trimmed.split(/\s+/);
     const firstToken = tokens[0];
 
-    // Skip bulletin header line (e.g., "FTTH20 VTBB 030500", "SMLA01 VLIV 010000")
-    if (tokens.length === 3 && /^[A-Z0-9]{4,6}$/i.test(tokens[0]) && /^\d{6}$/.test(tokens[2])) {
-      continue;
-    }
-    if (trimmed === "AAXX" || trimmed.startsWith("AAXX ")) {
+    // Skip bulletin header line (e.g., "FTTH20 VTBB 030500", "SMRA11 RUNW 010000 RRU")
+    if (tokens.length >= 3 && /^[A-Z0-9]{4,6}$/i.test(tokens[0]) && /^\d{6}$/.test(tokens[2])) {
       continue;
     }
 
-    // Pattern 1: 5-digit WMO station ID (e.g., 48921)
+    // Pattern 1: 5-digit WMO station ID (e.g., 48921, 36104)
     const isWmoId = /^\d{5}$/.test(firstToken);
 
     // Pattern 2: 4-letter ICAO station ID (e.g., VTBD, VTBS, WMKK, WSSS) or METAR/SPECI/TAF
@@ -57,7 +54,7 @@ function extractStationObjects(rawText: string): GTSStationItem[] {
     if (["METAR", "SPECI", "TAF"].includes(upperFirst) && tokens[1] && /^[A-Z]{4}$/i.test(tokens[1])) {
       isIcaoId = true;
       extractedId = tokens[1].toUpperCase();
-    } else if (/^[A-Z]{4}$/i.test(firstToken) && upperFirst !== "AUTO" && upperFirst !== "NIL" && upperFirst !== "COR" && upperFirst !== "AMD") {
+    } else if (/^[A-Z]{4}$/i.test(firstToken) && upperFirst !== "AUTO" && upperFirst !== "NIL" && upperFirst !== "COR" && upperFirst !== "AMD" && upperFirst !== "AAXX") {
       isIcaoId = true;
       extractedId = upperFirst;
     }
