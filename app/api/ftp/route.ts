@@ -26,21 +26,60 @@ export interface GTSBulletin {
 
 function extractStationObjects(rawText: string): GTSStationItem[] {
   const stations: GTSStationItem[] = [];
-  const seen = new Set<string>();
   const lines = rawText.split(/\r?\n/);
+
+  let currentStationId: string | null = null;
+  let currentLines: string[] = [];
+
   for (const line of lines) {
     const trimmed = line.trim();
     if (!trimmed) continue;
+
     const tokens = trimmed.split(/\s+/);
     const firstToken = tokens[0];
-    if (/^\d{5}$/.test(firstToken) && !seen.has(firstToken)) {
-      seen.add(firstToken);
-      stations.push({
-        stationId: firstToken,
-        rawLine: trimmed,
-      });
+
+    // Check if line starts a new 5-digit WMO station ID
+    if (/^\d{5}$/.test(firstToken)) {
+      if (currentStationId && currentLines.length > 0) {
+        stations.push({
+          stationId: currentStationId,
+          rawLine: currentLines.join("\n"),
+        });
+      }
+
+      currentStationId = firstToken;
+      currentLines = [trimmed];
+
+      if (trimmed.endsWith("=")) {
+        stations.push({
+          stationId: currentStationId,
+          rawLine: currentLines.join("\n"),
+        });
+        currentStationId = null;
+        currentLines = [];
+      }
+    } else if (currentStationId) {
+      // Continuation line (e.g., Section 333 58000 60017 70012=)
+      currentLines.push(trimmed);
+
+      if (trimmed.endsWith("=")) {
+        stations.push({
+          stationId: currentStationId,
+          rawLine: currentLines.join("\n"),
+        });
+        currentStationId = null;
+        currentLines = [];
+      }
     }
   }
+
+  if (currentStationId && currentLines.length > 0) {
+    stations.push({
+      stationId: currentStationId,
+      rawLine: currentLines.join("\n"),
+    });
+  }
+
   return stations;
 }
 
