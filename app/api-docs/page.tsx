@@ -135,10 +135,18 @@ const COUNTRY_OPTIONS = [
   { value: "UTTT", label: "🇺🇿 อุซเบกิสถาน (Uzbekistan - UTTT)" },
 ];
 
+function getTodayDateStr() {
+  const d = new Date();
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 export default function ApiDocsPage() {
   const { lang, t } = useLanguage();
   const [selectedEndpoint, setSelectedEndpoint] = useState<ApiEndpointInfo>(API_ENDPOINTS[0]);
-  const [paramDate, setParamDate] = useState<string>("");
+  const [paramDate, setParamDate] = useState<string>(getTodayDateStr());
   const [paramCountry, setParamCountry] = useState<string>("");
   const [paramUtc, setParamUtc] = useState<string>("");
 
