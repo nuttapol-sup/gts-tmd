@@ -89,12 +89,13 @@ const COUNTRIES = [
   { value: "UTTT", name: "Uzbekistan", flag: "🇺🇿", iso: "uz" },
 ];
 
-function isSynopticBulletin(b: GTSBulletin): boolean {
+export function isSynopticBulletin(b: GTSBulletin): boolean {
   if (!b) return false;
   const cat = (b.category || "").toLowerCase();
   const label = (b.categoryLabel || "").toLowerCase();
-  const header = (b.headerLine || b.dataType || "").toUpperCase();
-  const raw = (b.rawText || "");
+  const header = (b.headerLine || "").toUpperCase();
+  const raw = (b.rawText || "").toUpperCase();
+
   return (
     cat === "synoptic" ||
     label.includes("synoptic") ||
@@ -106,6 +107,14 @@ function isSynopticBulletin(b: GTSBulletin): boolean {
   );
 }
 
+export function getBulletinRawText(b: GTSBulletin): string {
+  if (!b) return "";
+  if (b.rawText) return b.rawText;
+  if (b.stations && b.stations.length > 0) {
+    return `${b.headerLine}\n${b.stations.map((s) => s.rawLine).join("\n")}`;
+  }
+  return b.headerLine || "";
+}
 
 export interface DecodedSynopStation {
   stationId: string;
@@ -934,7 +943,7 @@ export default function DataHub() {
                               </button>
                             )}
                             <button
-                              onClick={() => handleCopy(bulletin.rawText, bulletin.id)}
+                              onClick={() => handleCopy(getBulletinRawText(bulletin), bulletin.id)}
                               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/30 transition-all cursor-pointer shrink-0"
                             >
                               {copiedId === bulletin.id ? (
@@ -953,7 +962,7 @@ export default function DataHub() {
                         </div>
 
                         <pre className="p-5 rounded-2xl bg-slate-950 border border-cyan-500/40 font-mono text-xs sm:text-sm text-cyan-300 overflow-x-auto whitespace-pre-wrap leading-relaxed shadow-inner max-h-[500px] overflow-y-auto">
-                          <code>{bulletin.rawText}</code>
+                          <code>{getBulletinRawText(bulletin)}</code>
                         </pre>
                       </div>
                     ))}
@@ -1034,7 +1043,7 @@ export default function DataHub() {
                                     </button>
                                   )}
                                   <button
-                                    onClick={() => handleCopy(bulletin.rawText, bulletin.id)}
+                                    onClick={() => handleCopy(getBulletinRawText(bulletin), bulletin.id)}
                                     className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/30 transition-all cursor-pointer"
                                   >
                                   {copiedId === bulletin.id ? (
@@ -1053,7 +1062,7 @@ export default function DataHub() {
                               </div>
 
                               <pre className="p-4 rounded-xl bg-slate-950 border border-cyan-500/30 font-mono text-xs text-cyan-300 overflow-x-auto whitespace-pre-wrap leading-relaxed shadow-inner max-h-[360px] overflow-y-auto">
-                                <code>{bulletin.rawText}</code>
+                                <code>{getBulletinRawText(bulletin)}</code>
                               </pre>
                             </div>
                           ))}

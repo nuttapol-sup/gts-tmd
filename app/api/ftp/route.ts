@@ -554,15 +554,27 @@ export async function GET(request: Request) {
     });
 
     // Deduplicate bulletins having exact same headerLine, countryCode, and rawText content
-    const uniqueBulletins: GTSBulletin[] = [];
+    const uniqueBulletins: any[] = [];
     const seenContentKeys = new Set<string>();
+    let idCounter = 1;
 
     for (const b of bulletins) {
       const normText = (b.rawText || "").trim().replace(/\r?\n/g, "\n");
       const key = `${b.headerLine || ""}_${b.countryCode || ""}_${normText}`;
       if (!seenContentKeys.has(key)) {
         seenContentKeys.add(key);
-        uniqueBulletins.push(b);
+        uniqueBulletins.push({
+          id: String(idCounter++).padStart(6, "0"),
+          category: b.category,
+          categoryLabel: b.categoryLabel,
+          headerLine: b.headerLine,
+          dataType: b.dataType,
+          countryCode: b.countryCode,
+          utcTimeStr: b.utcTimeStr,
+          dayStr: b.dayStr,
+          hourStr: b.hourStr,
+          stations: b.stations,
+        });
       }
     }
 
