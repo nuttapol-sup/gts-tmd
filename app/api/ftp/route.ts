@@ -215,22 +215,26 @@ export async function GET(request: Request) {
           }
         }
 
-        const fileContent = fs.readFileSync(filePath, "utf-8");
+        try {
+          const stat = fs.statSync(filePath);
+          if (stat.size > 5 * 1024 * 1024) continue; // Skip files > 5MB to prevent Invalid string length
 
-        // Split text content by ZCZC marker
-        const blocks = fileContent.split(/ZCZC/i);
+          const fileContent = fs.readFileSync(filePath, "utf-8");
 
-        let blockIdx = 0;
-        for (const block of blocks) {
-          blockIdx++;
-          if (!block.trim()) continue;
+          // Split text content by ZCZC marker
+          const blocks = fileContent.split(/ZCZC/i);
 
-          let nnnnIdx = block.indexOf("NNNN");
-          let body = nnnnIdx !== -1 ? block.substring(0, nnnnIdx) : block;
-          const cleanRaw = body.replace(/ZCZC/gi, "").replace(/NNNN/gi, "").trim();
+          let blockIdx = 0;
+          for (const block of blocks) {
+            blockIdx++;
+            if (!block.trim()) continue;
 
-          const lines = body.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
-          if (lines.length === 0) continue;
+            let nnnnIdx = block.indexOf("NNNN");
+            let body = nnnnIdx !== -1 ? block.substring(0, nnnnIdx) : block;
+            const cleanRaw = body.replace(/ZCZC/gi, "").replace(/NNNN/gi, "").trim();
+
+            const lines = body.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+            if (lines.length === 0) continue;
 
           let headerLine = "";
           let dataType = "";
@@ -380,20 +384,24 @@ export async function GET(request: Request) {
 
           const sanitizedRaw = cleanBinaryText(cleanRaw);
 
-          bulletins.push({
-            id: `ftp-${filename}-${blockIdx}`,
-            category,
-            categoryLabel,
-            headerLine,
-            dataType,
-            countryCode,
-            utcTimeStr,
-            dayStr,
-            hourStr,
-            rawText: sanitizedRaw,
-            filename,
-            folderPath: scanDir,
-          });
+            bulletins.push({
+              id: `ftp-${filename}-${blockIdx}`,
+              category,
+              categoryLabel,
+              headerLine,
+              dataType,
+              countryCode,
+              utcTimeStr,
+              dayStr,
+              hourStr,
+              rawText: sanitizedRaw,
+              filename,
+              folderPath: scanDir,
+            });
+          }
+        } catch (e) {
+          // Skip corrupt or unreadable file safely
+          continue;
         }
       }
     }
