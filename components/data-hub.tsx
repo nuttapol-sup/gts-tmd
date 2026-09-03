@@ -348,7 +348,8 @@ export default function DataHub() {
   const utcParam = searchParams.get("utc");
   const countryParam = searchParams.get("country");
   const bulletinIdParam = searchParams.get("bulletinId");
-  const isNewTabMode = Boolean(bulletinIdParam);
+  const bulletinHeaderParam = searchParams.get("bulletinHeader") || searchParams.get("header");
+  const isNewTabMode = Boolean(bulletinIdParam || bulletinHeaderParam);
 
   const [activeTab, setActiveTab] = useState<WeatherCategory>("synoptic");
 
@@ -412,15 +413,15 @@ export default function DataHub() {
   };
 
   useEffect(() => {
-    if (bulletinIdParam) {
-      setSelectedBulletinId(bulletinIdParam);
+    if (bulletinIdParam || bulletinHeaderParam) {
+      if (bulletinIdParam) setSelectedBulletinId(bulletinIdParam);
       setViewMode("single");
     } else {
       setViewMode("headers");
       setSelectedBulletinId(null);
     }
     fetchFtpData(false);
-  }, [selectedCountry, selectedDate, selectedUtc, activeTab, bulletinIdParam]);
+  }, [selectedCountry, selectedDate, selectedUtc, activeTab, bulletinIdParam, bulletinHeaderParam]);
 
   const handleAllData = () => {
     setViewMode("all");
@@ -459,7 +460,13 @@ export default function DataHub() {
     return acc;
   }, {} as Record<string, GTSBulletin[]>);
 
-  const selectedBulletin = ftpBulletins.find((b) => b.id === selectedBulletinId) || (selectedBulletinId ? ftpBulletins.find((b) => b.id.includes(selectedBulletinId)) : undefined) || ftpBulletins[0];
+  const selectedBulletin =
+    (bulletinHeaderParam
+      ? ftpBulletins.find((b) => (b.headerLine || b.dataType || "").trim().toUpperCase() === bulletinHeaderParam.trim().toUpperCase())
+      : undefined) ||
+    (selectedBulletinId ? ftpBulletins.find((b) => b.id === selectedBulletinId) : undefined) ||
+    (selectedBulletinId ? ftpBulletins.find((b) => b.id.includes(selectedBulletinId)) : undefined) ||
+    ftpBulletins[0];
 
   const getCountryName = (code: string) => {
     const upper = (code || "").toUpperCase();
