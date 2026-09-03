@@ -59,18 +59,11 @@ function extractStationObjects(rawText: string): GTSStationItem[] {
       extractedId = upperFirst;
     }
 
-    if (isWmoId || isIcaoId) {
-      if (currentStationId && currentLines.length > 0) {
-        stations.push({
-          stationId: currentStationId,
-          rawLine: currentLines.join(" "),
-        });
-      }
+    // If we are currently accumulating an active station report, append continuation lines until '='
+    if (currentStationId) {
+      currentLines.push(trimmed);
 
-      currentStationId = isWmoId ? firstToken : extractedId;
-      currentLines = [trimmed];
-
-      if (trimmed.endsWith("=")) {
+      if (trimmed.endsWith("=") || trimmed.includes("=")) {
         stations.push({
           stationId: currentStationId,
           rawLine: currentLines.join(" "),
@@ -78,11 +71,12 @@ function extractStationObjects(rawText: string): GTSStationItem[] {
         currentStationId = null;
         currentLines = [];
       }
-    } else if (currentStationId) {
-      // Continuation line for active station
-      currentLines.push(trimmed);
+    } else if (isWmoId || isIcaoId) {
+      // Start a new station report
+      currentStationId = isWmoId ? firstToken : extractedId;
+      currentLines = [trimmed];
 
-      if (trimmed.endsWith("=")) {
+      if (trimmed.endsWith("=") || trimmed.includes("=")) {
         stations.push({
           stationId: currentStationId,
           rawLine: currentLines.join(" "),
@@ -91,7 +85,7 @@ function extractStationObjects(rawText: string): GTSStationItem[] {
         currentLines = [];
       }
     } else {
-      // General body line (for bulletins without WMO/ICAO station headers)
+      // General body line before any station block (e.g., "AAXX 01001")
       stations.push({
         stationId: firstToken.toUpperCase(),
         rawLine: trimmed,
