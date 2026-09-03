@@ -82,11 +82,18 @@ export async function GET(request: Request) {
   }
 
   const { searchParams } = new URL(request.url);
-  const dateParam = searchParams.get("date") || "";
-  const utcParam = searchParams.get("utc") || "";
-  const countryParam = searchParams.get("country") || "";
-  const categoryParam = searchParams.get("category") || "";
+  const rawDateParam = searchParams.get("date") || "";
+  const rawUtcParam = searchParams.get("utc") || "";
+  const rawCountryParam = searchParams.get("country") || "";
+  const rawCategoryParam = searchParams.get("category") || "";
   const isAllData = searchParams.get("allData") === "true";
+
+  // Cybersecurity: Input sanitization to prevent Path Traversal & Special Character Injection
+  const sanitizeAlphaNum = (val: string) => val.replace(/[^a-zA-Z0-9\-_]/g, "").substring(0, 30);
+  const dateParam = rawDateParam.replace(/[^0-9\-]/g, "").substring(0, 10);
+  const utcParam = sanitizeAlphaNum(rawUtcParam);
+  const countryParam = sanitizeAlphaNum(rawCountryParam);
+  const categoryParam = sanitizeAlphaNum(rawCategoryParam);
 
   const candidateBaseDirs = [
     process.env.FTP_DIR,
