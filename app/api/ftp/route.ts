@@ -75,7 +75,7 @@ const CATEGORY_SUBFOLDERS: Record<string, string[]> = {
   burf: ["Burf", "burf", "BUFR", "bufr", "Bufr"],
 };
 
-export async function GET(request: Request) {
+export async function handleFtpQuery(request: Request, forcedCategory?: string) {
   if (process.env.NEXT_PHASE === "phase-production-build" || process.env.IS_BUILD === "true") {
     return NextResponse.json({ status: "success", count: 0, bulletins: [] });
   }
@@ -84,8 +84,8 @@ export async function GET(request: Request) {
   const rawDateParam = searchParams.get("date") || "";
   const rawUtcParam = searchParams.get("utc") || "";
   const rawCountryParam = searchParams.get("country") || "";
-  const rawCategoryParam = searchParams.get("category") || "";
-  const isAllData = searchParams.get("allData") === "true";
+  const rawCategoryParam = forcedCategory || searchParams.get("category") || "";
+  const isAllData = searchParams.get("allData") === "true" || !!forcedCategory;
 
   // Cybersecurity: Input sanitization to prevent Path Traversal & Special Character Injection
   const sanitizeAlphaNum = (val: string) => val.replace(/[^a-zA-Z0-9\-_]/g, "").substring(0, 30);
@@ -594,4 +594,8 @@ export async function GET(request: Request) {
       bulletins: [],
     });
   }
+}
+
+export async function GET(request: Request) {
+  return handleFtpQuery(request);
 }
