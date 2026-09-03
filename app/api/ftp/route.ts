@@ -22,7 +22,6 @@ export interface GTSBulletin {
   stations: GTSStationItem[];
   rawText: string;
   filename: string;
-  folderPath: string;
 }
 
 function extractStationObjects(rawText: string): GTSStationItem[] {
@@ -437,7 +436,6 @@ export async function GET(request: Request) {
               stations: extractStationObjects(sanitizedRaw),
               rawText: sanitizedRaw,
               filename,
-              folderPath: scanDir,
             });
           }
         } catch (e) {
@@ -533,7 +531,6 @@ export async function GET(request: Request) {
                 stations: extractStationObjects(sanitizedRaw),
                 rawText: sanitizedRaw,
                 filename,
-                folderPath: scanDir,
               });
             }
           } catch (e) {
@@ -578,7 +575,6 @@ export async function GET(request: Request) {
       targetHour,
       countryParam,
       isAllData,
-      scannedFolders: dirsToScan,
       bulletins: uniqueBulletins,
     });
   } catch (error: any) {
