@@ -66,7 +66,7 @@ function extractStationObjects(rawText: string): GTSStationItem[] {
       if (currentStationId && currentLines.length > 0) {
         stations.push({
           stationId: currentStationId,
-          rawLine: currentLines.join("\n"),
+          rawLine: currentLines.join(" "),
         });
       }
 
@@ -76,7 +76,7 @@ function extractStationObjects(rawText: string): GTSStationItem[] {
       if (trimmed.endsWith("=")) {
         stations.push({
           stationId: currentStationId,
-          rawLine: currentLines.join("\n"),
+          rawLine: currentLines.join(" "),
         });
         currentStationId = null;
         currentLines = [];
@@ -88,7 +88,7 @@ function extractStationObjects(rawText: string): GTSStationItem[] {
       if (trimmed.endsWith("=")) {
         stations.push({
           stationId: currentStationId,
-          rawLine: currentLines.join("\n"),
+          rawLine: currentLines.join(" "),
         });
         currentStationId = null;
         currentLines = [];
@@ -105,7 +105,7 @@ function extractStationObjects(rawText: string): GTSStationItem[] {
   if (currentStationId && currentLines.length > 0) {
     stations.push({
       stationId: currentStationId,
-      rawLine: currentLines.join("\n"),
+      rawLine: currentLines.join(" "),
     });
   }
 
