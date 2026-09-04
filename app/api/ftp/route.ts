@@ -63,12 +63,22 @@ function extractStationObjects(rawText: string): GTSStationItem[] {
       }
     }
 
-    // Pattern 2: 4-letter ICAO station ID (e.g., VTBD, VTBS, WMKK, WSSS) or METAR/SPECI/TAF
+    // Pattern 2: 4-letter ICAO station ID (e.g., VTBD, VTBS, WMKK, WSSS, WBGB) or METAR/SPECI/TAF
     let isIcaoId = false;
 
-    if (["METAR", "SPECI", "TAF"].includes(upperFirst) && tokens[1] && /^[A-Z]{4}$/i.test(tokens[1])) {
-      isIcaoId = true;
-      extractedId = tokens[1].toUpperCase();
+    if (["METAR", "SPECI", "TAF"].includes(upperFirst)) {
+      for (let i = 1; i < Math.min(tokens.length, 5); i++) {
+        const tok = tokens[i].toUpperCase();
+        if (
+          /^[A-Z]{4}$/.test(tok) &&
+          !["COR", "AMD", "NIL", "AUTO", "RTD", "AAXX", "BBXX"].includes(tok) &&
+          !/^CC[A-Z]$/.test(tok)
+        ) {
+          isIcaoId = true;
+          extractedId = tok;
+          break;
+        }
+      }
     } else if (/^[A-Z]{4}$/i.test(firstToken) && upperFirst !== "AUTO" && upperFirst !== "NIL" && upperFirst !== "COR" && upperFirst !== "AMD" && upperFirst !== "AAXX" && !isUpperAirHeader) {
       isIcaoId = true;
       extractedId = upperFirst;
