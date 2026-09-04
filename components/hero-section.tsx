@@ -30,12 +30,6 @@ export default function HeroSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
         {/* Main Hero Content */}
         <div className="flex flex-col items-center text-center max-w-4xl mx-auto space-y-8">
-          {/* Badge Pill */}
-          <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-transparent border border-cyan-500/30 text-cyan-300 text-xs sm:text-sm font-medium backdrop-blur-md shadow-lg">
-            <Radio className="w-4 h-4 text-cyan-400 animate-pulse" />
-            <span>Regional Telecommunication Hub (RTH Bangkok / GTS Thailand)</span>
-          </div>
-
           {/* Main Title */}
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight sm:leading-tight">
             {t("ศูนย์โทรคมนาคมอุตุนิยมวิทยา", "Telecommunication Center")}
