@@ -162,19 +162,19 @@ export default function Navbar() {
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           scrolled
-            ? "bg-[#0b132b]/90 backdrop-blur-md border-b border-cyan-500/20 py-3 shadow-lg shadow-cyan-950/20"
-            : "bg-transparent py-5"
+            ? "bg-[#0b132b]/95 backdrop-blur-xl border-b border-cyan-500/30 py-2.5 sm:py-3 shadow-xl shadow-cyan-950/40"
+            : "bg-[#0b132b]/85 lg:bg-transparent backdrop-blur-md lg:backdrop-blur-none border-b border-cyan-500/20 lg:border-transparent py-2.5 sm:py-5"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between gap-2">
             {/* Logo & Title */}
-            <div className="flex items-center gap-2 sm:gap-3 shrink min-w-0">
+            <div className="flex items-center gap-2.5 sm:gap-3 shrink min-w-0">
               {/* Static Logo Emblem */}
               <Link
                 href="/"
                 aria-label="RTH Bangkok GTS Thailand"
-                className="relative w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 p-0.5 shadow-md shadow-cyan-500/30 group-hover:scale-105 transition-transform duration-300 overflow-hidden shrink-0"
+                className="relative w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 p-0.5 shadow-md shadow-cyan-500/30 group-hover:scale-105 transition-transform duration-300 overflow-hidden shrink-0"
               >
                 <div className="w-full h-full bg-[#0b132b] rounded-[10px] flex items-center justify-center relative overflow-hidden">
                   {customLogoUrl ? (
@@ -189,15 +189,17 @@ export default function Navbar() {
                 </div>
               </Link>
 
-              <Link href="/" className="flex flex-col min-w-0 overflow-hidden">
-                <span className="font-bold text-sm sm:text-base lg:text-lg tracking-wider text-white group-hover:text-cyan-300 transition-colors flex items-center gap-1.5 sm:gap-2 truncate">
-                  RTH BANGKOK
-                  <span className="inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-semibold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 shrink-0">
+              <Link href="/" className="flex flex-col min-w-0">
+                <div className="flex items-center gap-1.5 whitespace-nowrap">
+                  <span className="font-extrabold text-sm sm:text-base lg:text-lg tracking-wider text-white group-hover:text-cyan-300 transition-colors">
+                    RTH BANGKOK
+                  </span>
+                  <span className="inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 shrink-0">
                     <Radio className="w-2.5 h-2.5 mr-1 animate-ping text-cyan-400" />
                     GTS Thailand
                   </span>
-                </span>
-                <span className="text-[10px] sm:text-[11px] text-slate-400 font-light truncate max-w-[150px] xs:max-w-[200px] sm:max-w-[320px] lg:max-w-none">
+                </div>
+                <span className="hidden md:block text-[10px] sm:text-[11px] text-slate-400 font-light truncate max-w-[280px] lg:max-w-none">
                   {t(
                     "ศูนย์โทรคมนาคมอุตุนิยมวิทยาแห่งภูมิภาคเอเชียตะวันออกเฉียงใต้",
                     "Regional Telecommunication Hub Southeast Asia"
