@@ -167,14 +167,14 @@ export default function Navbar() {
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-2">
             {/* Logo & Title */}
-            <div className="flex items-center gap-3 group">
+            <div className="flex items-center gap-2 sm:gap-3 shrink min-w-0">
               {/* Static Logo Emblem */}
               <Link
                 href="/"
                 aria-label="RTH Bangkok GTS Thailand"
-                className="relative w-11 h-11 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 p-0.5 shadow-md shadow-cyan-500/30 group-hover:scale-105 transition-transform duration-300 overflow-hidden shrink-0"
+                className="relative w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 p-0.5 shadow-md shadow-cyan-500/30 group-hover:scale-105 transition-transform duration-300 overflow-hidden shrink-0"
               >
                 <div className="w-full h-full bg-[#0b132b] rounded-[10px] flex items-center justify-center relative overflow-hidden">
                   {customLogoUrl ? (
@@ -184,20 +184,20 @@ export default function Navbar() {
                       className="w-full h-full object-contain p-1"
                     />
                   ) : (
-                    <CloudSun className="w-6 h-6 text-cyan-400 animate-pulse-glow" />
+                    <CloudSun className="w-5 h-5 sm:w-6 sm:h-6 text-cyan-400 animate-pulse-glow" />
                   )}
                 </div>
               </Link>
 
-              <Link href="/" className="flex flex-col">
-                <span className="font-bold text-lg tracking-wider text-white group-hover:text-cyan-300 transition-colors flex items-center gap-2">
+              <Link href="/" className="flex flex-col min-w-0 overflow-hidden">
+                <span className="font-bold text-sm sm:text-base lg:text-lg tracking-wider text-white group-hover:text-cyan-300 transition-colors flex items-center gap-1.5 sm:gap-2 truncate">
                   RTH BANGKOK
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                  <span className="inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-semibold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 shrink-0">
                     <Radio className="w-2.5 h-2.5 mr-1 animate-ping text-cyan-400" />
                     GTS Thailand
                   </span>
                 </span>
-                <span className="text-[11px] text-slate-400 font-light truncate max-w-[240px] sm:max-w-none">
+                <span className="text-[10px] sm:text-[11px] text-slate-400 font-light truncate max-w-[150px] xs:max-w-[200px] sm:max-w-[320px] lg:max-w-none">
                   {t(
                     "ศูนย์โทรคมนาคมอุตุนิยมวิทยาแห่งภูมิภาคเอเชียตะวันออกเฉียงใต้",
                     "Regional Telecommunication Hub Southeast Asia"
@@ -330,10 +330,10 @@ export default function Navbar() {
             </nav>
 
             {/* Mobile Menu & Language Button */}
-            <div className="lg:hidden flex items-center gap-2">
+            <div className="lg:hidden flex items-center gap-1.5 sm:gap-2 shrink-0 z-10">
               <button
                 onClick={toggleLang}
-                className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-slate-900/90 border border-cyan-500/40 text-xs font-bold text-cyan-300 cursor-pointer shadow-sm"
+                className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-slate-900/90 border border-cyan-500/40 text-xs font-bold text-cyan-300 cursor-pointer shadow-sm shrink-0"
               >
                 <Globe className="w-3.5 h-3.5 text-cyan-400 mr-0.5" />
                 <span className={lang === "th" ? "text-cyan-300 font-black" : "text-slate-500"}>TH</span>
@@ -342,10 +342,10 @@ export default function Navbar() {
               </button>
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="p-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/50 transition-colors"
+                className="p-2 rounded-xl text-cyan-300 bg-slate-900/90 hover:text-white hover:bg-slate-800 border border-cyan-500/40 transition-colors shadow-sm cursor-pointer shrink-0"
                 aria-label="Toggle menu"
               >
-                {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                {mobileMenuOpen ? <X className="w-6 h-6 text-rose-400" /> : <Menu className="w-6 h-6 text-cyan-400" />}
               </button>
             </div>
           </div>
@@ -353,7 +353,7 @@ export default function Navbar() {
 
         {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
-          <div className="lg:hidden mt-3 pt-3 border-t border-cyan-500/20 bg-[#0b132b]/98 backdrop-blur-2xl rounded-2xl p-3 space-y-2 shadow-2xl max-h-[80vh] overflow-y-auto">
+          <div className="lg:hidden mt-3 pt-3 border-t border-cyan-500/20 bg-[#0b132b]/98 backdrop-blur-2xl rounded-2xl p-3 space-y-2 shadow-2xl max-h-[80vh] overflow-y-auto mx-4">
             {/* 1. หน้าหลัก */}
             <Link
               href="/"
@@ -374,7 +374,17 @@ export default function Navbar() {
               {t("เอกสารที่เกี่ยวข้อง", "Documents")}
             </Link>
 
-            {/* 3. เกี่ยวกับเรา */}
+            {/* 3. บริการ API */}
+            <Link
+              href="/api-docs"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-bold text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 transition-all border border-emerald-500/30 shadow-md"
+            >
+              <Zap className="w-4 h-4 text-emerald-400 animate-pulse" />
+              <span>{t("บริการ API", "API Services")}</span>
+            </Link>
+
+            {/* 4. เกี่ยวกับเรา */}
             <div className="rounded-xl border border-slate-800 bg-slate-900/40 overflow-hidden transition-all">
               <button
                 type="button"
@@ -417,7 +427,7 @@ export default function Navbar() {
               )}
             </div>
 
-            {/* 4. บริการ GTS */}
+            {/* 5. บริการ GTS */}
             <div className="rounded-xl border border-slate-800 bg-slate-900/40 overflow-hidden transition-all">
               <button
                 type="button"
@@ -458,7 +468,7 @@ export default function Navbar() {
               )}
             </div>
 
-            {/* 5. ติดต่อเรา */}
+            {/* 6. ติดต่อเรา */}
             <Link
               href="/contact"
               onClick={() => setMobileMenuOpen(false)}
