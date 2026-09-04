@@ -273,7 +273,7 @@ export default function DocumentsPage() {
     <div className="min-h-screen flex flex-col bg-[#0b132b] text-slate-100 font-sans selection:bg-cyan-500 selection:text-white">
       <Navbar />
 
-      <main className="flex-1 pt-36 sm:pt-40 lg:pt-44 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-8 relative z-10">
+      <main className="flex-1 pt-24 sm:pt-28 lg:pt-44 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-8 relative z-10">
         {/* Background Decorative Glow */}
         <div className="absolute top-20 left-1/2 -translate-x-1/2 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
 
