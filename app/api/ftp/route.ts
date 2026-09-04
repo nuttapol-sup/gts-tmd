@@ -230,8 +230,15 @@ export function isCountryMatch(
     case "UAFF": // Kyrgyzstan
       return cCode === "UAFF" || cCode.startsWith("UC") || a1a2 === "KG";
 
-    case "VLIV": // Laos
-      return cCode.startsWith("VL") || a1a2 === "LA";
+    case "VLIV": // Laos (VLAP, VLHS, VLLB, VLLN, VLOS, VLPS, VLSB, VLSK, VLSN, VLSV, VLTK, VLVT, VLXK)
+      return (
+        cCode.startsWith("VL") ||
+        cCode === "VLIV" ||
+        cCode === "VLVT" ||
+        a1a2 === "LA" ||
+        a1a2 === "LV" ||
+        /VL(AP|HS|LB|LN|OS|PS|SB|SK|SN|SV|TK|VT|XK)/.test(bodyUpper)
+      );
 
     case "VMMC": // Macao
       return cCode.startsWith("VM") || a1a2 === "MO";
