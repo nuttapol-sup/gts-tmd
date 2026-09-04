@@ -12,7 +12,7 @@ export default async function ServicesPage({
   const isNewTab = Boolean(params?.bulletinId || params?.bulletinHeader);
 
   return (
-    <main className={`min-h-screen bg-[#0b132b] text-slate-100 flex flex-col ${isNewTab ? "p-4 sm:p-8 justify-center items-center" : "pt-24"}`}>
+    <main className={`min-h-screen bg-[#0b132b] text-slate-100 flex flex-col ${isNewTab ? "p-4 sm:p-8 justify-center items-center" : "pt-36 sm:pt-40 lg:pt-44"}`}>
       {!isNewTab && <Navbar />}
 
       <Suspense fallback={<div className="min-h-[500px] flex items-center justify-center text-slate-400">กำลังโหลด...</div>}>
