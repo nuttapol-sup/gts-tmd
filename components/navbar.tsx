@@ -232,8 +232,8 @@ export default function Navbar() {
             </div>
           </div>
 
-          {/* Row 2: Desktop Navigation Bar (แยกอยู่คนละแถวกับ Logo) */}
-          <nav className="hidden lg:flex items-center gap-2 mt-3 pt-2.5 border-t border-cyan-500/20">
+          {/* Row 2: Desktop Navigation Bar (จัดอยู่คนละแถวกับ Logo - ตรงกลาง) */}
+          <nav className="hidden lg:flex items-center justify-center gap-2 sm:gap-3 mt-3 pt-2.5 border-t border-cyan-500/20">
             <Link
               href="/"
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
