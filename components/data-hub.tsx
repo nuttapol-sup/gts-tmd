@@ -68,7 +68,9 @@ const COUNTRIES = [
   { value: "zero", name: "--- All (ทั้งหมด) ---", flag: "🌐", iso: "" },
   { value: "AMMC", name: "Australia", flag: "🇦🇺", iso: "au" },
   { value: "VGDC", name: "Bangladesh", flag: "🇧🇩", iso: "bd" },
+  { value: "VQPR", name: "Bhutan", flag: "🇧🇹", iso: "bt" },
   { value: "WBSB", name: "Brunei", flag: "🇧🇳", iso: "bn" },
+  { value: "VDPP", name: "Cambodia", flag: "🇰🇭", iso: "kh" },
   { value: "BABJ", name: "China", flag: "🇨🇳", iso: "cn" },
   { value: "VHHH", name: "Hong Kong", flag: "🇭🇰", iso: "hk" },
   { value: "DEMS", name: "India", flag: "🇮🇳", iso: "in" },
@@ -91,12 +93,13 @@ const COUNTRIES = [
   { value: "OCEAN", name: "Pacific Ocean", flag: "🌊", iso: "un" },
   { value: "RPLL", name: "Philippines", flag: "🇵🇭", iso: "ph" },
   { value: "ROAH", name: "Ryukyu Islands", flag: "🇯🇵", iso: "jp" },
-    { value: "RUSSIA", name: "Russia (รัสเซีย)", flag: "🇷🇺", iso: "ru" },
+  { value: "RUSSIA", name: "Russia (รัสเซีย)", flag: "🇷🇺", iso: "ru" },
   { value: "WSSS", name: "Singapore", flag: "🇸🇬", iso: "sg" },
   { value: "VCCC", name: "Sri Lanka", flag: "🇱🇰", iso: "lk" },
   { value: "RCAA", name: "Taiwan", flag: "🇹🇼", iso: "tw" },
   { value: "VTBB", name: "Thailand", flag: "🇹🇭", iso: "th" },
   { value: "UTTT", name: "Uzbekistan", flag: "🇺🇿", iso: "uz" },
+  { value: "VVGL", name: "Vietnam", flag: "🇻🇳", iso: "vn" },
 ];
 
 export function isSynopticBulletin(b: GTSBulletin): boolean {

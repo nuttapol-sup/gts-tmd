@@ -173,8 +173,14 @@ export function isCountryMatch(
     case "VGDC": // Bangladesh
       return cCode.startsWith("VG") || a1a2 === "BS" || a1a2 === "BD";
 
+    case "VQPR": // Bhutan
+      return cCode === "VQPR" || cCode.startsWith("VQ") || a1a2 === "BT" || /\bVQ[A-Z]{2}\b/.test(bodyUpper);
+
     case "WBSB": // Brunei (Exclusive to Brunei WBSB, excluding Sabah/Sarawak WB..)
       return cCode === "WBSB" || a1a2 === "BN" || a1a2 === "BX";
+
+    case "VDPP": // Cambodia
+      return cCode === "VDPP" || cCode.startsWith("VD") || a1a2 === "CB" || a1a2 === "KH" || /\bVD[A-Z]{2}\b/.test(bodyUpper);
 
     case "BABJ": // China (Exclusive to Chinese ICAO prefixes ZB, ZG, ZH, ZL, ZP, ZS, ZU, ZY)
       return (
@@ -315,6 +321,9 @@ export function isCountryMatch(
     case "UTTT": // Uzbekistan
       return cCode.startsWith("UT") || a1a2 === "UZ";
 
+    case "VVGL": // Vietnam
+      return cCode === "VVGL" || cCode.startsWith("VV") || a1a2 === "VS" || a1a2 === "VN" || /\bVV[A-Z]{2}\b/.test(bodyUpper);
+
     default:
       return cCode === req || dType.includes(req);
   }
@@ -342,6 +351,14 @@ export function resolveEffectiveCountry(
     if (/VL(AP|HS|LB|LN|OS|PS|SB|SK|SN|SV|TK|VT|XK)/.test(bodyUpper) && !hasThaiStation) {
       return "VLIV";
     }
+    // Cambodia: VD..
+    if (/\bVD[A-Z]{2}\b/.test(bodyUpper) && !hasThaiStation) {
+      return "VDPP";
+    }
+    // Vietnam: VV..
+    if (/\bVV[A-Z]{2}\b/.test(bodyUpper) && !hasThaiStation) {
+      return "VVGL";
+    }
     // Myanmar: VY..
     if (/\bVY[A-Z]{2}\b/.test(bodyUpper) && !hasThaiStation) {
       return "VBRR";
@@ -353,6 +370,10 @@ export function resolveEffectiveCountry(
     // Nepal: VN..
     if (/\bVN[A-Z]{2}\b/.test(bodyUpper) && !hasThaiStation) {
       return "VNKT";
+    }
+    // Bhutan: VQ..
+    if (/\bVQ[A-Z]{2}\b/.test(bodyUpper) && !hasThaiStation) {
+      return "VQPR";
     }
     // Brunei: WBSB
     if (bodyUpper.includes("WBSB") && !hasThaiStation) {

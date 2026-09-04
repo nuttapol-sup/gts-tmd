@@ -96,7 +96,9 @@ const COUNTRY_OPTIONS = [
   { value: "", label: "--- All (ทั้งหมด) ---" },
   { value: "AMMC", label: "Australia (AMMC)" },
   { value: "VGDC", label: "Bangladesh (VGDC)" },
+  { value: "VQPR", label: "Bhutan (VQPR)" },
   { value: "WBSB", label: "Brunei (WBSB)" },
+  { value: "VDPP", label: "Cambodia (VDPP)" },
   { value: "BABJ", label: "China (BABJ)" },
   { value: "VHHH", label: "Hong Kong (VHHH)" },
   { value: "DEMS", label: "India (DEMS)" },
@@ -125,6 +127,7 @@ const COUNTRY_OPTIONS = [
   { value: "RCAA", label: "Taiwan (RCAA)" },
   { value: "VTBB", label: "Thailand (VTBB)" },
   { value: "UTTT", label: "Uzbekistan (UTTT)" },
+  { value: "VVGL", label: "Vietnam (VVGL)" },
 ];
 
 function getTodayDateStr() {
