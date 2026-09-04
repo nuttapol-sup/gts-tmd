@@ -676,6 +676,15 @@ export async function handleFtpQuery(request: Request, forcedCategory?: string) 
             continue;
           }
 
+          // METAR filter: only allow headers starting with SA, FT, SP, or FC
+          if (categoryParam === "metar" || category === "metar") {
+            const dtUpper = (dataType || "").trim().toUpperCase();
+            const prefix2 = dtUpper.substring(0, 2);
+            if (!["SA", "FT", "SP", "FC"].includes(prefix2)) {
+              continue;
+            }
+          }
+
           // Synoptic filter: only allow headers starting with SM or SI
           if (categoryParam === "synoptic" || category === "synoptic") {
             const dtUpper = (dataType || "").trim().toUpperCase();
@@ -774,6 +783,14 @@ export async function handleFtpQuery(request: Request, forcedCategory?: string) 
 
               if (countryParam && countryParam !== "zero") {
                 if (!isCountryMatch(countryParam, countryCode, dataType, cleanRaw)) {
+                  continue;
+                }
+              }
+
+              if (categoryParam === "metar") {
+                const dtUpper = (dataType || "").trim().toUpperCase();
+                const prefix2 = dtUpper.substring(0, 2);
+                if (!["SA", "FT", "SP", "FC"].includes(prefix2)) {
                   continue;
                 }
               }
