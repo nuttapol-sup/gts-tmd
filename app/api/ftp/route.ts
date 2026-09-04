@@ -125,6 +125,178 @@ function extractStationObjects(rawText: string): GTSStationItem[] {
   return stations;
 }
 
+export function isCountryMatch(
+  selectedCountry: string,
+  countryCode: string,
+  dataType: string,
+  bodyText: string
+): boolean {
+  if (!selectedCountry || selectedCountry === "zero") return true;
+
+  const req = selectedCountry.toUpperCase();
+  const cCode = (countryCode || "").toUpperCase();
+  const dType = (dataType || "").toUpperCase();
+  const bodyUpper = (bodyText || "").toUpperCase();
+
+  // WMO 2-letter A1A2 (e.g. SATH31 -> TH, SAAU31 -> AU, SAJP31 -> JP)
+  const a1a2 = dType.length >= 4 ? dType.substring(2, 4) : "";
+
+  switch (req) {
+    case "VTBB": // Thailand
+      return (
+        cCode.startsWith("VT") ||
+        a1a2 === "TH" ||
+        bodyUpper.includes("VTBB") ||
+        bodyUpper.includes("VTBD") ||
+        bodyUpper.includes("VTBS")
+      );
+
+    case "AMMC": // Australia
+      return (
+        cCode === "AMMC" ||
+        cCode.startsWith("Y") ||
+        a1a2 === "AU" ||
+        bodyUpper.includes("YSSY") ||
+        bodyUpper.includes("YMML")
+      );
+
+    case "VGDC": // Bangladesh
+      return cCode.startsWith("VG") || a1a2 === "BS" || a1a2 === "BD";
+
+    case "WBSB": // Brunei
+      return cCode === "WBSB" || cCode.startsWith("WB") || a1a2 === "BN";
+
+    case "BABJ": // China
+      return (
+        cCode === "BABJ" ||
+        (cCode.startsWith("Z") && !cCode.startsWith("ZK")) ||
+        a1a2 === "CN"
+      );
+
+    case "VHHH": // Hong Kong
+      return cCode.startsWith("VH") || a1a2 === "HK";
+
+    case "DEMS": // India
+      return (
+        cCode === "DEMS" ||
+        cCode.startsWith("VI") ||
+        cCode.startsWith("VO") ||
+        cCode.startsWith("VE") ||
+        cCode.startsWith("VA") ||
+        a1a2 === "IN"
+      );
+
+    case "WIIX": // Indonesia
+      return (
+        cCode === "WIIX" ||
+        cCode.startsWith("WI") ||
+        cCode.startsWith("WA") ||
+        a1a2 === "ID"
+      );
+
+    case "OLLL": // Iran
+      return cCode.startsWith("OI") || a1a2 === "IR";
+
+    case "RJTD": // Japan
+      return (
+        cCode === "RJTD" ||
+        cCode.startsWith("RJ") ||
+        cCode.startsWith("RO") ||
+        a1a2 === "JP"
+      );
+
+    case "UAAA": // Kazakhstan
+      return (cCode.startsWith("UA") && !cCode.startsWith("UAFF")) || a1a2 === "KZ";
+
+    case "OKBK": // Kuwait
+      return cCode.startsWith("OK") || a1a2 === "KW";
+
+    case "UAFF": // Kyrgyzstan
+      return cCode === "UAFF" || cCode.startsWith("UC") || a1a2 === "KG";
+
+    case "VLIV": // Laos
+      return cCode.startsWith("VL") || a1a2 === "LA";
+
+    case "VMMC": // Macao
+      return cCode.startsWith("VM") || a1a2 === "MO";
+
+    case "FMMI": // Madagascar
+      return cCode.startsWith("FM") || a1a2 === "MG";
+
+    case "WMKK": // Malaysia
+      return (
+        ((cCode.startsWith("WM") || cCode.startsWith("WB")) && cCode !== "WBSB") ||
+        a1a2 === "MY"
+      );
+
+    case "VRMM": // Maldives
+      return cCode.startsWith("VR") || a1a2 === "MV";
+
+    case "MNUB": // Mongolia
+      return cCode === "MNUB" || cCode.startsWith("ZM") || a1a2 === "MN";
+
+    case "VBRR": // Myanmar
+      return cCode === "VBRR" || cCode.startsWith("VY") || a1a2 === "MM";
+
+    case "VNKT": // Nepal
+      return cCode.startsWith("VN") || a1a2 === "NP";
+
+    case "DKPY": // North Korea
+      return cCode === "DKPY" || cCode.startsWith("ZK") || a1a2 === "KP";
+
+    case "OOMS": // Oman
+      return cCode.startsWith("OO") || a1a2 === "OM";
+
+    case "OCEAN": // Pacific Ocean
+      return (
+        cCode === "OCEAN" ||
+        cCode.startsWith("PH") ||
+        cCode.startsWith("NF") ||
+        cCode.startsWith("NW") ||
+        cCode.startsWith("PT") ||
+        cCode.startsWith("PG") ||
+        a1a2 === "OC" ||
+        a1a2 === "PF" ||
+        a1a2 === "PS"
+      );
+
+    case "RPLL": // Philippines
+      return cCode.startsWith("RP") || a1a2 === "PH";
+
+    case "ROAH": // Ryukyu Islands
+      return cCode.startsWith("RO") || a1a2 === "RY";
+
+    case "RUSSIA": // Russia
+    case "RU":
+      return (
+        cCode.startsWith("RU") ||
+        cCode === "RIII" ||
+        (cCode.startsWith("U") &&
+          !cCode.startsWith("UA") &&
+          !cCode.startsWith("UC") &&
+          !cCode.startsWith("UT")) ||
+        a1a2 === "RU" ||
+        a1a2 === "RA" ||
+        a1a2 === "RS"
+      );
+
+    case "WSSS": // Singapore
+      return cCode.startsWith("WS") || a1a2 === "SG";
+
+    case "VCCC": // Sri Lanka
+      return cCode.startsWith("VC") || a1a2 === "SL";
+
+    case "RCAA": // Taiwan
+      return cCode.startsWith("RC") || a1a2 === "TW";
+
+    case "UTTT": // Uzbekistan
+      return cCode.startsWith("UT") || a1a2 === "UZ";
+
+    default:
+      return cCode === req || dType.includes(req);
+  }
+}
+
 const MONTH_NAMES = [
   "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
   "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
@@ -478,13 +650,7 @@ export async function handleFtpQuery(request: Request, forcedCategory?: string) 
 
           // Apply Country Code Filter (if country is selected and not "zero")
           if (countryParam && countryParam !== "zero") {
-            const reqC = countryParam.toUpperCase();
-            const fileC = countryCode.toUpperCase();
-            if (reqC === "RUSSIA" || reqC === "RU") {
-              if (!fileC.startsWith("RU") && fileC !== "RIII") {
-                continue;
-              }
-            } else if (fileC !== reqC) {
+            if (!isCountryMatch(countryParam, countryCode, dataType, cleanRaw)) {
               continue;
             }
           }
@@ -589,6 +755,12 @@ export async function handleFtpQuery(request: Request, forcedCategory?: string) 
 
               let category: GTSBulletin["category"] = "synoptic";
               let categoryLabel = "ข่าว Synoptic (Surface)";
+
+              if (countryParam && countryParam !== "zero") {
+                if (!isCountryMatch(countryParam, countryCode, dataType, cleanRaw)) {
+                  continue;
+                }
+              }
 
               if (categoryParam === "synoptic" || category === "synoptic") {
                 const dtUpper = (dataType || "").trim().toUpperCase();
