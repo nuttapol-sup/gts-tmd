@@ -163,13 +163,20 @@ export function isCountryMatch(
     case "VGDC": // Bangladesh
       return cCode.startsWith("VG") || a1a2 === "BS" || a1a2 === "BD";
 
-    case "WBSB": // Brunei
-      return cCode === "WBSB" || cCode.startsWith("WB") || a1a2 === "BN";
+    case "WBSB": // Brunei (Exclusive to Brunei WBSB, excluding Sabah/Sarawak WB..)
+      return cCode === "WBSB" || a1a2 === "BN" || a1a2 === "BX";
 
-    case "BABJ": // China
+    case "BABJ": // China (Exclusive to Chinese ICAO prefixes ZB, ZG, ZH, ZL, ZP, ZS, ZU, ZY)
       return (
         cCode === "BABJ" ||
-        (cCode.startsWith("Z") && !cCode.startsWith("ZK")) ||
+        cCode.startsWith("ZB") ||
+        cCode.startsWith("ZG") ||
+        cCode.startsWith("ZH") ||
+        cCode.startsWith("ZL") ||
+        cCode.startsWith("ZP") ||
+        cCode.startsWith("ZS") ||
+        cCode.startsWith("ZU") ||
+        cCode.startsWith("ZY") ||
         a1a2 === "CN"
       );
 
@@ -197,16 +204,15 @@ export function isCountryMatch(
     case "OLLL": // Iran
       return cCode.startsWith("OI") || a1a2 === "IR";
 
-    case "RJTD": // Japan
+    case "RJTD": // Japan (Exclusive to RJ.. ICAO airports, excluding Ryukyu RO..)
       return (
         cCode === "RJTD" ||
         cCode.startsWith("RJ") ||
-        cCode.startsWith("RO") ||
         a1a2 === "JP"
       );
 
     case "UAAA": // Kazakhstan
-      return (cCode.startsWith("UA") && !cCode.startsWith("UAFF")) || a1a2 === "KZ";
+      return (cCode.startsWith("UA") && cCode !== "UAFF") || a1a2 === "KZ";
 
     case "OKBK": // Kuwait
       return cCode.startsWith("OK") || a1a2 === "KW";
@@ -223,9 +229,9 @@ export function isCountryMatch(
     case "FMMI": // Madagascar
       return cCode.startsWith("FM") || a1a2 === "MG";
 
-    case "WMKK": // Malaysia
+    case "WMKK": // Malaysia (Peninsular WM.. and Sabah/Sarawak WB..)
       return (
-        ((cCode.startsWith("WM") || cCode.startsWith("WB")) && cCode !== "WBSB") ||
+        (cCode.startsWith("WM") || (cCode.startsWith("WB") && cCode !== "WBSB")) ||
         a1a2 === "MY"
       );
 
@@ -236,7 +242,7 @@ export function isCountryMatch(
       return cCode === "MNUB" || cCode.startsWith("ZM") || a1a2 === "MN";
 
     case "VBRR": // Myanmar
-      return cCode === "VBRR" || cCode.startsWith("VY") || a1a2 === "MM";
+      return cCode === "VBRR" || cCode.startsWith("VY") || a1a2 === "MM" || a1a2 === "BM";
 
     case "VNKT": // Nepal
       return cCode.startsWith("VN") || a1a2 === "NP";
@@ -263,7 +269,7 @@ export function isCountryMatch(
     case "RPLL": // Philippines
       return cCode.startsWith("RP") || a1a2 === "PH";
 
-    case "ROAH": // Ryukyu Islands
+    case "ROAH": // Ryukyu Islands (Exclusive to RO.. ICAO airports)
       return cCode.startsWith("RO") || a1a2 === "RY";
 
     case "RUSSIA": // Russia
