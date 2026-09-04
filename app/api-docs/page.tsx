@@ -54,8 +54,8 @@ const API_ENDPOINTS: ApiEndpointInfo[] = [
     categoryKey: "metar",
     badgeColor: "from-indigo-500 to-purple-600",
     icon: Plane,
-    description: "ดึงเฉพาะข้อมูลข่าวสภาพอากาศการบิน รายสนามบิน ICAO ทั่วโลก (ทิศทางลม ทัศนวิสัย ฐานเมฆ อุณหภูมิ ความกดอากาศ QNH)",
-    descriptionEn: "Fetches aeronautical METAR/SPECI bulletins for international airports.",
+    description: "ดึงเฉพาะข้อมูลข่าวสภาพอากาศการบิน (หัวข่าว SA, FT, SP, FC / METAR, TAF, SPECI) รายสนามบิน ICAO ทั่วโลก พร้อมสกัดรหัสสนามบิน 4 หลัก รองรับฉบับแก้ไข (COR, AMD, AUTO)",
+    descriptionEn: "Fetches aeronautical METAR/TAF/SPECI bulletins (SA, FT, SP, FC headers) with extracted 4-letter ICAO airport IDs and modifier support (COR, AMD, AUTO).",
   },
   {
     name: "API ข่าวเตือนภัย (Weather Warning)",
@@ -223,7 +223,11 @@ export default function ApiDocsPage() {
               </span>
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 font-semibold">
                 <Lock className="w-3.5 h-3.5 text-indigo-400" />
-                {t("รหัสสถานี WMO & ID 6 หลัก", "6-Digit ID & WMO Station Parsed")}
+                {t("สกัดรหัสสนามบิน ICAO 4 หลัก & COR", "4-Letter ICAO Airport & COR Parsed")}
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-purple-500/20 text-purple-300 border border-purple-500/40 font-semibold">
+                <Plane className="w-3.5 h-3.5 text-purple-400" />
+                {t("กรองหัวข่าว METAR (SA, FT, SP, FC)", "METAR Headers: SA, FT, SP, FC")}
               </span>
             </div>
           </div>
