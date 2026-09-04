@@ -234,18 +234,6 @@ export default function Navbar() {
                 {t("เอกสารที่เกี่ยวข้อง", "Documents")}
               </Link>
 
-              <Link
-                href="/api-docs"
-                className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-                  pathname === "/api-docs"
-                    ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-bold"
-                    : "text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10"
-                }`}
-              >
-                <Zap className="w-4 h-4 text-emerald-400 animate-pulse" />
-                <span>{t("บริการ API", "API Services")}</span>
-              </Link>
-
               {/* Dropdown: เกี่ยวกับเรา (Read-Only Menu) */}
               <div className="relative group">
                 <button
@@ -374,16 +362,6 @@ export default function Navbar() {
             >
               <FileText className="w-4 h-4 text-cyan-400" />
               {t("เอกสารที่เกี่ยวข้อง", "Documents")}
-            </Link>
-
-            {/* 3. บริการ API */}
-            <Link
-              href="/api-docs"
-              onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-bold text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 transition-all border border-emerald-500/30 shadow-md"
-            >
-              <Zap className="w-4 h-4 text-emerald-400 animate-pulse" />
-              <span>{t("บริการ API", "API Services")}</span>
             </Link>
 
             {/* 4. เกี่ยวกับเรา */}
