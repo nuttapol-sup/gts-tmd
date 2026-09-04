@@ -320,6 +320,49 @@ export function isCountryMatch(
   }
 }
 
+export function resolveEffectiveCountry(
+  issuingCenterCode: string,
+  dataType: string,
+  bodyText: string,
+  reqCountryParam?: string
+): string {
+  const req = (reqCountryParam || "").trim().toUpperCase();
+  if (req && req !== "ZERO") {
+    return req;
+  }
+
+  const cCode = (issuingCenterCode || "").trim().toUpperCase();
+  const dType = (dataType || "").trim().toUpperCase();
+  const bodyUpper = (bodyText || "").toUpperCase();
+
+  // If issuing center is Bangkok RTH (VTBB) or other regional collectors:
+  if (cCode === "VTBB") {
+    const hasThaiStation = /VT(BD|BS|SP|CC|SS|UU|UK|PB|SE|SG)/.test(bodyUpper);
+    // Laos: VLAP, VLHS, VLLB, VLLN, VLOS, VLPS, VLSB, VLSK, VLSN, VLSV, VLTK, VLVT, VLXK
+    if (/VL(AP|HS|LB|LN|OS|PS|SB|SK|SN|SV|TK|VT|XK)/.test(bodyUpper) && !hasThaiStation) {
+      return "VLIV";
+    }
+    // Myanmar: VY..
+    if (/\bVY[A-Z]{2}\b/.test(bodyUpper) && !hasThaiStation) {
+      return "VBRR";
+    }
+    // Bangladesh: VG..
+    if (/\bVG[A-Z]{2}\b/.test(bodyUpper) && !hasThaiStation) {
+      return "VGDC";
+    }
+    // Nepal: VN..
+    if (/\bVN[A-Z]{2}\b/.test(bodyUpper) && !hasThaiStation) {
+      return "VNKT";
+    }
+    // Brunei: WBSB
+    if (bodyUpper.includes("WBSB") && !hasThaiStation) {
+      return "WBSB";
+    }
+  }
+
+  return cCode;
+}
+
 const MONTH_NAMES = [
   "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
   "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
@@ -701,21 +744,22 @@ export async function handleFtpQuery(request: Request, forcedCategory?: string) 
           }
 
           const sanitizedRaw = cleanBinaryText(cleanRaw);
+          const effectiveCountryCode = resolveEffectiveCountry(countryCode, dataType, sanitizedRaw, countryParam);
 
-            bulletins.push({
-              id: `ftp-${filename}-${blockIdx}`,
-              category,
-              categoryLabel,
-              headerLine,
-              dataType,
-              countryCode,
-              utcTimeStr,
-              dayStr,
-              hourStr,
-              stations: extractStationObjects(sanitizedRaw),
-              rawText: sanitizedRaw,
-              filename,
-            });
+          bulletins.push({
+            id: `ftp-${filename}-${blockIdx}`,
+            category,
+            categoryLabel,
+            headerLine,
+            dataType,
+            countryCode: effectiveCountryCode,
+            utcTimeStr,
+            dayStr,
+            hourStr,
+            stations: extractStationObjects(sanitizedRaw),
+            rawText: sanitizedRaw,
+            filename,
+          });
           }
         } catch (e) {
           // Skip corrupt or unreadable file safely
@@ -810,6 +854,7 @@ export async function handleFtpQuery(request: Request, forcedCategory?: string) 
               }
 
               const sanitizedRaw = cleanBinaryText(cleanRaw);
+              const effectiveCountryCode = resolveEffectiveCountry(countryCode, dataType, sanitizedRaw, countryParam);
 
               bulletins.push({
                 id: `ftp-${filename}-${blockIdx}`,
@@ -817,7 +862,7 @@ export async function handleFtpQuery(request: Request, forcedCategory?: string) 
                 categoryLabel,
                 headerLine,
                 dataType,
-                countryCode,
+                countryCode: effectiveCountryCode,
                 utcTimeStr,
                 dayStr,
                 hourStr,

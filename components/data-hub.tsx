@@ -530,7 +530,10 @@ export default function DataHub() {
       }
     }
 
-    const rawCode = (item.countryCode || "OTHER").toUpperCase();
+    let rawCode = (item.countryCode || "OTHER").toUpperCase();
+    if (selectedCountry && selectedCountry !== "zero") {
+      rawCode = selectedCountry.toUpperCase();
+    }
     const code = (rawCode.startsWith("RU") || rawCode === "RIII" || rawCode === "RUSSIA") ? "RUSSIA" : rawCode;
     const headerStr = (item.headerLine || item.dataType || "").trim();
     const key = `${code}___${headerStr}`;
@@ -545,7 +548,10 @@ export default function DataHub() {
 
   // Group bulletins by countryCode
   const groupedByCountry = displayBulletins.reduce<Record<string, GTSBulletin[]>>((acc, item) => {
-    const rawCode = (item.countryCode || "OTHER").toUpperCase();
+    let rawCode = (item.countryCode || "OTHER").toUpperCase();
+    if (selectedCountry && selectedCountry !== "zero") {
+      rawCode = selectedCountry.toUpperCase();
+    }
     const code = (rawCode.startsWith("RU") || rawCode === "RIII" || rawCode === "RUSSIA") ? "RUSSIA" : rawCode;
     if (!acc[code]) {
       acc[code] = [];
