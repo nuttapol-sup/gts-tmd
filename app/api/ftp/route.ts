@@ -931,6 +931,7 @@ export async function handleFtpQuery(request: Request, forcedCategory?: string) 
           countryCode: b.countryCode,
           utcTimeStr: b.utcTimeStr,
           stations: b.stations,
+          rawText: b.rawText,
         });
       }
     }

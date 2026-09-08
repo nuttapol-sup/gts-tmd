@@ -903,7 +903,7 @@ export default function DataHub() {
                 const seenTextContent = new Set<string>();
 
                 for (const b of matchingBulletins) {
-                  const contentKey = (b.rawText || "").trim().replace(/\r?\n/g, "\n");
+                  const contentKey = getBulletinRawText(b).trim().replace(/\r?\n/g, "\n");
                   if (!seenTextContent.has(contentKey)) {
                     seenTextContent.add(contentKey);
                     uniqueMatching.push(b);
