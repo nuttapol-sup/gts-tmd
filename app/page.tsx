@@ -4,7 +4,7 @@ import Footer from "@/components/footer";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#040e0c] text-slate-900 dark:text-slate-100 flex flex-col justify-between selection:bg-emerald-600 selection:text-white transition-colors duration-300">
+    <div className="min-h-screen bg-white dark:bg-[#040e0c] text-slate-900 dark:text-slate-100 flex flex-col justify-between selection:bg-emerald-600 selection:text-white transition-colors duration-300">
       {/* Navigation Header */}
       <Navbar />
 

@@ -14,19 +14,6 @@ export default function HeroSection() {
 
   return (
     <section className="relative pt-24 sm:pt-28 lg:pt-44 pb-16 md:pb-32 overflow-hidden flex items-center justify-center">
-      {/* Dynamic Meteorological Radar Glow Background */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-500/10 rounded-full blur-3xl pointer-events-none animate-pulse-glow" />
-      <div className="absolute top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-teal-600/10 rounded-full blur-3xl pointer-events-none" />
-
-      {/* Radar Grid Lines SVG overlay */}
-      <div
-        className="absolute inset-0 opacity-15 pointer-events-none"
-        style={{
-          backgroundImage: `radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.25) 0%, transparent 70%), linear-gradient(rgba(16, 185, 129, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(16, 185, 129, 0.05) 1px, transparent 1px)`,
-          backgroundSize: "100% 100%, 40px 40px, 40px 40px",
-        }}
-      />
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
         {/* Main Hero Content */}
         <div className="flex flex-col items-center text-center max-w-4xl mx-auto space-y-8">
