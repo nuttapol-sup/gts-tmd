@@ -220,11 +220,7 @@ export default function ShowcaseViewer({
   const displayDescription = description || `ศูนย์รวมข้อมูลเอกสารและสื่อประชาสัมพันธ์ กรมอุตุนิยมวิทยา`;
 
   return (
-    <main className="min-h-screen bg-slate-50 dark:bg-[#040e0c] text-slate-900 dark:text-slate-100 flex flex-col pt-32 pb-16 relative overflow-hidden transition-colors duration-300">
-      {/* Background Glow Orbs */}
-      <div className="absolute top-20 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-20 right-1/4 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
-
+    <main className="min-h-screen bg-white dark:bg-[#040e0c] text-slate-900 dark:text-slate-100 flex flex-col pt-32 pb-16 relative overflow-hidden transition-colors duration-300">
       <Navbar />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 relative z-10 flex-1 w-full">
