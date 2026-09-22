@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Prompt, Kanit, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "@/context/language-context";
+import { ThemeProvider } from "@/context/theme-context";
 
 const prompt = Prompt({
   weight: ["300", "400", "500", "600", "700"],
@@ -41,12 +42,15 @@ export default function RootLayout({
   return (
     <html
       lang="th"
-      className={`${prompt.variable} ${kanit.variable} ${jetbrainsMono.variable} h-full antialiased dark`}
+      className={`${prompt.variable} ${kanit.variable} ${jetbrainsMono.variable} h-full antialiased light`}
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col font-sans bg-[#0b132b] text-slate-100 selection:bg-cyan-500 selection:text-white">
-        <LanguageProvider>
-          {children}
-        </LanguageProvider>
+      <body className="min-h-full flex flex-col font-sans bg-slate-50 dark:bg-[#040e0c] text-slate-900 dark:text-slate-100 selection:bg-emerald-600 selection:text-white transition-colors duration-300">
+        <ThemeProvider>
+          <LanguageProvider>
+            {children}
+          </LanguageProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

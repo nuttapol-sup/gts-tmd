@@ -192,12 +192,12 @@ export default function ApiDocsPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#0b132b] text-slate-100 flex flex-col pt-24 sm:pt-28 lg:pt-44">
+    <main className="min-h-screen bg-slate-50 dark:bg-[#0b132b] text-slate-900 dark:text-slate-100 flex flex-col pt-24 sm:pt-28 lg:pt-44 transition-colors duration-300">
       <Navbar />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full flex-grow space-y-10">
         {/* Header Hero Section */}
-        <div className="relative rounded-3xl p-8 sm:p-12 overflow-hidden bg-gradient-to-br from-[#0d1b3e] via-[#0f274c] to-[#0b132b] border border-cyan-500/30 shadow-2xl">
+        <div className="relative rounded-3xl p-8 sm:p-12 overflow-hidden bg-white/95 dark:bg-gradient-to-br dark:from-[#0d1b3e] dark:via-[#0f274c] dark:to-[#0b132b] border border-slate-200 dark:border-cyan-500/30 shadow-md dark:shadow-2xl transition-colors">
           <div className="absolute top-0 right-0 -mt-12 -mr-12 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
           <div className="relative z-10 space-y-4 max-w-3xl">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/20 text-cyan-300 text-xs font-bold border border-cyan-400/40">

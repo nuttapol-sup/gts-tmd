@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useLanguage } from "@/context/language-context";
+import { useTheme } from "@/context/theme-context";
 import {
   CloudSun,
   Home,
@@ -29,6 +30,8 @@ import {
   RotateCcw,
   Image as ImageIcon,
   PhoneCall,
+  Sun,
+  Moon,
 } from "lucide-react";
 
 export interface MenuItem {
@@ -60,6 +63,7 @@ const DEFAULT_ABOUT_SUBMENU: MenuItem[] = [];
 
 export default function Navbar() {
   const { lang, toggleLang, t } = useLanguage();
+  const { theme, toggleTheme } = useTheme();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileAboutOpen, setMobileAboutOpen] = useState(false);
@@ -72,37 +76,37 @@ export default function Navbar() {
       label: t("ข้อมูลข่าว Synoptic", "Synoptic Bulletins"),
       href: "/services?tab=synoptic",
       icon: Satellite,
-      iconColor: "text-cyan-400",
+      iconColor: "text-emerald-600 dark:text-emerald-400",
     },
     {
       label: t("ข้อมูลข่าว UpperAir", "Upper Air Bulletins (Wind)"),
       href: "/services?tab=upperair",
       icon: Cloud,
-      iconColor: "text-sky-400",
+      iconColor: "text-teal-600 dark:text-teal-400",
     },
     {
       label: t("ข้อมูลข่าวเตือนภัย", "Weather Warnings"),
       href: "/services?tab=warning",
       icon: AlertTriangle,
-      iconColor: "text-amber-400",
+      iconColor: "text-amber-600 dark:text-amber-400",
     },
     {
       label: t("ข้อมูลข่าว Metar (อากาศการบิน)", "METAR Bulletins (Aeronautical)"),
       href: "/services?tab=metar",
       icon: RadioTower,
-      iconColor: "text-indigo-400",
+      iconColor: "text-indigo-600 dark:text-indigo-400",
     },
     {
       label: t("Note ท้ายข่าว (Raw GTS Format)", "Raw GTS Notes"),
       href: "/services?tab=notes",
       icon: StickyNote,
-      iconColor: "text-pink-400",
+      iconColor: "text-pink-600 dark:text-pink-400",
     },
     {
       label: t("บริการ API (API Developer Hub)", "API Developer Hub"),
       href: "/api-docs",
       icon: Zap,
-      iconColor: "text-emerald-400",
+      iconColor: "text-emerald-600 dark:text-emerald-400",
     },
   ];
 
@@ -162,12 +166,12 @@ export default function Navbar() {
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           scrolled
-            ? "bg-[#0b132b]/95 backdrop-blur-xl border-b border-cyan-500/30 py-2.5 sm:py-3 shadow-xl shadow-cyan-950/40"
-            : "bg-[#0b132b]/85 lg:bg-transparent backdrop-blur-md lg:backdrop-blur-none border-b border-cyan-500/20 lg:border-transparent py-2.5 sm:py-5"
+            ? "bg-white/95 dark:bg-[#0b132b]/95 backdrop-blur-xl border-b border-slate-200 dark:border-cyan-500/30 py-2.5 sm:py-3 shadow-md dark:shadow-xl dark:shadow-cyan-950/40"
+            : "bg-white/90 dark:bg-[#0b132b]/85 lg:bg-slate-50/80 lg:dark:bg-transparent backdrop-blur-md lg:backdrop-blur-none border-b border-slate-200 dark:border-cyan-500/20 lg:border-transparent py-2.5 sm:py-5"
         }`}
       >
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-          {/* Row 1: Logo, Title & Language / Mobile Menu */}
+          {/* Row 1: Logo, Title & Theme / Language / Mobile Menu */}
           <div className="flex items-center justify-between gap-3">
             {/* Logo & Title */}
             <div className="flex items-center gap-3 shrink min-w-0">
@@ -175,9 +179,9 @@ export default function Navbar() {
               <Link
                 href="/"
                 aria-label="RTH Bangkok GTS Thailand"
-                className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 p-0.5 shadow-md shadow-cyan-500/30 group-hover:scale-105 transition-transform duration-300 overflow-hidden shrink-0"
+                className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-tr from-emerald-600 via-teal-600 to-emerald-400 p-0.5 shadow-md shadow-emerald-600/20 dark:shadow-emerald-500/30 group-hover:scale-105 transition-transform duration-300 overflow-hidden shrink-0"
               >
-                <div className="w-full h-full bg-[#0b132b] rounded-[10px] flex items-center justify-center relative overflow-hidden">
+                <div className="w-full h-full bg-white dark:bg-[#040e0c] rounded-[10px] flex items-center justify-center relative overflow-hidden">
                   {customLogoUrl ? (
                     <img
                       src={customLogoUrl}
@@ -185,22 +189,22 @@ export default function Navbar() {
                       className="w-full h-full object-contain p-1"
                     />
                   ) : (
-                    <CloudSun className="w-6 h-6 text-cyan-400 animate-pulse-glow" />
+                    <CloudSun className="w-6 h-6 text-emerald-600 dark:text-emerald-400 animate-pulse-glow" />
                   )}
                 </div>
               </Link>
 
               <Link href="/" className="flex flex-col min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="font-extrabold text-base sm:text-lg lg:text-xl tracking-wider text-white group-hover:text-cyan-300 transition-colors">
+                  <span className="font-extrabold text-base sm:text-lg lg:text-xl tracking-wider text-slate-900 dark:text-white group-hover:text-emerald-700 dark:group-hover:text-emerald-300 transition-colors">
                     RTH BANGKOK
                   </span>
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 shrink-0">
-                    <Radio className="w-2.5 h-2.5 mr-1 animate-ping text-cyan-400" />
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/30 shrink-0">
+                    <Radio className="w-2.5 h-2.5 mr-1 animate-ping text-emerald-600 dark:text-emerald-400" />
                     GTS Thailand
                   </span>
                 </div>
-                <span className="text-[11px] text-slate-400 font-light truncate max-w-[240px] sm:max-w-none">
+                <span className="text-[11px] text-slate-600 dark:text-slate-400 font-medium dark:font-light truncate max-w-[240px] sm:max-w-none">
                   {t(
                     "ศูนย์โทรคมนาคมอุตุนิยมวิทยาแห่งภูมิภาคเอเชียตะวันออกเฉียงใต้",
                     "Regional Telecommunication Hub Southeast Asia"
@@ -209,40 +213,56 @@ export default function Navbar() {
               </Link>
             </div>
 
-            {/* Language Switcher & Mobile Menu Trigger */}
+            {/* Controls: Theme Switcher & Language Switcher & Mobile Menu Trigger */}
             <div className="flex items-center gap-2 shrink-0">
+              {/* Theme Toggle Button */}
               <button
-                onClick={toggleLang}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-cyan-500/40 text-xs font-bold text-cyan-300 shadow-md hover:shadow-cyan-500/20 transition-all cursor-pointer"
-                title={lang === "th" ? "Switch to English" : "เปลี่ยนเป็นภาษาไทย"}
+                onClick={toggleTheme}
+                className="flex items-center justify-center p-2 rounded-xl bg-slate-100 dark:bg-slate-900/90 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-300 dark:border-emerald-500/40 text-slate-700 dark:text-amber-400 shadow-sm transition-all cursor-pointer"
+                title={theme === "light" ? t("เปลี่ยนเป็นโหมดมืด (Dark Mode)", "Switch to Dark Mode") : t("เปลี่ยนเป็นโหมดสว่าง (Light Mode)", "Switch to Light Mode")}
+                aria-label="Toggle theme"
               >
-                <Globe className="w-3.5 h-3.5 text-cyan-400" />
-                <span className={lang === "th" ? "text-cyan-300 font-black" : "text-slate-500"}>TH</span>
-                <span className="text-slate-600 font-normal">/</span>
-                <span className={lang === "en" ? "text-cyan-300 font-black" : "text-slate-500"}>EN</span>
+                {theme === "light" ? (
+                  <Moon className="w-4 h-4 text-slate-700" />
+                ) : (
+                  <Sun className="w-4 h-4 text-amber-400" />
+                )}
               </button>
 
+              {/* Language Switcher */}
+              <button
+                onClick={toggleLang}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-900/90 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-300 dark:border-emerald-500/40 text-xs font-bold text-slate-800 dark:text-emerald-300 shadow-sm transition-all cursor-pointer"
+                title={lang === "th" ? "Switch to English" : "เปลี่ยนเป็นภาษาไทย"}
+              >
+                <Globe className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                <span className={lang === "th" ? "text-emerald-700 dark:text-emerald-300 font-black" : "text-slate-400 dark:text-slate-500"}>TH</span>
+                <span className="text-slate-400 dark:text-slate-600 font-normal">/</span>
+                <span className={lang === "en" ? "text-emerald-700 dark:text-emerald-300 font-black" : "text-slate-400 dark:text-slate-500"}>EN</span>
+              </button>
+
+              {/* Mobile Menu Trigger */}
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="lg:hidden p-2 rounded-xl text-cyan-300 bg-slate-900/90 hover:text-white hover:bg-slate-800 border border-cyan-500/40 transition-colors shadow-sm cursor-pointer shrink-0"
+                className="lg:hidden p-2 rounded-xl text-slate-700 dark:text-emerald-300 bg-slate-100 dark:bg-slate-900/90 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-300 dark:border-emerald-500/40 transition-colors shadow-sm cursor-pointer shrink-0"
                 aria-label="Toggle menu"
               >
-                {mobileMenuOpen ? <X className="w-5 h-5 text-rose-400" /> : <Menu className="w-5 h-5 text-cyan-400" />}
+                {mobileMenuOpen ? <X className="w-5 h-5 text-rose-500" /> : <Menu className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />}
               </button>
             </div>
           </div>
 
-          {/* Row 2: Desktop Navigation Bar (จัดอยู่คนละแถวกับ Logo - ตรงกลาง) */}
-          <nav className="hidden lg:flex items-center justify-center gap-2 sm:gap-3 mt-3 pt-2.5 border-t border-cyan-500/20">
+          {/* Row 2: Desktop Navigation Bar */}
+          <nav className="hidden lg:flex items-center justify-center gap-2 sm:gap-3 mt-3 pt-2.5 border-t border-slate-200 dark:border-emerald-500/20">
             <Link
               href="/"
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
                 pathname === "/"
-                  ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm"
-                  : "text-slate-300 hover:text-white hover:bg-slate-800/60"
+                  ? "bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/40 shadow-sm"
+                  : "text-slate-700 dark:text-slate-300 hover:text-emerald-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60"
               }`}
             >
-              <Home className="w-4 h-4 text-cyan-400" />
+              <Home className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               {t("หน้าหลัก", "Home")}
             </Link>
 
@@ -250,11 +270,11 @@ export default function Navbar() {
               href="/documents"
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
                 pathname === "/documents"
-                  ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm"
-                  : "text-slate-300 hover:text-white hover:bg-slate-800/60"
+                  ? "bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/40 shadow-sm"
+                  : "text-slate-700 dark:text-slate-300 hover:text-emerald-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60"
               }`}
             >
-              <FileText className="w-4 h-4 text-cyan-400" />
+              <FileText className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               {t("เอกสารที่เกี่ยวข้อง", "Documents")}
             </Link>
 
@@ -262,24 +282,24 @@ export default function Navbar() {
             <div className="relative group">
               <button
                 onClick={() => toggleDropdown("about")}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-slate-800/60 transition-all cursor-pointer"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-emerald-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-all cursor-pointer"
               >
-                <Info className="w-4 h-4 text-cyan-400" />
+                <Info className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 {t("เกี่ยวกับเรา", "About Us")}
                 <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover:rotate-180 transition-transform" />
               </button>
 
               <div className="absolute left-0 top-full pt-2 w-72 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform group-hover:translate-y-0 translate-y-2 z-50">
-                <div className="bg-[#0f172a]/95 backdrop-blur-xl border border-cyan-500/20 rounded-2xl shadow-2xl p-2 space-y-1">
+                <div className="bg-white/98 dark:bg-[#0b1815]/95 backdrop-blur-xl border border-slate-200 dark:border-emerald-500/20 rounded-2xl shadow-xl dark:shadow-2xl p-2 space-y-1">
                   {aboutSubmenu.map((item) => {
                     const IconComp = (item.icon && ICON_MAP[item.icon]) || FileText;
                     return (
                       <Link
                         key={item.id}
                         href={item.href}
-                        className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-300 hover:text-white hover:bg-cyan-500/20 transition-all"
+                        className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-300 hover:text-emerald-700 dark:hover:text-white hover:bg-emerald-50 dark:hover:bg-emerald-500/20 transition-all"
                       >
-                        <IconComp className={`w-4 h-4 ${item.iconColor || "text-cyan-400"}`} />
+                        <IconComp className={`w-4 h-4 ${item.iconColor || "text-emerald-600 dark:text-emerald-400"}`} />
                         <span className="truncate">{item.label}</span>
                       </Link>
                     );
@@ -292,22 +312,22 @@ export default function Navbar() {
             <div className="relative group">
               <button
                 onClick={() => toggleDropdown("services")}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-slate-800/60 transition-all cursor-pointer"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-emerald-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-all cursor-pointer"
               >
-                <Globe className="w-4 h-4 text-cyan-400" />
+                <Globe className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 {t("บริการ GTS", "GTS Services")}
                 <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover:rotate-180 transition-transform" />
               </button>
 
               <div className="absolute left-0 top-full pt-2 w-72 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform group-hover:translate-y-0 translate-y-2 z-50">
-                <div className="bg-[#0f172a]/95 backdrop-blur-xl border border-cyan-500/20 rounded-2xl shadow-2xl p-2 space-y-1">
+                <div className="bg-white/98 dark:bg-[#0b1815]/95 backdrop-blur-xl border border-slate-200 dark:border-emerald-500/20 rounded-2xl shadow-xl dark:shadow-2xl p-2 space-y-1">
                   {servicesSubmenu.map((item, idx) => {
                     const IconComp = item.icon;
                     return (
                       <Link
                         key={idx}
                         href={item.href}
-                        className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-300 hover:text-white hover:bg-cyan-500/20 transition-all"
+                        className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-300 hover:text-emerald-700 dark:hover:text-white hover:bg-emerald-50 dark:hover:bg-emerald-500/20 transition-all"
                       >
                         <IconComp className={`w-4 h-4 ${item.iconColor}`} />
                         <span>{item.label}</span>
@@ -320,13 +340,13 @@ export default function Navbar() {
 
             <Link
               href="/contact"
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
+              className={`flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-bold transition-all cursor-pointer shadow-md ${
                 pathname === "/contact"
-                  ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm"
-                  : "text-slate-300 hover:text-white hover:bg-slate-800/60"
+                  ? "bg-emerald-700 text-white shadow-emerald-700/30"
+                  : "bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-600/20 hover:scale-105"
               }`}
             >
-              <PhoneCall className="w-4 h-4 text-cyan-400" />
+              <PhoneCall className="w-4 h-4 text-white" />
               {t("ติดต่อเรา", "Contact Us")}
             </Link>
           </nav>
@@ -334,14 +354,14 @@ export default function Navbar() {
 
         {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
-          <div className="lg:hidden mt-3 pt-3 border-t border-cyan-500/20 bg-[#0b132b]/98 backdrop-blur-2xl rounded-2xl p-3 space-y-2 shadow-2xl max-h-[80vh] overflow-y-auto mx-4">
+          <div className="lg:hidden mt-3 pt-3 border-t border-slate-200 dark:border-emerald-500/20 bg-white/98 dark:bg-[#040e0c]/98 backdrop-blur-2xl rounded-2xl p-3 space-y-2 shadow-xl dark:shadow-2xl max-h-[80vh] overflow-y-auto mx-4 border border-slate-200 dark:border-slate-800">
             {/* 1. หน้าหลัก */}
             <Link
               href="/"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-semibold text-slate-200 hover:text-white hover:bg-cyan-500/20 transition-all border border-transparent hover:border-cyan-500/30"
+              className="flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-200 hover:text-emerald-700 dark:hover:text-white hover:bg-emerald-50 dark:hover:bg-emerald-500/20 transition-all border border-transparent hover:border-emerald-200 dark:hover:border-emerald-500/30"
             >
-              <Home className="w-4 h-4 text-cyan-400" />
+              <Home className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               {t("หน้าหลัก", "Home")}
             </Link>
 
@@ -349,37 +369,37 @@ export default function Navbar() {
             <Link
               href="/documents"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-semibold text-slate-200 hover:text-white hover:bg-cyan-500/20 transition-all border border-transparent hover:border-cyan-500/30"
+              className="flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-200 hover:text-emerald-700 dark:hover:text-white hover:bg-emerald-50 dark:hover:bg-emerald-500/20 transition-all border border-transparent hover:border-emerald-200 dark:hover:border-emerald-500/30"
             >
-              <FileText className="w-4 h-4 text-cyan-400" />
+              <FileText className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               {t("เอกสารที่เกี่ยวข้อง", "Documents")}
             </Link>
 
             {/* 4. เกี่ยวกับเรา */}
-            <div className="rounded-xl border border-slate-800 bg-slate-900/40 overflow-hidden transition-all">
+            <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/40 overflow-hidden transition-all">
               <button
                 type="button"
                 onClick={() => setMobileAboutOpen(!mobileAboutOpen)}
-                className="w-full flex items-center justify-between px-3.5 py-3 text-sm font-semibold text-slate-200 hover:text-white hover:bg-slate-800/80 transition-all cursor-pointer"
+                className="w-full flex items-center justify-between px-3.5 py-3 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:text-emerald-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-all cursor-pointer"
               >
                 <div className="flex items-center gap-3">
-                  <Info className="w-4 h-4 text-cyan-400" />
+                  <Info className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                   <span>{t("เกี่ยวกับเรา", "About Us")}</span>
                   {aboutSubmenu.length > 0 && (
-                    <span className="text-[10px] bg-cyan-950 text-cyan-300 px-2 py-0.5 rounded-full border border-cyan-500/30 font-medium">
+                    <span className="text-[10px] bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-500/30 font-medium">
                       {aboutSubmenu.length}
                     </span>
                   )}
                 </div>
                 <ChevronDown
                   className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${
-                    mobileAboutOpen ? "rotate-180 text-cyan-400" : ""
+                    mobileAboutOpen ? "rotate-180 text-emerald-600 dark:text-emerald-400" : ""
                   }`}
                 />
               </button>
 
               {mobileAboutOpen && (
-                <div className="p-2 space-y-1 bg-[#070d1e] border-t border-slate-800">
+                <div className="p-2 space-y-1 bg-white dark:bg-[#040e0c] border-t border-slate-200 dark:border-slate-800">
                   {aboutSubmenu.map((item) => {
                     const IconComp = (item.icon && ICON_MAP[item.icon]) || FileText;
                     return (
@@ -387,9 +407,9 @@ export default function Navbar() {
                         key={item.id}
                         href={item.href}
                         onClick={() => setMobileMenuOpen(false)}
-                        className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white hover:bg-cyan-500/20 transition-all border border-transparent hover:border-cyan-500/30"
+                        className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:text-emerald-700 dark:hover:text-white hover:bg-emerald-50 dark:hover:bg-emerald-500/20 transition-all border border-transparent hover:border-emerald-200 dark:hover:border-emerald-500/30"
                       >
-                        <IconComp className={`w-4 h-4 shrink-0 ${item.iconColor || "text-cyan-400"}`} />
+                        <IconComp className={`w-4 h-4 shrink-0 ${item.iconColor || "text-emerald-600 dark:text-emerald-400"}`} />
                         <span className="truncate">{item.label}</span>
                       </Link>
                     );
@@ -399,28 +419,28 @@ export default function Navbar() {
             </div>
 
             {/* 5. บริการ GTS */}
-            <div className="rounded-xl border border-slate-800 bg-slate-900/40 overflow-hidden transition-all">
+            <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/40 overflow-hidden transition-all">
               <button
                 type="button"
                 onClick={() => setMobileServicesOpen(!mobileServicesOpen)}
-                className="w-full flex items-center justify-between px-3.5 py-3 text-sm font-semibold text-slate-200 hover:text-white hover:bg-slate-800/80 transition-all cursor-pointer"
+                className="w-full flex items-center justify-between px-3.5 py-3 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:text-emerald-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-all cursor-pointer"
               >
                 <div className="flex items-center gap-3">
-                  <Globe className="w-4 h-4 text-cyan-400" />
+                  <Globe className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                   <span>{t("บริการ GTS", "GTS Services")}</span>
-                  <span className="text-[10px] bg-cyan-950 text-cyan-300 px-2 py-0.5 rounded-full border border-cyan-500/30 font-medium">
+                  <span className="text-[10px] bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-500/30 font-medium">
                     {servicesSubmenu.length}
                   </span>
                 </div>
                 <ChevronDown
                   className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${
-                    mobileServicesOpen ? "rotate-180 text-cyan-400" : ""
+                    mobileServicesOpen ? "rotate-180 text-emerald-600 dark:text-emerald-400" : ""
                   }`}
                 />
               </button>
 
               {mobileServicesOpen && (
-                <div className="p-2 space-y-1 bg-[#070d1e] border-t border-slate-800">
+                <div className="p-2 space-y-1 bg-white dark:bg-[#040e0c] border-t border-slate-200 dark:border-slate-800">
                   {servicesSubmenu.map((item, idx) => {
                     const IconComp = item.icon;
                     return (
@@ -428,7 +448,7 @@ export default function Navbar() {
                         key={idx}
                         href={item.href}
                         onClick={() => setMobileMenuOpen(false)}
-                        className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white hover:bg-cyan-500/20 transition-all border border-transparent hover:border-cyan-500/30"
+                        className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:text-emerald-700 dark:hover:text-white hover:bg-emerald-50 dark:hover:bg-emerald-500/20 transition-all border border-transparent hover:border-emerald-200 dark:hover:border-emerald-500/30"
                       >
                         <IconComp className={`w-4 h-4 shrink-0 ${item.iconColor}`} />
                         <span>{item.label}</span>
@@ -443,9 +463,9 @@ export default function Navbar() {
             <Link
               href="/contact"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-semibold text-slate-200 hover:text-white hover:bg-cyan-500/20 transition-all border border-transparent hover:border-cyan-500/30"
+              className="flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-200 hover:text-emerald-700 dark:hover:text-white hover:bg-emerald-50 dark:hover:bg-emerald-500/20 transition-all border border-transparent hover:border-emerald-200 dark:hover:border-emerald-500/30"
             >
-              <PhoneCall className="w-4 h-4 text-cyan-400" />
+              <PhoneCall className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               {t("ติดต่อเรา", "Contact Us")}
             </Link>
           </div>

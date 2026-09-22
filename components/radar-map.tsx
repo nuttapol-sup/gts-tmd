@@ -58,31 +58,31 @@ export default function RadarMap() {
   const [isScanning, setIsScanning] = useState(true);
 
   return (
-    <section className="py-16 relative z-10 bg-[#070d1e]/80 border-y border-cyan-500/10">
+    <section className="py-16 relative z-10 bg-slate-100/60 dark:bg-[#070d1e]/80 border-y border-slate-200/80 dark:border-cyan-500/10 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-semibold mb-2">
-              <Radio className="w-3.5 h-3.5 text-cyan-400 animate-ping" />
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 dark:bg-cyan-500/10 border border-blue-200 dark:border-cyan-500/30 text-blue-700 dark:text-cyan-300 text-xs font-bold shadow-sm mb-2">
+              <Radio className="w-3.5 h-3.5 text-blue-600 dark:text-cyan-400 animate-ping" />
               Doppler Weather Radar & Satellite Network
             </div>
-            <h2 className="text-3xl font-extrabold text-white tracking-tight">
+            <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
               ระบบภาพเรดาร์ตรวจอากาศ & โครงข่ายดาวเทียม
             </h2>
-            <p className="text-slate-400 text-sm mt-1">
+            <p className="text-slate-600 dark:text-slate-400 text-sm mt-1 font-normal dark:font-light">
               ติดตามกลุ่มฝนและภาพถ่ายดาวเทียมอุตุนิยมวิทยาเรียลไทม์จากสถานีตรวจอากาศครอบคลุมทั่วประเทศ
             </p>
           </div>
 
           {/* Mode switch */}
-          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-900 border border-slate-800 self-start md:self-auto">
+          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm self-start md:self-auto">
             <button
               onClick={() => setActiveMode("radar")}
               className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                 activeMode === "radar"
-                  ? "bg-cyan-500 text-white shadow-md shadow-cyan-500/30"
-                  : "text-slate-400 hover:text-white"
+                  ? "bg-blue-600 dark:bg-cyan-500 text-white shadow-md shadow-blue-500/20 dark:shadow-cyan-500/30"
+                  : "text-slate-600 dark:text-slate-400 hover:text-blue-700 dark:hover:text-white"
               }`}
             >
               ภาพเรดาร์ (Radar)
@@ -91,8 +91,8 @@ export default function RadarMap() {
               onClick={() => setActiveMode("satellite")}
               className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                 activeMode === "satellite"
-                  ? "bg-cyan-500 text-white shadow-md shadow-cyan-500/30"
-                  : "text-slate-400 hover:text-white"
+                  ? "bg-blue-600 dark:bg-cyan-500 text-white shadow-md shadow-blue-500/20 dark:shadow-cyan-500/30"
+                  : "text-slate-600 dark:text-slate-400 hover:text-blue-700 dark:hover:text-white"
               }`}
             >
               ภาพดาวเทียม (Himawari-9)
@@ -101,8 +101,8 @@ export default function RadarMap() {
               onClick={() => setActiveMode("gts-network")}
               className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                 activeMode === "gts-network"
-                  ? "bg-cyan-500 text-white shadow-md shadow-cyan-500/30"
-                  : "text-slate-400 hover:text-white"
+                  ? "bg-blue-600 dark:bg-cyan-500 text-white shadow-md shadow-blue-500/20 dark:shadow-cyan-500/30"
+                  : "text-slate-600 dark:text-slate-400 hover:text-blue-700 dark:hover:text-white"
               }`}
             >
               ผังการเชื่อมโยง GTS Network
@@ -114,9 +114,9 @@ export default function RadarMap() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Controls Bar */}
           <div className="lg:col-span-4 space-y-4">
-            <div className="glass-panel rounded-2xl p-5 border border-cyan-500/20 space-y-4">
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <Layers className="w-4 h-4 text-cyan-400" />
+            <div className="glass-panel rounded-3xl p-5 border border-slate-200 dark:border-cyan-500/20 bg-white dark:bg-slate-900/90 shadow-md dark:shadow-xl space-y-4 transition-colors">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <Layers className="w-4 h-4 text-blue-600 dark:text-cyan-400" />
                 เลือกสถานีเรดาร์ตรวจอากาศ
               </h3>
 
@@ -127,13 +127,13 @@ export default function RadarMap() {
                     onClick={() => setSelectedStation(st)}
                     className={`w-full text-left p-3 rounded-xl border transition-all cursor-pointer flex items-center justify-between ${
                       selectedStation.id === st.id
-                        ? "bg-cyan-500/20 border-cyan-400 text-white shadow-md shadow-cyan-500/10"
-                        : "bg-slate-900/60 border-slate-800 text-slate-300 hover:bg-slate-800/80"
+                        ? "bg-blue-50 dark:bg-cyan-500/20 border-blue-400 dark:border-cyan-400 text-blue-900 dark:text-white shadow-sm font-bold"
+                        : "bg-slate-50 dark:bg-slate-900/60 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/80"
                     }`}
                   >
                     <div>
                       <div className="font-semibold text-xs sm:text-sm">{st.name}</div>
-                      <div className="text-[11px] text-slate-400 flex items-center gap-2 mt-0.5">
+                      <div className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-2 mt-0.5 font-normal">
                         <span>{st.freq}</span>
                         <span>•</span>
                         <span>{st.range}</span>
@@ -141,28 +141,28 @@ export default function RadarMap() {
                     </div>
 
                     {selectedStation.id === st.id && (
-                      <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0" />
+                      <CheckCircle2 className="w-4 h-4 text-blue-600 dark:text-cyan-400 shrink-0" />
                     )}
                   </button>
                 ))}
               </div>
 
               {/* Technical Specifications */}
-              <div className="pt-3 border-t border-slate-800 space-y-2 text-xs">
-                <div className="flex justify-between text-slate-400">
+              <div className="pt-3 border-t border-slate-200 dark:border-slate-800 space-y-2 text-xs">
+                <div className="flex justify-between text-slate-600 dark:text-slate-400">
                   <span>สถานะสแกน:</span>
-                  <span className="text-emerald-400 font-medium flex items-center gap-1">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                  <span className="text-emerald-700 dark:text-emerald-400 font-bold flex items-center gap-1">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
                     กำลังกวาดสัญญาณแบบเรียลไทม์
                   </span>
                 </div>
-                <div className="flex justify-between text-slate-400">
+                <div className="flex justify-between text-slate-600 dark:text-slate-400">
                   <span>ค่าการสะท้อน (Reflectivity):</span>
-                  <span className="text-cyan-300 font-mono">{selectedStation.dBz}</span>
+                  <span className="text-blue-700 dark:text-cyan-300 font-mono font-bold">{selectedStation.dBz}</span>
                 </div>
-                <div className="flex justify-between text-slate-400">
+                <div className="flex justify-between text-slate-600 dark:text-slate-400">
                   <span>พิกัดสถานีเรดาร์:</span>
-                  <span className="text-slate-300 font-mono">{selectedStation.coords}</span>
+                  <span className="text-slate-800 dark:text-slate-300 font-mono">{selectedStation.coords}</span>
                 </div>
               </div>
             </div>
@@ -170,7 +170,7 @@ export default function RadarMap() {
 
           {/* Visual Display Screen */}
           <div className="lg:col-span-8">
-            <div className="glass-panel rounded-2xl p-6 border border-cyan-500/30 relative min-h-[420px] flex flex-col justify-between overflow-hidden">
+            <div className="glass-panel rounded-3xl p-6 border border-slate-800 dark:border-cyan-500/30 bg-slate-950 text-white relative min-h-[420px] flex flex-col justify-between overflow-hidden shadow-xl">
               {/* Radar Sweeper Visual Container */}
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-40">
                 {/* Concentric Radar Rings */}
@@ -193,7 +193,7 @@ export default function RadarMap() {
               </div>
 
               {/* Screen Top Status Bar */}
-              <div className="relative z-10 flex items-center justify-between bg-slate-950/80 p-3 rounded-xl border border-slate-800 text-xs">
+              <div className="relative z-10 flex items-center justify-between bg-slate-900/90 p-3 rounded-xl border border-slate-800 text-xs">
                 <div className="flex items-center gap-2 text-white font-semibold">
                   <MapPin className="w-4 h-4 text-cyan-400" />
                   <span>{selectedStation.name}</span>
@@ -252,7 +252,7 @@ export default function RadarMap() {
               </div>
 
               {/* Bottom Legend */}
-              <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between bg-slate-950/80 p-3 rounded-xl border border-slate-800 text-xs gap-3">
+              <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between bg-slate-900/90 p-3 rounded-xl border border-slate-800 text-xs gap-3">
                 <div className="flex items-center gap-2">
                   <span className="text-slate-400">ระดับความเข้มกลุ่มฝน (dBZ):</span>
                   <div className="flex items-center gap-1">

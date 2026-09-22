@@ -23,9 +23,10 @@ export default function MissionSection() {
         "Collect, verify, control, operate, and enhance meteorological communication networks for exchanging national and international weather and seismic data."
       ),
       icon: Globe2,
-      color: "from-cyan-500/20 to-blue-500/20",
-      borderColor: "border-cyan-500/30",
-      iconColor: "text-cyan-400",
+      color: "from-emerald-50/80 to-teal-50/50 dark:from-emerald-500/20 dark:to-teal-500/20",
+      borderColor: "border-emerald-100 dark:border-emerald-500/30",
+      iconColor: "text-emerald-600 dark:text-emerald-400",
+      iconBg: "bg-emerald-100/80 dark:bg-slate-900/80 border-emerald-200 dark:border-white/10",
     },
     {
       num: "02",
@@ -35,9 +36,10 @@ export default function MissionSection() {
         "Disseminate meteorological information for safety and operational efficiency across aviation, maritime, land transport, and other sectors."
       ),
       icon: Radio,
-      color: "from-blue-500/20 to-indigo-500/20",
-      borderColor: "border-blue-500/30",
-      iconColor: "text-blue-400",
+      color: "from-teal-50/80 to-emerald-50/50 dark:from-teal-500/20 dark:to-emerald-500/20",
+      borderColor: "border-teal-100 dark:border-emerald-500/30",
+      iconColor: "text-teal-600 dark:text-emerald-400",
+      iconBg: "bg-teal-100/80 dark:bg-slate-900/80 border-teal-200 dark:border-white/10",
     },
     {
       num: "03",
@@ -47,9 +49,10 @@ export default function MissionSection() {
         "Research and modernize weather telecommunications to support Big Data and real-time transmission of meteorological and earthquake data."
       ),
       icon: Cpu,
-      color: "from-purple-500/20 to-pink-500/20",
-      borderColor: "border-purple-500/30",
-      iconColor: "text-purple-400",
+      color: "from-emerald-50/80 to-teal-50/50 dark:from-emerald-500/20 dark:to-teal-500/20",
+      borderColor: "border-emerald-100 dark:border-teal-500/30",
+      iconColor: "text-emerald-600 dark:text-teal-400",
+      iconBg: "bg-emerald-100/80 dark:bg-slate-900/80 border-emerald-200 dark:border-white/10",
     },
     {
       num: "04",
@@ -59,9 +62,10 @@ export default function MissionSection() {
         "Provide consultation, development, manuals, installation, maintenance, and repair services for weather telecommunications equipment."
       ),
       icon: Wrench,
-      color: "from-amber-500/20 to-orange-500/20",
-      borderColor: "border-amber-500/30",
-      iconColor: "text-amber-400",
+      color: "from-amber-50/80 to-orange-50/50 dark:from-amber-500/20 dark:to-orange-500/20",
+      borderColor: "border-amber-100 dark:border-amber-500/30",
+      iconColor: "text-amber-600 dark:text-amber-400",
+      iconBg: "bg-amber-100/80 dark:bg-slate-900/80 border-amber-200 dark:border-white/10",
     },
     {
       num: "05",
@@ -71,9 +75,10 @@ export default function MissionSection() {
         "Operate as the Regional Telecommunication Hub for Southeast Asia under the World Meteorological Organization (WMO) framework."
       ),
       icon: ShieldCheck,
-      color: "from-emerald-500/20 to-teal-500/20",
-      borderColor: "border-emerald-500/30",
-      iconColor: "text-emerald-400",
+      color: "from-emerald-50/80 to-teal-50/50 dark:from-emerald-500/20 dark:to-teal-500/20",
+      borderColor: "border-emerald-100 dark:border-emerald-500/30",
+      iconColor: "text-emerald-600 dark:text-emerald-400",
+      iconBg: "bg-emerald-100/80 dark:bg-slate-900/80 border-emerald-200 dark:border-white/10",
     },
     {
       num: "06",
@@ -83,9 +88,10 @@ export default function MissionSection() {
         "Collaborate with and support partner agencies for the maximum safety and benefit of the public and the nation."
       ),
       icon: Users,
-      color: "from-sky-500/20 to-cyan-500/20",
-      borderColor: "border-sky-500/30",
-      iconColor: "text-sky-400",
+      color: "from-teal-50/80 to-emerald-50/50 dark:from-teal-500/20 dark:to-emerald-500/20",
+      borderColor: "border-teal-100 dark:border-emerald-500/30",
+      iconColor: "text-teal-600 dark:text-emerald-400",
+      iconBg: "bg-teal-100/80 dark:bg-slate-900/80 border-teal-200 dark:border-white/10",
     },
   ];
 
@@ -94,14 +100,14 @@ export default function MissionSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-semibold">
-            <Building className="w-3.5 h-3.5 text-cyan-400" />
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/30 text-emerald-800 dark:text-emerald-300 text-xs font-bold shadow-sm">
+            <Building className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
             {t("กองสื่อสาร กรมอุตุนิยมวิทยา", "Telecommunication Division, TMD")}
           </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
             {t("หน้าที่และความรับผิดชอบหลัก", "Core Responsibilities & Missions")}
           </h2>
-          <p className="text-slate-400 text-sm sm:text-base">
+          <p className="text-slate-600 dark:text-slate-400 text-sm sm:text-base font-normal dark:font-light">
             {t(
               "ความมุ่งมั่นและพันธกิจของกองสื่อสาร ในการบริหารจัดการระบบโทรคมนาคมอุตุนิยมวิทยาแห่งชาติและภูมิภาค",
               "Commitment and mission of the Telecommunication Division in managing national and regional meteorological telecommunication systems."
@@ -116,22 +122,22 @@ export default function MissionSection() {
             return (
               <div
                 key={m.num}
-                className={`glass-panel rounded-2xl p-6 border ${m.borderColor} bg-gradient-to-br ${m.color} relative overflow-hidden group hover:scale-[1.02] transition-all duration-300 shadow-xl`}
+                className={`glass-panel rounded-3xl p-6 border ${m.borderColor} bg-white dark:bg-slate-900/90 relative overflow-hidden group hover:scale-[1.02] transition-all duration-300 shadow-md dark:shadow-xl`}
               >
                 <div className="flex items-center justify-between mb-4">
-                  <div className={`p-3 rounded-xl bg-slate-900/80 border border-white/10 ${m.iconColor}`}>
+                  <div className={`p-3 rounded-2xl border ${m.iconBg} ${m.iconColor} shadow-sm`}>
                     <Icon className="w-6 h-6" />
                   </div>
-                  <span className="text-2xl font-black text-slate-500/40 group-hover:text-cyan-400/40 transition-colors font-mono">
+                  <span className="text-2xl font-black text-slate-300 dark:text-slate-700 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors font-mono">
                     {m.num}
                   </span>
                 </div>
 
-                <h3 className="text-lg font-bold text-white mb-2 group-hover:text-cyan-300 transition-colors">
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2 group-hover:text-emerald-700 dark:group-hover:text-emerald-300 transition-colors">
                   {m.title}
                 </h3>
 
-                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal dark:font-light">
                   {m.desc}
                 </p>
               </div>

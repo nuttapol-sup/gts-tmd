@@ -584,13 +584,13 @@ export default function DataHub() {
         {/* Category Navigation Bar */}
         {!isNewTabMode && (
           <>
-        <div className="flex flex-wrap justify-center gap-2 p-1.5 rounded-2xl bg-slate-900/80 backdrop-blur-md border border-cyan-500/20 shadow-xl max-w-4xl mx-auto">
+        <div className="flex flex-wrap justify-center gap-2 p-1.5 rounded-2xl bg-white/90 dark:bg-slate-900/80 backdrop-blur-md border border-slate-200 dark:border-emerald-500/20 shadow-md dark:shadow-xl max-w-4xl mx-auto transition-colors">
           <button
             onClick={() => setActiveTab("synoptic")}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
               activeTab === "synoptic"
-                ? "bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/25"
-                : "text-slate-400 hover:text-white hover:bg-slate-800/60"
+                ? "bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-500 dark:to-teal-600 text-white shadow-md shadow-emerald-600/25"
+                : "text-slate-700 dark:text-slate-400 hover:text-emerald-700 dark:hover:text-white hover:bg-emerald-50 dark:hover:bg-slate-800/60"
             }`}
           >
             <Satellite className="w-4 h-4" />
@@ -599,10 +599,10 @@ export default function DataHub() {
 
           <button
             onClick={() => setActiveTab("upperair")}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
               activeTab === "upperair"
-                ? "bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/25"
-                : "text-slate-400 hover:text-white hover:bg-slate-800/60"
+                ? "bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-500 dark:to-teal-600 text-white shadow-md shadow-emerald-600/25"
+                : "text-slate-700 dark:text-slate-400 hover:text-emerald-700 dark:hover:text-white hover:bg-emerald-50 dark:hover:bg-slate-800/60"
             }`}
           >
             <Cloud className="w-4 h-4" />
@@ -611,22 +611,22 @@ export default function DataHub() {
 
           <button
             onClick={() => setActiveTab("warning")}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
               activeTab === "warning"
-                ? "bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/25"
-                : "text-slate-400 hover:text-white hover:bg-slate-800/60"
+                ? "bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-md shadow-amber-500/25"
+                : "text-slate-700 dark:text-slate-400 hover:text-amber-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60"
             }`}
           >
-            <AlertTriangle className="w-4 h-4 text-amber-300" />
+            <AlertTriangle className="w-4 h-4 text-amber-500 dark:text-amber-300" />
             {t("ประกาศเตือนภัย (War)", "Weather Warnings")}
           </button>
 
           <button
             onClick={() => setActiveTab("metar")}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
               activeTab === "metar"
-                ? "bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/25"
-                : "text-slate-400 hover:text-white hover:bg-slate-800/60"
+                ? "bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-500 dark:to-teal-600 text-white shadow-md shadow-emerald-600/25"
+                : "text-slate-700 dark:text-slate-400 hover:text-emerald-700 dark:hover:text-white hover:bg-emerald-50 dark:hover:bg-slate-800/60"
             }`}
           >
             <RadioTower className="w-4 h-4" />
@@ -635,10 +635,10 @@ export default function DataHub() {
 
           <button
             onClick={() => setActiveTab("notes")}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
               activeTab === "notes"
-                ? "bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/25"
-                : "text-slate-400 hover:text-white hover:bg-slate-800/60"
+                ? "bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-500 dark:to-teal-600 text-white shadow-md shadow-emerald-600/25"
+                : "text-slate-700 dark:text-slate-400 hover:text-emerald-700 dark:hover:text-white hover:bg-emerald-50 dark:hover:bg-slate-800/60"
             }`}
           >
             <StickyNote className="w-4 h-4" />
@@ -648,35 +648,28 @@ export default function DataHub() {
 
         {/* GTS Query Form Control Card */}
         <div className="max-w-3xl mx-auto">
-          <div className="glass-panel rounded-3xl p-6 sm:p-8 border border-cyan-500/30 bg-gradient-to-br from-[#0f172a]/95 via-[#0f1d3a]/90 to-[#0b132b]/95 shadow-2xl relative overflow-hidden space-y-6">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
-
-            {/* Badge & Card Title */}
-            <div className="text-center space-y-2 border-b border-slate-800 pb-4">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 text-xs font-bold shadow-md">
-                <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-                {activeTab === "synoptic" && "ข้อมูลผิวพื้น (Surface Synoptic)"}
-                {activeTab === "upperair" && "ข้อมูลบรรยากาศชั้นบน (Upper Air / Wind)"}
-                {activeTab === "warning" && "ประกาศเตือนภัยสภาพอากาศ (Warning / War)"}
-                {activeTab === "metar" && "ข้อมูลอากาศการบิน (METAR / TAF)"}
-                {activeTab === "notes" && "Note ท้ายข่าวสภาพอากาศ (GTS Raw Notes)"}
+          <div className="glass-panel rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-emerald-500/30 bg-white/95 dark:bg-slate-900/90 shadow-md dark:shadow-2xl space-y-6 transition-colors">
+            {/* Form Header */}
+            <div className="text-center space-y-1.5 border-b border-slate-200 dark:border-slate-800 pb-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-500/15 border border-emerald-200 dark:border-emerald-500/30 text-emerald-800 dark:text-emerald-300 text-xs font-bold">
+                <Database className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                GTS Weather Data Hub Query
               </div>
-              <h2 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
-                ข้อมูลข่าว {
-                  activeTab === "synoptic" ? "Synoptic" :
-                  activeTab === "upperair" ? "Upper Air (Wind)" :
-                  activeTab === "warning" ? "เตือนภัย (War)" :
-                  activeTab === "metar" ? "METAR" : "Note"
-                }
-              </h2>
+              <h3 className="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white">
+                {activeTab === "synoptic" && t("ค้นหาข่าว Synoptic", "Query Synoptic Bulletins")}
+                {activeTab === "upperair" && t("ค้นหาข่าว Upper Air", "Query Upper Air Bulletins")}
+                {activeTab === "warning" && t("ค้นหาประกาศเตือนภัย", "Query Weather Warnings")}
+                {activeTab === "metar" && t("ค้นหาข่าว METAR (อากาศการบิน)", "Query METAR Aeronautical Data")}
+                {activeTab === "notes" && t("ค้นหา Note ท้ายข่าว (Raw GTS Format)", "Query GTS Raw Notes")}
+              </h3>
             </div>
 
-            {/* Form Fields */}
-            <div className="space-y-6">
-              {/* 1. Date Picker */}
+            {/* Form Controls Container */}
+            <div className="space-y-5">
+              {/* 1. Date Picker Control */}
               <div className="space-y-2">
-                <label className="block text-xs font-semibold text-slate-300 flex items-center justify-center gap-1.5">
-                  <Calendar className="w-4 h-4 text-cyan-400" />
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 text-center flex items-center justify-center gap-1.5">
+                  <Calendar className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                   เลือกวันที่ (DD/MM/YYYY)
                 </label>
                 <div className="max-w-xs mx-auto relative">
@@ -684,15 +677,15 @@ export default function DataHub() {
                     type="date"
                     value={selectedDate}
                     onChange={(e) => setSelectedDate(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl bg-slate-900/90 border border-cyan-500/40 text-sm font-mono text-center text-cyan-300 focus:outline-none focus:border-cyan-300 shadow-inner"
+                    className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/90 border border-slate-300 dark:border-emerald-500/40 text-sm font-mono text-center text-slate-900 dark:text-emerald-300 focus:outline-none focus:border-emerald-600 dark:focus:border-emerald-400 shadow-inner"
                   />
                 </div>
               </div>
 
               {/* 2. UTC Cycle Time Radio Selectors */}
               <div className="space-y-2">
-                <label className="block text-xs font-semibold text-slate-300 text-center flex items-center justify-center gap-1.5">
-                  <Clock className="w-4 h-4 text-cyan-400" />
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 text-center flex items-center justify-center gap-1.5">
+                  <Clock className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                   รอบเวลาตรวจวัดมาตรฐาน (UTC Cycle Time{activeTab === "metar" ? " - ราย 1 ชม." : ""})
                 </label>
                 {(() => {
@@ -709,8 +702,8 @@ export default function DataHub() {
                           onClick={() => setSelectedUtc(item.utc)}
                           className={`p-1.5 rounded-xl text-center border transition-all cursor-pointer flex flex-col items-center justify-center ${
                             selectedUtc === item.utc
-                              ? "bg-gradient-to-tr from-cyan-500 to-blue-600 text-white border-cyan-300 shadow-md shadow-cyan-500/30 scale-105"
-                              : "bg-slate-900/70 text-slate-300 border-slate-800 hover:border-slate-700 hover:text-white"
+                              ? "bg-gradient-to-tr from-emerald-600 to-teal-600 dark:from-emerald-500 dark:to-teal-600 text-white border-emerald-500 dark:border-emerald-300 shadow-md scale-105"
+                              : "bg-slate-100 dark:bg-slate-900/70 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:bg-emerald-50 dark:hover:border-emerald-700 hover:text-emerald-900 dark:hover:text-white"
                           }`}
                         >
                           <span className="text-[11px] font-bold font-mono">{item.utc}. UTC</span>
@@ -724,15 +717,15 @@ export default function DataHub() {
 
               {/* 3. Country Select Dropdown */}
               <div className="space-y-2">
-                <label className="block text-xs font-semibold text-slate-300 text-center flex items-center justify-center gap-1.5">
-                  <Globe2 className="w-4 h-4 text-cyan-400" />
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 text-center flex items-center justify-center gap-1.5">
+                  <Globe2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                   Select a Country (เลือกประเทศ)
                 </label>
                 <div className="max-w-md mx-auto">
                   <select
                     value={selectedCountry}
                     onChange={(e) => setSelectedCountry(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl bg-slate-900/90 border border-cyan-500/40 text-sm text-white focus:outline-none focus:border-cyan-300 font-medium cursor-pointer"
+                    className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/90 border border-slate-300 dark:border-emerald-500/40 text-sm text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600 dark:focus:border-emerald-400 font-medium cursor-pointer"
                   >
                     {COUNTRIES.map((c) => (
                       <option key={c.value} value={c.value}>
@@ -777,34 +770,34 @@ export default function DataHub() {
         <div className="space-y-4 max-w-4xl mx-auto">
           {/* ----------------- MODE 1: BROWSE HEADERS INDEX LIST (เมื่อเลือกประเทศ/วันที่/UTC) ----------------- */}
           {viewMode === "headers" && (
-            <div className="glass-panel rounded-3xl p-6 border border-cyan-500/30 space-y-6 shadow-2xl">
-              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div className="glass-panel rounded-3xl p-6 border border-slate-200 dark:border-cyan-500/30 bg-white/95 dark:bg-[#0f172a]/95 space-y-6 shadow-xl dark:shadow-2xl transition-colors">
+              <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
                 <button
                   onClick={handleAllData}
-                  className="text-cyan-400 hover:text-cyan-300 font-bold text-sm underline flex items-center gap-1.5 transition-colors cursor-pointer"
+                  className="text-blue-700 dark:text-cyan-400 hover:text-blue-900 dark:hover:text-cyan-300 font-bold text-sm underline flex items-center gap-1.5 transition-colors cursor-pointer"
                 >
-                  <Database className="w-4 h-4 text-emerald-400" />
+                  <Database className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                   All Data &lt;&lt; -- แสดงข้อมูลทั้งหมด
                 </button>
-                <span className="text-xs text-slate-400 font-mono">
+                <span className="text-xs text-slate-600 dark:text-slate-400 font-mono">
                   พบ {displayBulletins.length} รายการ (แยก {countryCodes.length} ประเทศ)
                 </span>
               </div>
 
               {isLoading ? (
-                <div className="p-8 text-center text-slate-400 flex flex-col items-center justify-center gap-3">
-                  <RefreshCw className="w-8 h-8 text-cyan-400 animate-spin" />
+                <div className="p-8 text-center text-slate-600 dark:text-slate-400 flex flex-col items-center justify-center gap-3">
+                  <RefreshCw className="w-8 h-8 text-blue-600 dark:text-cyan-400 animate-spin" />
                   <span>กำลังดึงรายการหัวข่าวสาร ...</span>
                 </div>
               ) : displayBulletins.length === 0 ? (
-                <div className="p-8 text-center text-slate-400 space-y-2">
-                  <p className="text-sm text-slate-300 font-semibold">
+                <div className="p-8 text-center text-slate-600 dark:text-slate-400 space-y-2">
+                  <p className="text-sm text-slate-800 dark:text-slate-300 font-semibold">
                     ไม่พบรายการหัวข่าวตรงตามเงื่อนไขที่เลือก (วันที่ {selectedDate}, UTC {selectedUtc}, {selectedCountry === "zero" ? "แสดงทุกประเทศ" : `ประเทศ ${selectedCountry}`})
                   </p>
                 </div>
               ) : (
                 <div className="space-y-6">
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-slate-600 dark:text-slate-400">
                     คลิกเลือก **หัวข่าว** ด้านล่าง (แยกจำแนกตามประเทศ) เพื่อเปิดอ่านเนื้อหาข่าวเฉพาะหัวข่านั้นๆ:
                   </p>
 
@@ -828,15 +821,15 @@ export default function DataHub() {
                       });
 
                       return (
-                        <div key={code} className="p-4 rounded-2xl bg-slate-950/90 border border-cyan-500/30 space-y-3 shadow-lg">
-                          <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+                        <div key={code} className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/90 border border-slate-200 dark:border-cyan-500/30 space-y-3 shadow-sm dark:shadow-lg">
+                          <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
                             <div className="flex items-center gap-2.5">
                               {renderCountryFlag(code, "w-6 h-4")}
-                              <span className="font-bold text-sm text-cyan-200">
+                              <span className="font-bold text-sm text-slate-900 dark:text-cyan-200">
                                 {countryName} ({code})
                               </span>
                             </div>
-                            <span className="text-xs text-slate-400 font-mono bg-cyan-950 px-2.5 py-0.5 rounded-full border border-cyan-500/30">
+                            <span className="text-xs text-blue-800 dark:text-slate-400 font-mono bg-blue-100 dark:bg-cyan-950 px-2.5 py-0.5 rounded-full border border-blue-200 dark:border-cyan-500/30 font-medium">
                               {countryBulletins.length} รายการ
                             </span>
                           </div>
@@ -848,7 +841,7 @@ export default function DataHub() {
                               return (
                                 <div
                                   key={baseKey}
-                                  className="flex flex-wrap items-center gap-2.5 py-1.5 border-b border-slate-800/60 last:border-0"
+                                  className="flex flex-wrap items-center gap-2.5 py-1.5 border-b border-slate-200 dark:border-slate-800/60 last:border-0"
                                 >
                                   {itemsInRow.map((item) => (
                                     <a
@@ -856,11 +849,11 @@ export default function DataHub() {
                                       href={`/services?tab=${activeTab}&date=${selectedDate}&utc=${selectedUtc}&country=${selectedCountry}&bulletinId=${encodeURIComponent(item.id)}&bulletinHeader=${encodeURIComponent(item.headerLine || item.dataType)}`}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      className="px-3.5 py-1.5 rounded-xl bg-cyan-950/80 hover:bg-cyan-600 hover:text-white text-cyan-300 font-semibold border border-cyan-500/40 hover:border-cyan-300 transition-all cursor-pointer shadow-md text-xs sm:text-sm inline-flex items-center gap-1.5"
+                                      className="px-3.5 py-1.5 rounded-xl bg-blue-50 dark:bg-cyan-950/80 hover:bg-blue-600 dark:hover:bg-cyan-600 hover:text-white text-blue-700 dark:text-cyan-300 font-semibold border border-blue-200 dark:border-cyan-500/40 hover:border-blue-300 dark:hover:border-cyan-300 transition-all cursor-pointer shadow-sm text-xs sm:text-sm inline-flex items-center gap-1.5"
                                       title={`กดเพื่อเปิดอ่านเนื้อหาข่าว ${item.headerLine} ในแท็บใหม่`}
                                     >
                                       <span>{item.headerLine || item.dataType}</span>
-                                      <ExternalLink className="w-3.5 h-3.5 text-cyan-400 opacity-80" />
+                                      <ExternalLink className="w-3.5 h-3.5 text-blue-600 dark:text-cyan-400 opacity-80" />
                                     </a>
                                   ))}
                                 </div>
@@ -879,8 +872,8 @@ export default function DataHub() {
           {/* ----------------- MODE 2: SINGLE SELECTED HEADER VIEW (เมื่อกดเข้า หัวข่าวนั้นๆ) ----------------- */}
           {viewMode === "single" && (
             isLoading ? (
-              <div className="p-12 text-center text-slate-400 flex flex-col items-center justify-center gap-3 glass-panel rounded-2xl">
-                <RefreshCw className="w-8 h-8 text-cyan-400 animate-spin" />
+              <div className="p-12 text-center text-slate-600 dark:text-slate-400 flex flex-col items-center justify-center gap-3 glass-panel rounded-2xl bg-white dark:bg-slate-900">
+                <RefreshCw className="w-8 h-8 text-blue-600 dark:text-cyan-400 animate-spin" />
                 <span>กำลังโหลดข้อมูลข่าวสาร...</span>
               </div>
             ) : selectedBulletin ? (
@@ -914,26 +907,26 @@ export default function DataHub() {
 
                 return (
                   <div className="space-y-4">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-3">
                       {isNewTabMode ? (
                         <button
                           onClick={() => window.close()}
-                          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-rose-900/60 hover:bg-rose-800 text-rose-300 text-xs font-bold border border-rose-700/50 transition-all cursor-pointer shrink-0"
+                          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-rose-100 dark:bg-rose-900/60 hover:bg-rose-600 hover:text-white text-rose-800 dark:text-rose-300 text-xs font-bold border border-rose-200 dark:border-rose-700/50 transition-all cursor-pointer shrink-0"
                         >
-                          <X className="w-4 h-4 text-rose-400" />
+                          <X className="w-4 h-4 text-rose-600 dark:text-rose-400" />
                           ปิดแท็บนี้ (Close Tab)
                         </button>
                       ) : (
                         <button
                           onClick={() => setViewMode("headers")}
-                          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 text-xs font-semibold border border-slate-700 transition-all cursor-pointer shrink-0"
+                          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-blue-700 dark:text-cyan-300 text-xs font-semibold border border-slate-300 dark:border-slate-700 transition-all cursor-pointer shrink-0"
                         >
-                          <ArrowLeft className="w-4 h-4 text-cyan-400" />
+                          <ArrowLeft className="w-4 h-4 text-blue-600 dark:text-cyan-400" />
                           กลับไปหน้ารวมหัวข่าว (Back to Headers List)
                         </button>
                       )}
 
-                      <span className="text-xs text-cyan-400 font-mono font-bold bg-cyan-950/60 px-3 py-1.5 rounded-xl border border-cyan-800">
+                      <span className="text-xs text-blue-700 dark:text-cyan-400 font-mono font-bold bg-blue-50 dark:bg-cyan-950/60 px-3 py-1.5 rounded-xl border border-blue-200 dark:border-cyan-800">
                         แสดงหัวข่าว: {selectedBulletin.headerLine} ({listToDisplay.length} รายการ)
                       </span>
                     </div>
@@ -942,28 +935,28 @@ export default function DataHub() {
                     {listToDisplay.map((bulletin, idx) => (
                       <div
                         key={bulletin.id}
-                        className={`glass-panel rounded-3xl p-6 border space-y-4 shadow-2xl relative overflow-hidden transition-all ${
+                        className={`glass-panel rounded-3xl p-6 border space-y-4 shadow-xl dark:shadow-2xl relative overflow-hidden transition-all ${
                           idx === 0
-                            ? "border-emerald-500/50 bg-gradient-to-br from-[#0f2427]/90 via-[#0d1f35]/90 to-[#0b132b]/95"
-                            : "border-cyan-500/30 bg-slate-900/90"
+                            ? "border-emerald-500/50 bg-emerald-50/50 dark:bg-gradient-to-br dark:from-[#0f2427]/90 dark:via-[#0d1f35]/90 dark:to-[#0b132b]/95"
+                            : "border-slate-200 dark:border-cyan-500/30 bg-white dark:bg-slate-900/90"
                         }`}
                       >
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-3">
                           <div className="flex items-center gap-2.5 flex-wrap">
                             {idx === 0 && (
-                              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-extrabold border border-emerald-500/50 shadow-md shadow-emerald-500/20 animate-pulse">
-                                <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+                              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 text-xs font-extrabold border border-emerald-300 dark:border-emerald-500/50 shadow-sm animate-pulse">
+                                <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                                 ข้อมูลตัวล่าสุด (LATEST)
                               </span>
                             )}
-                            <span className="px-3 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 font-mono text-sm font-bold border border-cyan-500/40">
+                            <span className="px-3 py-1 rounded-lg bg-blue-100 dark:bg-cyan-500/20 text-blue-800 dark:text-cyan-300 font-mono text-sm font-bold border border-blue-200 dark:border-cyan-500/40">
                               {bulletin.headerLine}
                             </span>
-                            <span className="px-2.5 py-0.5 rounded-md bg-blue-500/20 text-blue-300 font-mono text-xs font-bold border border-blue-500/30 flex items-center gap-2">
+                            <span className="px-2.5 py-0.5 rounded-md bg-blue-50 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 font-mono text-xs font-bold border border-blue-200 dark:border-blue-500/30 flex items-center gap-2">
                               {renderCountryFlag(bulletin.countryCode, "w-5 h-3.5")}
                               <span>รหัสประเทศ: {getCountryName(bulletin.countryCode)} ({bulletin.countryCode})</span>
                             </span>
-                            <span className="px-2.5 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 text-xs font-semibold border border-emerald-500/30">
+                            <span className="px-2.5 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 text-xs font-semibold border border-emerald-200 dark:border-emerald-500/30">
                               {bulletin.categoryLabel}
                             </span>
                           </div>
@@ -972,7 +965,7 @@ export default function DataHub() {
                             {isSynopticBulletin(bulletin) && (
                               <button
                                 onClick={() => setDecodingBulletin(bulletin)}
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-gradient-to-r from-cyan-600 to-blue-600 hover:brightness-110 text-white shadow-md shadow-cyan-500/20 border border-cyan-400/30 transition-all cursor-pointer"
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-cyan-600 dark:to-blue-600 hover:brightness-110 text-white shadow-md shadow-blue-500/20 border border-blue-400/30 transition-all cursor-pointer"
                               >
                                 <FileText className="w-3.5 h-3.5" />
                                 <span>ถอดรหัสข่าว (Decode)</span>
@@ -980,12 +973,12 @@ export default function DataHub() {
                             )}
                             <button
                               onClick={() => handleCopy(getBulletinRawText(bulletin), bulletin.id)}
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/30 transition-all cursor-pointer shrink-0"
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-cyan-300 border border-slate-300 dark:border-cyan-500/30 transition-all cursor-pointer shrink-0"
                             >
                               {copiedId === bulletin.id ? (
                                 <>
-                                  <Check className="w-3.5 h-3.5 text-emerald-400" />
-                                  <span className="text-emerald-300">คัดลอกรหัสแล้ว</span>
+                                  <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                                  <span className="text-emerald-700 dark:text-emerald-300">คัดลอกรหัสแล้ว</span>
                                 </>
                               ) : (
                                 <>
@@ -997,7 +990,7 @@ export default function DataHub() {
                           </div>
                         </div>
 
-                        <pre className="p-5 rounded-2xl bg-slate-950 border border-cyan-500/40 font-mono text-xs sm:text-sm text-cyan-300 overflow-x-auto whitespace-pre-wrap leading-relaxed shadow-inner max-h-[500px] overflow-y-auto">
+                        <pre className="p-5 rounded-2xl bg-slate-900 dark:bg-slate-950 border border-slate-800 dark:border-cyan-500/40 font-mono text-xs sm:text-sm text-cyan-300 overflow-x-auto whitespace-pre-wrap leading-relaxed shadow-inner max-h-[500px] overflow-y-auto">
                           <code>{getBulletinRawText(bulletin)}</code>
                         </pre>
                       </div>
@@ -1007,8 +1000,8 @@ export default function DataHub() {
               );
             })()
             ) : (
-              <div className="p-12 text-center text-slate-400 flex flex-col items-center justify-center gap-3 glass-panel rounded-2xl">
-                <p className="text-sm text-slate-300 font-semibold">ไม่พบข้อมูลข่าวตรงตามรหัสที่เลือก</p>
+              <div className="p-12 text-center text-slate-600 dark:text-slate-400 flex flex-col items-center justify-center gap-3 glass-panel rounded-2xl bg-white dark:bg-slate-900">
+                <p className="text-sm text-slate-800 dark:text-slate-300 font-semibold">ไม่พบข้อมูลข่าวตรงตามรหัสที่เลือก</p>
               </div>
             )
           )}
@@ -1016,14 +1009,14 @@ export default function DataHub() {
           {/* ----------------- MODE 3: ALL DATA EXPANDED VIEW (เมื่อกด All Data) ----------------- */}
           {viewMode === "all" && (
             <div className="space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-2 border-b border-slate-800 pb-3">
-                <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                  <Database className="w-5 h-5 text-emerald-400" />
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-2 border-b border-slate-200 dark:border-slate-800 pb-3">
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                  <Database className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                   แสดงข้อมูลทั้งหมด (พบ {displayBulletins.length} ข่าว - แยก {countryCodes.length} ประเทศ)
                 </h3>
                 <button
                   onClick={() => setViewMode("headers")}
-                  className="text-xs text-cyan-400 hover:underline flex items-center gap-1 cursor-pointer"
+                  className="text-xs text-blue-700 dark:text-cyan-400 hover:underline flex items-center gap-1 cursor-pointer font-medium"
                 >
                   <ArrowLeft className="w-3 h-3" />
                   สลับไปดูเฉพาะรายการหัวข่าว
@@ -1031,8 +1024,8 @@ export default function DataHub() {
               </div>
 
               {isLoading ? (
-                <div className="p-12 text-center text-slate-400 flex flex-col items-center justify-center gap-3 glass-panel rounded-2xl">
-                  <RefreshCw className="w-8 h-8 text-cyan-400 animate-spin" />
+                <div className="p-12 text-center text-slate-600 dark:text-slate-400 flex flex-col items-center justify-center gap-3 glass-panel rounded-2xl bg-white dark:bg-slate-900">
+                  <RefreshCw className="w-8 h-8 text-blue-600 dark:text-cyan-400 animate-spin" />
                   <span>กำลังอ่านไฟล์ข้อมูลข่าวสารทั้งหมด ...</span>
                 </div>
               ) : (
@@ -1042,12 +1035,12 @@ export default function DataHub() {
                     const countryName = getCountryName(code);
                     return (
                       <div key={code} className="space-y-4">
-                        <div className="flex items-center justify-between px-4 py-2 rounded-2xl bg-slate-900 border border-cyan-500/30 text-cyan-300 font-bold text-sm shadow-md">
+                        <div className="flex items-center justify-between px-4 py-2 rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-cyan-500/30 text-slate-900 dark:text-cyan-300 font-bold text-sm shadow-sm">
                           <div className="flex items-center gap-2.5">
                             {renderCountryFlag(code, "w-6 h-4")}
                             <span>{countryName} ({code})</span>
                           </div>
-                          <span className="text-xs text-slate-400 font-mono bg-slate-950 px-3 py-1 rounded-full border border-slate-800">
+                          <span className="text-xs text-slate-600 dark:text-slate-400 font-mono bg-white dark:bg-slate-950 px-3 py-1 rounded-full border border-slate-200 dark:border-slate-800 font-medium">
                             {countryBulletins.length} ข่าว
                           </span>
                         </div>
@@ -1056,14 +1049,14 @@ export default function DataHub() {
                           {countryBulletins.map((bulletin) => (
                             <div
                               key={bulletin.id}
-                              className="glass-panel rounded-2xl p-5 border border-cyan-500/25 hover:border-cyan-400 transition-all duration-300 space-y-3 shadow-xl"
+                              className="glass-panel rounded-2xl p-5 border border-slate-200 dark:border-cyan-500/25 bg-white dark:bg-slate-900/90 hover:border-blue-400 dark:hover:border-cyan-400 transition-all duration-300 space-y-3 shadow-md dark:shadow-xl"
                             >
-                              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/80 pb-2">
+                              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800/80 pb-2">
                                 <div className="flex items-center gap-2.5 flex-wrap">
-                                  <span className="px-2.5 py-0.5 rounded-md bg-cyan-500/20 text-cyan-300 font-mono text-xs font-bold border border-cyan-500/30">
+                                  <span className="px-2.5 py-0.5 rounded-md bg-blue-100 dark:bg-cyan-500/20 text-blue-800 dark:text-cyan-300 font-mono text-xs font-bold border border-blue-200 dark:border-cyan-500/30">
                                     {bulletin.headerLine}
                                   </span>
-                                  <span className="px-2.5 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 text-xs font-semibold border border-emerald-500/30">
+                                  <span className="px-2.5 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 text-xs font-semibold border border-emerald-200 dark:border-emerald-500/30">
                                     {bulletin.categoryLabel}
                                   </span>
                                 </div>
@@ -1072,7 +1065,7 @@ export default function DataHub() {
                                   {isSynopticBulletin(bulletin) && (
                                     <button
                                       onClick={() => setDecodingBulletin(bulletin)}
-                                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium bg-gradient-to-r from-cyan-600 to-blue-600 hover:brightness-110 text-white shadow-md shadow-cyan-500/20 border border-cyan-400/30 transition-all cursor-pointer"
+                                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-cyan-600 dark:to-blue-600 hover:brightness-110 text-white shadow-md shadow-blue-500/20 border border-blue-400/30 transition-all cursor-pointer"
                                     >
                                       <FileText className="w-3.5 h-3.5" />
                                       <span>ถอดรหัสข่าว (Decode)</span>
@@ -1080,12 +1073,12 @@ export default function DataHub() {
                                   )}
                                   <button
                                     onClick={() => handleCopy(getBulletinRawText(bulletin), bulletin.id)}
-                                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/30 transition-all cursor-pointer"
+                                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-cyan-300 border border-slate-300 dark:border-cyan-500/30 transition-all cursor-pointer"
                                   >
                                   {copiedId === bulletin.id ? (
                                     <>
-                                      <Check className="w-3.5 h-3.5 text-emerald-400" />
-                                      <span className="text-emerald-300">คัดลอกรหัสแล้ว</span>
+                                      <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                                      <span className="text-emerald-700 dark:text-emerald-300">คัดลอกรหัสแล้ว</span>
                                     </>
                                   ) : (
                                     <>
@@ -1097,7 +1090,7 @@ export default function DataHub() {
                               </div>
                               </div>
 
-                              <pre className="p-4 rounded-xl bg-slate-950 border border-cyan-500/30 font-mono text-xs text-cyan-300 overflow-x-auto whitespace-pre-wrap leading-relaxed shadow-inner max-h-[360px] overflow-y-auto">
+                              <pre className="p-4 rounded-xl bg-slate-900 dark:bg-slate-950 border border-slate-800 dark:border-cyan-500/30 font-mono text-xs text-cyan-300 overflow-x-auto whitespace-pre-wrap leading-relaxed shadow-inner max-h-[360px] overflow-y-auto">
                                 <code>{getBulletinRawText(bulletin)}</code>
                               </pre>
                             </div>
@@ -1114,15 +1107,15 @@ export default function DataHub() {
 
         {/* Category Description Box */}
         {!isNewTabMode && (
-        <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-2 text-center max-w-4xl mx-auto">
-          <h3 className="font-bold text-sm text-cyan-300 tracking-wider uppercase">
+        <div className="glass-panel rounded-2xl p-6 border border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/90 space-y-2 text-center max-w-4xl mx-auto transition-colors">
+          <h3 className="font-bold text-sm text-blue-700 dark:text-cyan-300 tracking-wider uppercase">
             {activeTab === "synoptic" && "SYNOPTIC (Surface Synoptic Observations)"}
             {activeTab === "upperair" && "UPPER AIR (Wind & Sounding Observations)"}
             {activeTab === "warning" && "WARNING (Weather Warnings & SIGMET)"}
             {activeTab === "metar" && "METAR (Aviation Routine Weather Report)"}
             {activeTab === "notes" && "NOTE (GTS Bulletin Raw Text Notes)"}
           </h3>
-          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-light">
+          <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-normal dark:font-light">
             {activeTab === "synoptic" && "ข้อมูลตรวจอากาศผิวพื้นแสดงสภาพอากาศบริเวณพื้นดิน ทุก 3 ชั่วโมง (00, 03, 06, 09, 12, 15, 18, 21 UTC)"}
             {activeTab === "upperair" && "ข้อมูลตรวจอากาศชั้นบนรายงานทิศทาง ความเร็วลม และบรรยากาศชั้นบน"}
             {activeTab === "warning" && "ประกาศเตือนภัยสภาพอากาศและพายุหมุนกะทันหัน หรือสภาวะอากาศร้ายแรงทางการบิน"}
