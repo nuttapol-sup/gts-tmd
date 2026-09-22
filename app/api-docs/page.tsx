@@ -197,17 +197,16 @@ export default function ApiDocsPage() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full flex-grow space-y-10">
         {/* Header Hero Section */}
-        <div className="relative rounded-3xl p-8 sm:p-12 overflow-hidden bg-white/95 dark:bg-gradient-to-br dark:from-[#0d1b3e] dark:via-[#0f274c] dark:to-[#0b132b] border border-slate-200 dark:border-cyan-500/30 shadow-md dark:shadow-2xl transition-colors">
-          <div className="absolute top-0 right-0 -mt-12 -mr-12 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative rounded-3xl p-8 sm:p-12 overflow-hidden bg-white dark:bg-gradient-to-br dark:from-[#0d1b3e] dark:via-[#0f274c] dark:to-[#0b132b] border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-2xl transition-colors">
           <div className="relative z-10 space-y-4 max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/20 text-cyan-300 text-xs font-bold border border-cyan-400/40">
-              <Zap className="w-4 h-4 text-cyan-400 animate-pulse" />
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 text-xs font-bold border border-emerald-200 dark:border-emerald-800">
+              <Zap className="w-4 h-4 text-emerald-600 dark:text-emerald-400 animate-pulse" />
               <span>{t("บริการข้อมูลข่าวสารอุตุนิยมวิทยา API", "GTS TMD RESTful API Services")}</span>
             </div>
-            <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
+            <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight">
               {t("ศูนย์บริการเชื่อมต่อข้อมูล API อุตุนิยมวิทยา", "Meteorological API Developer Hub")}
             </h1>
-            <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
+            <p className="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed">
               {t(
                 "เปิดให้บริการเชื่อมต่อดึงข้อมูลข่าวสารสภาพอากาศ GTS (Synoptic, METAR, Warning, UpperAir) ผ่านมาตรฐาน RESTful API ในรูปแบบ JSON สำหรับนักพัฒนา, หน่วยงาน และแอปพลิเคชันภายนอก",
                 "Provides high-performance RESTful JSON APIs for real-time GTS weather bulletins (Synoptic, METAR, Warnings, UpperAir) for developers and partner agencies."
@@ -215,21 +214,21 @@ export default function ApiDocsPage() {
             </p>
 
             {/* Server Security & Compliance Badges */}
-            <div className="pt-2 flex flex-wrap items-center gap-3 text-xs text-slate-300">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-semibold">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+            <div className="pt-2 flex flex-wrap items-center gap-3 text-xs text-slate-700 dark:text-slate-300">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 font-semibold">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
                 {t("เซิร์ฟเวอร์เปิดใช้งาน (HTTPS Status: 200 OK)", "Server Status: 200 OK (Active)")}
               </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-semibold">
-                <ShieldCheck className="w-3.5 h-3.5 text-cyan-400" />
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 font-semibold">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                 {t("OWASP Cybersecurity Hardened", "OWASP Cybersecurity Hardened")}
               </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 font-semibold">
-                <Lock className="w-3.5 h-3.5 text-indigo-400" />
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-semibold">
+                <Lock className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                 {t("สกัดรหัสสนามบิน ICAO 4 หลัก & COR", "4-Letter ICAO Airport & COR Parsed")}
               </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-purple-500/20 text-purple-300 border border-purple-500/40 font-semibold">
-                <Plane className="w-3.5 h-3.5 text-purple-400" />
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-semibold">
+                <Plane className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                 {t("กรองหัวข่าว METAR (SA, FT, SP, FC)", "METAR Headers: SA, FT, SP, FC")}
               </span>
             </div>
@@ -239,11 +238,11 @@ export default function ApiDocsPage() {
         {/* API Endpoint Showcase Grid */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2.5">
-              <Cpu className="w-6 h-6 text-cyan-400" />
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2.5">
+              <Cpu className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
               <span>{t("รายการ API ที่เปิดให้บริการ (Active Endpoints)", "Active API Service Endpoints")}</span>
             </h2>
-            <span className="text-xs text-slate-400 font-mono">Total {API_ENDPOINTS.length} Endpoints</span>
+            <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">Total {API_ENDPOINTS.length} Endpoints</span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -254,40 +253,40 @@ export default function ApiDocsPage() {
                 <div
                   key={idx}
                   onClick={() => setSelectedEndpoint(endpoint)}
-                  className={`glass-panel rounded-2xl p-6 border transition-all duration-300 cursor-pointer flex flex-col justify-between space-y-4 hover:border-cyan-400/60 ${
+                  className={`group rounded-2xl p-6 border transition-all duration-300 cursor-pointer flex flex-col justify-between space-y-4 ${
                     isSelected
-                      ? "border-cyan-400 bg-gradient-to-b from-[#0f2b45]/90 to-[#0b132b]/95 shadow-xl shadow-cyan-500/20 scale-[1.02]"
-                      : "border-cyan-500/20 bg-slate-900/80 hover:bg-slate-900/95"
+                      ? "border-emerald-500 bg-emerald-50/60 dark:bg-slate-900 shadow-md ring-2 ring-emerald-500/20"
+                      : "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/80 hover:bg-slate-50 dark:hover:bg-slate-900 hover:border-emerald-400"
                   }`}
                 >
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="px-2.5 py-1 rounded-md text-[11px] font-extrabold font-mono uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                      <span className="px-2.5 py-1 rounded-md text-[11px] font-extrabold font-mono uppercase bg-emerald-600 text-white shadow-xs">
                         {endpoint.method}
                       </span>
-                      <IconComp className="w-5 h-5 text-cyan-400" />
+                      <IconComp className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                     </div>
 
                     <div>
-                      <h3 className="text-base font-bold text-white group-hover:text-cyan-300 transition-colors">
+                      <h3 className="text-base font-bold text-slate-900 dark:text-white group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">
                         {t(endpoint.name, endpoint.nameEn)}
                       </h3>
-                      <p className="text-xs font-mono text-cyan-300 mt-1 break-all bg-slate-950/80 px-2.5 py-1 rounded-md border border-cyan-500/30">
+                      <p className="text-xs font-mono text-emerald-800 dark:text-emerald-300 font-semibold mt-1 break-all bg-slate-100 dark:bg-slate-950 px-2.5 py-1 rounded-md border border-slate-200 dark:border-slate-800">
                         {endpoint.path}
                       </p>
                     </div>
 
-                    <p className="text-xs text-slate-300 leading-relaxed line-clamp-3">
+                    <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed line-clamp-3">
                       {t(endpoint.description, endpoint.descriptionEn)}
                     </p>
                   </div>
 
-                  <div className="pt-3 border-t border-slate-800 flex items-center justify-between text-xs">
-                    <span className="text-cyan-400 font-semibold flex items-center gap-1">
+                  <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
+                    <span className="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
                       <Play className="w-3 h-3" />
                       {t("คลิกเพื่อทดสอบยิง API", "Click to Test API")}
                     </span>
-                    <ExternalLink className="w-3.5 h-3.5 text-slate-500" />
+                    <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
                   </div>
                 </div>
               );
@@ -296,18 +295,20 @@ export default function ApiDocsPage() {
         </div>
 
         {/* Interactive Try-It-Out Developer Console Workspace */}
-        <div className="glass-panel rounded-3xl p-6 sm:p-8 border border-cyan-500/30 space-y-6 bg-slate-900/90 shadow-2xl">
+        <div className="rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 space-y-6 bg-white dark:bg-slate-900 shadow-sm dark:shadow-2xl">
           {/* Workspace Header */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
             <div className="flex items-center gap-2">
-              <Terminal className="w-6 h-6 text-emerald-400" />
+              <Terminal className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
               <div>
-                <h3 className="text-lg sm:text-xl font-bold text-white">
+                <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
                   {t("คำสั่ง API", "API Commands")}
                 </h3>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                   {t("กำลังทดสอบ API:", "Selected API:")}{" "}
-                  <span className="text-cyan-300 font-mono font-bold">{selectedEndpoint.path}</span>
+                  <span className="text-emerald-800 dark:text-emerald-300 font-mono font-bold bg-emerald-50 dark:bg-emerald-950 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800">
+                    {selectedEndpoint.path}
+                  </span>
                 </p>
               </div>
             </div>
@@ -316,9 +317,9 @@ export default function ApiDocsPage() {
           {/* LIVE TESTER */}
           <div className="space-y-6">
             {/* Parameters Input Form */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-slate-950/80 p-5 rounded-2xl border border-cyan-500/30">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-slate-50 dark:bg-slate-950/80 p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                <label className="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1.5">
                   {t("1. วันที่ (date - YYYY-MM-DD)", "1. Date (YYYY-MM-DD)")}
                 </label>
                 <input
@@ -326,31 +327,31 @@ export default function ApiDocsPage() {
                   value={paramDate}
                   onChange={(e) => setParamDate(e.target.value)}
                   placeholder="เช่น 2026-09-03"
-                  className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-cyan-400"
+                  className="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
                 />
-                <span className="text-[10px] text-slate-500 mt-1 block">* ละเว้นเพื่อดึงวันปัจจุบัน</span>
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 block">* ละเว้นเพื่อดึงวันปัจจุบัน</span>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                <label className="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1.5">
                   {t("2. รหัสประเทศ (country)", "2. Country Code")}
                 </label>
                 <select
                   value={paramCountry}
                   onChange={(e) => setParamCountry(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-cyan-400 cursor-pointer"
+                  className="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 cursor-pointer"
                 >
                   {COUNTRY_OPTIONS.map((c) => (
-                    <option key={c.value} value={c.value} className="bg-slate-900 text-white py-1">
+                    <option key={c.value} value={c.value} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white py-1">
                       {c.label}
                     </option>
                   ))}
                 </select>
-                <span className="text-[10px] text-slate-500 mt-1 block">* เลือกประเทศที่ต้องการกรอง</span>
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 block">* เลือกประเทศที่ต้องการกรอง</span>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                <label className="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1.5">
                   {t("3. รหัสเวลา UTC (utc)", "3. UTC Hour (00, 06, 12)")}
                 </label>
                 <input
@@ -358,22 +359,25 @@ export default function ApiDocsPage() {
                   value={paramUtc}
                   onChange={(e) => setParamUtc(e.target.value)}
                   placeholder="เช่น 00, 06, 12, 18"
-                  className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-cyan-400"
+                  className="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
                 />
-                <span className="text-[10px] text-slate-500 mt-1 block">* ละเว้นเพื่อดึงทุกช่วงเวลา</span>
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 block">* ละเว้นเพื่อดึงทุกช่วงเวลา</span>
               </div>
             </div>
 
             {/* Action Bar */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-900 p-4 rounded-2xl border border-cyan-500/20">
-              <div className="font-mono text-xs text-cyan-300 overflow-x-auto py-1">
-                <span className="text-emerald-400 font-bold">GET</span> {buildQueryUrl(selectedEndpoint.path)}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-100 dark:bg-slate-950 p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
+              <div className="font-mono text-xs text-slate-800 dark:text-emerald-300 overflow-x-auto py-1 flex items-center">
+                <span className="text-emerald-700 dark:text-emerald-400 font-bold bg-emerald-100 dark:bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-300 dark:border-emerald-800 mr-2 shrink-0">
+                  GET
+                </span>
+                <span className="break-all">{buildQueryUrl(selectedEndpoint.path)}</span>
               </div>
 
               <button
                 onClick={handleExecuteTest}
                 disabled={isExecuting}
-                className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-xs font-extrabold bg-gradient-to-r from-emerald-500 to-teal-600 hover:brightness-110 text-white shadow-lg shadow-emerald-500/20 cursor-pointer disabled:opacity-50 shrink-0"
+                className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-xs font-extrabold bg-emerald-600 hover:bg-emerald-700 text-white shadow-md cursor-pointer disabled:opacity-50 shrink-0 transition-colors"
               >
                 {isExecuting ? (
                   <>
@@ -382,7 +386,7 @@ export default function ApiDocsPage() {
                   </>
                 ) : (
                   <>
-                    <Play className="w-4 h-4" />
+                    <Play className="w-4 h-4 fill-current" />
                     <span>{t("ยิงคำสั่งทดสอบ (Execute Request)", "Execute Request")}</span>
                   </>
                 )}
@@ -394,31 +398,31 @@ export default function ApiDocsPage() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="px-2.5 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 font-mono text-xs font-bold border border-emerald-500/40">
+                    <span className="px-2.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-mono text-xs font-bold border border-emerald-300 dark:border-emerald-800">
                       Status: {testResult.status} {testResult.statusText}
                     </span>
-                    <span className="text-xs text-slate-400">Response JSON</span>
+                    <span className="text-xs text-slate-600 dark:text-slate-400">Response JSON</span>
                   </div>
 
                   <button
                     onClick={() => handleCopyJson(JSON.stringify(testResult.data, null, 2))}
-                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-cyan-300 border border-cyan-500/30 cursor-pointer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-xs text-slate-700 dark:text-emerald-300 border border-slate-200 dark:border-slate-700 shadow-sm cursor-pointer transition-colors"
                   >
                     {copiedResponse ? (
                       <>
-                        <Check className="w-3.5 h-3.5 text-emerald-400" />
-                        <span className="text-emerald-300">คัดลอก JSON แล้ว</span>
+                        <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                        <span className="text-emerald-700 dark:text-emerald-300 font-semibold">คัดลอก JSON แล้ว</span>
                       </>
                     ) : (
                       <>
-                        <Copy className="w-3.5 h-3.5" />
+                        <Copy className="w-3.5 h-3.5 text-slate-500" />
                         <span>คัดลอกผลลัพธ์ JSON</span>
                       </>
                     )}
                   </button>
                 </div>
 
-                <pre className="p-5 rounded-2xl bg-slate-950 border border-cyan-500/40 font-mono text-xs text-cyan-300 overflow-x-auto whitespace-pre-wrap leading-relaxed shadow-inner max-h-[500px] overflow-y-auto">
+                <pre className="p-5 rounded-2xl bg-slate-900 dark:bg-slate-950 border border-slate-800 font-mono text-xs text-emerald-400 overflow-x-auto whitespace-pre-wrap leading-relaxed shadow-inner max-h-[500px] overflow-y-auto">
                   <code>{JSON.stringify(testResult.data, null, 2)}</code>
                 </pre>
               </div>
