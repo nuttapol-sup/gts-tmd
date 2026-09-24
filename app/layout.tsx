@@ -5,19 +5,17 @@ import { LanguageProvider } from "@/context/language-context";
 import { ThemeProvider } from "@/context/theme-context";
 
 const prompt = Prompt({
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
   subsets: ["thai", "latin"],
   variable: "--font-prompt",
   display: "swap",
-  adjustFontFallback: false,
 });
 
 const kanit = Kanit({
-  weight: ["400", "600", "700", "800"],
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
   subsets: ["thai", "latin"],
   variable: "--font-kanit",
   display: "swap",
-  adjustFontFallback: false,
 });
 
 const jetbrainsMono = JetBrains_Mono({
@@ -25,7 +23,6 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-jetbrains",
   display: "swap",
-  adjustFontFallback: false,
 });
 
 export const metadata: Metadata = {
