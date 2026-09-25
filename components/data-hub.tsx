@@ -490,7 +490,6 @@ export default function DataHub() {
       ? ftpBulletins.find((b) => normalizeHeaderStr(b.dataType) === normalizeHeaderStr(bulletinHeaderParam.split(" ")[0]))
       : undefined) ||
     (selectedBulletinId ? ftpBulletins.find((b) => b.id === selectedBulletinId) : undefined) ||
-    (bulletinIdParam ? ftpBulletins.find((b) => b.id.includes(bulletinIdParam)) : undefined) ||
     (!isNewTabMode ? ftpBulletins[0] : undefined);
 
   const getCountryName = (code: string) => {

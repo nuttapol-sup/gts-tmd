@@ -728,6 +728,17 @@ export async function handleFtpQuery(request: Request, forcedCategory?: string) 
             continue;
           }
 
+          // If specific bulletin header requested, strictly filter by requested header
+          if (bulletinHeaderParam) {
+            const normReqHeader = bulletinHeaderParam.replace(/\s+/g, " ").trim().toUpperCase();
+            const normHLine = (headerLine || "").replace(/\s+/g, " ").trim().toUpperCase();
+            const normDType = (dataType || "").replace(/\s+/g, " ").trim().toUpperCase();
+            const isHeaderMatch = normHLine.startsWith(normReqHeader) || normReqHeader.startsWith(normHLine) || normDType === normReqHeader.split(" ")[0];
+            if (!isHeaderMatch) {
+              continue;
+            }
+          }
+
           // Apply Hour Filter (skip if direct bulletin lookup or allData)
           if (targetHour && hourStr && hourStr !== targetHour && !isAllData && !bulletinIdParam && !bulletinHeaderParam) {
             continue;
