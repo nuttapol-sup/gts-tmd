@@ -47,10 +47,12 @@ function processFtpFiles() {
   const utcCycle = getUtcCycleHour(now.getUTCHours());
 
   for (const file of files) {
-    const filePath = path.join(RECEIVED_DIR, file);
-    const stat = fs.statSync(filePath);
+    try {
+      const filePath = path.join(RECEIVED_DIR, file);
+      if (!fs.existsSync(filePath)) continue;
+      const stat = fs.statSync(filePath);
 
-    if (stat.isDirectory()) continue;
+      if (stat.isDirectory()) continue;
 
     const fileUpper = file.toUpperCase();
     const prefix2 = fileUpper.substring(0, 2);
@@ -93,8 +95,7 @@ function processFtpFiles() {
       fs.mkdirSync(targetFolder, { recursive: true });
     }
 
-    try {
-      if (isBurf) {
+    if (isBurf) {
         // ประมวลผลไฟล์ Burf / BUFR (IS*.*, IU*.*, H*.*)
         // 1. สร้างโฟลเดอร์เฉพาะรอบเวลา e.g. Burf/12-AUG26_T15/
         const burfSubDirName = `${dayStr}-${monthStr}${year2D}_T${utcCycle}`;

@@ -44,7 +44,7 @@ export async function GET(request: Request) {
     else if (ext === ".webm") contentType = "video/webm";
     else if (ext === ".txt") contentType = "text/plain; charset=utf-8";
 
-    const fileStream = fs.createReadStream(fullPath);
+    const fileBuffer = fs.readFileSync(fullPath);
 
     const headers: Record<string, string> = {
       "Content-Type": contentType,
@@ -57,8 +57,7 @@ export async function GET(request: Request) {
       headers["Content-Disposition"] = `inline; filename="${encodeURIComponent(fileName)}"`;
     }
 
-    // @ts-ignore
-    return new NextResponse(fileStream, { headers });
+    return new NextResponse(fileBuffer, { headers });
   } catch (error: any) {
     return NextResponse.json(
       { status: "error", message: error.message || "Failed to serve file" },
