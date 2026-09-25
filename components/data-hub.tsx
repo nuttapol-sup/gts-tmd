@@ -409,8 +409,10 @@ export default function DataHub() {
         utc: selectedUtc,
         country: selectedCountry,
         category: activeTab,
-        allData: isAllData ? "true" : "false",
+        allData: isAllData || isNewTabMode ? "true" : "false",
       });
+      if (bulletinIdParam) query.set("bulletinId", bulletinIdParam);
+      if (bulletinHeaderParam) query.set("bulletinHeader", bulletinHeaderParam);
       const res = await fetch(`/api/ftp?${query.toString()}`);
       const data = await res.json();
       if (data.status === "success" && data.bulletins) {
@@ -475,12 +477,16 @@ export default function DataHub() {
   }, {} as Record<string, GTSBulletin[]>);
 
   const selectedBulletin =
+    (bulletinIdParam
+      ? ftpBulletins.find((b) => b.id === bulletinIdParam || b.id.includes(bulletinIdParam))
+      : undefined) ||
     (bulletinHeaderParam
       ? ftpBulletins.find((b) => (b.headerLine || b.dataType || "").trim().toUpperCase() === bulletinHeaderParam.trim().toUpperCase())
       : undefined) ||
-    (selectedBulletinId ? ftpBulletins.find((b) => b.id === selectedBulletinId) : undefined) ||
-    (selectedBulletinId ? ftpBulletins.find((b) => b.id.includes(selectedBulletinId)) : undefined) ||
-    ftpBulletins[0];
+    (selectedBulletinId
+      ? ftpBulletins.find((b) => b.id === selectedBulletinId || b.id.includes(selectedBulletinId))
+      : undefined) ||
+    (!isNewTabMode ? ftpBulletins[0] : undefined);
 
   const getCountryName = (code: string) => {
     const upper = (code || "").toUpperCase();
@@ -847,7 +853,7 @@ export default function DataHub() {
                                   {itemsInRow.map((item) => (
                                     <a
                                       key={item.id}
-                      href={`/services?bulletinId=${encodeURIComponent(item.id)}`}
+                      href={`/services?bulletinId=${encodeURIComponent(item.id)}&bulletinHeader=${encodeURIComponent(item.headerLine || item.dataType)}&date=${selectedDate}&utc=${item.hourStr || selectedUtc}&country=${item.countryCode}&tab=${activeTab}`}
                                       target="_blank"
                                       rel="noopener noreferrer"
                                       className="px-3.5 py-1.5 rounded-xl bg-blue-50 dark:bg-cyan-950/80 hover:bg-blue-600 dark:hover:bg-cyan-600 hover:text-white text-blue-700 dark:text-cyan-300 font-semibold border border-blue-200 dark:border-cyan-500/40 hover:border-blue-300 dark:hover:border-cyan-300 transition-all cursor-pointer shadow-sm text-xs sm:text-sm inline-flex items-center gap-1.5"

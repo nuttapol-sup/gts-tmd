@@ -425,7 +425,11 @@ export async function handleFtpQuery(request: Request, forcedCategory?: string) 
   const rawUtcParam = searchParams.get("utc") || "";
   const rawCountryParam = searchParams.get("country") || "";
   const rawCategoryParam = forcedCategory || searchParams.get("category") || "";
-  const isAllData = searchParams.get("allData") === "true" || !!forcedCategory;
+  const rawBulletinId = searchParams.get("bulletinId") || "";
+  const rawBulletinHeader = searchParams.get("bulletinHeader") || searchParams.get("header") || "";
+  const bulletinIdParam = rawBulletinId.trim();
+  const bulletinHeaderParam = rawBulletinHeader.replace(/_/g, " ").trim();
+  const isAllData = searchParams.get("allData") === "true" || !!forcedCategory || !!bulletinIdParam || !!bulletinHeaderParam;
 
   // Cybersecurity: Input sanitization to prevent Path Traversal & Special Character Injection
   const sanitizeAlphaNum = (val: string) => val.replace(/[^a-zA-Z0-9\-_]/g, "").substring(0, 30);
@@ -725,25 +729,25 @@ export async function handleFtpQuery(request: Request, forcedCategory?: string) 
             categoryLabel = "ข่าว Synoptic (Surface)";
           }
 
-          // Apply Day Filter
-          if (targetDay && dayStr && dayStr !== targetDay) {
+          // Apply Day Filter (skip if specific bulletin or header requested)
+          if (targetDay && dayStr && dayStr !== targetDay && !bulletinIdParam && !bulletinHeaderParam) {
             continue;
           }
 
-          // Apply Hour Filter
-          if (targetHour && hourStr && hourStr !== targetHour) {
+          // Apply Hour Filter (skip if direct bulletin lookup or allData)
+          if (targetHour && hourStr && hourStr !== targetHour && !isAllData && !bulletinIdParam && !bulletinHeaderParam) {
             continue;
           }
 
-          // Apply Country Code Filter (if country is selected and not "zero")
-          if (countryParam && countryParam !== "zero") {
+          // Apply Country Code Filter (skip if direct bulletin lookup)
+          if (countryParam && countryParam !== "zero" && !bulletinIdParam && !bulletinHeaderParam) {
             if (!isCountryMatch(countryParam, countryCode, dataType, cleanRaw)) {
               continue;
             }
           }
 
-          // Apply Category Filter if specific category tab selected (unless categoryParam is empty)
-          if (categoryParam && category !== categoryParam) {
+          // Apply Category Filter (skip if direct bulletin lookup or allData)
+          if (categoryParam && category !== categoryParam && !isAllData && !bulletinIdParam && !bulletinHeaderParam) {
             continue;
           }
 
