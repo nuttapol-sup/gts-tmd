@@ -18,7 +18,7 @@ export default function HeroSection() {
         {/* Main Hero Content */}
         <div className="flex flex-col items-center text-center max-w-4xl mx-auto space-y-8">
           {/* Main Title */}
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight sm:leading-tight">
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-slate-900 dark:text-white leading-tight sm:leading-tight">
             {t("ศูนย์โทรคมนาคมอุตุนิยมวิทยา", "Telecommunication Center")}
             <br />
             <span className="bg-gradient-to-r from-emerald-700 via-teal-600 to-emerald-500 dark:from-emerald-400 dark:via-teal-300 dark:to-emerald-500 bg-clip-text text-transparent">
