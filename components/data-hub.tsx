@@ -361,7 +361,8 @@ export default function DataHub() {
   const utcParam = searchParams.get("utc");
   const countryParam = searchParams.get("country");
   const bulletinIdParam = searchParams.get("bulletinId");
-  const bulletinHeaderParam = searchParams.get("bulletinHeader") || searchParams.get("header");
+  const rawHeader = searchParams.get("bulletinHeader") || searchParams.get("header") || "";
+  const bulletinHeaderParam = rawHeader.replace(/_/g, " ").trim();
   const isNewTabMode = Boolean(bulletinIdParam || bulletinHeaderParam);
 
   const [activeTab, setActiveTab] = useState<WeatherCategory>("synoptic");
@@ -846,7 +847,7 @@ export default function DataHub() {
                                   {itemsInRow.map((item) => (
                                     <a
                                       key={item.id}
-                                      href={`/services?tab=${activeTab}&date=${selectedDate}&utc=${selectedUtc}&country=${selectedCountry}&bulletinId=${encodeURIComponent(item.id)}&bulletinHeader=${encodeURIComponent(item.headerLine || item.dataType)}`}
+                                      href={`/services?tab=${activeTab}&date=${selectedDate}&utc=${selectedUtc}&country=${selectedCountry}&bulletinId=${encodeURIComponent(item.id)}&header=${encodeURIComponent(item.headerLine || item.dataType)}`}
                                       target="_blank"
                                       rel="noopener noreferrer"
                                       className="px-3.5 py-1.5 rounded-xl bg-blue-50 dark:bg-cyan-950/80 hover:bg-blue-600 dark:hover:bg-cyan-600 hover:text-white text-blue-700 dark:text-cyan-300 font-semibold border border-blue-200 dark:border-cyan-500/40 hover:border-blue-300 dark:hover:border-cyan-300 transition-all cursor-pointer shadow-sm text-xs sm:text-sm inline-flex items-center gap-1.5"
