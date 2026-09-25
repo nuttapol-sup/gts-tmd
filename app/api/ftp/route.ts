@@ -332,14 +332,8 @@ export function isCountryMatch(
 export function resolveEffectiveCountry(
   issuingCenterCode: string,
   dataType: string,
-  bodyText: string,
-  reqCountryParam?: string
+  bodyText: string
 ): string {
-  const req = (reqCountryParam || "").trim().toUpperCase();
-  if (req && req !== "ZERO") {
-    return req;
-  }
-
   const cCode = (issuingCenterCode || "").trim().toUpperCase();
   const dType = (dataType || "").trim().toUpperCase();
   const bodyUpper = (bodyText || "").toUpperCase();
@@ -769,7 +763,7 @@ export async function handleFtpQuery(request: Request, forcedCategory?: string) 
           }
 
           const sanitizedRaw = cleanBinaryText(cleanRaw);
-          const effectiveCountryCode = resolveEffectiveCountry(countryCode, dataType, sanitizedRaw, countryParam);
+          const effectiveCountryCode = resolveEffectiveCountry(countryCode, dataType, sanitizedRaw);
 
           bulletins.push({
             id: `ftp-${filename}-${blockIdx}`,
