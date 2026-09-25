@@ -40,18 +40,9 @@ const nextConfig: NextConfig = {
   // 1. Hide X-Powered-By: Next.js header to prevent framework fingerprinting
   poweredByHeader: false,
 
-  // 2. Comprehensive Security Headers (CSP, COOP, Anti-Clickjacking, Anti-XSS, HSTS, Cache-Control)
+  // 2. Comprehensive Security Headers (CSP, COOP, Anti-Clickjacking, Anti-XSS, HSTS)
   async headers() {
     return [
-      {
-        source: "/_next/static/(.*)",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, max-age=31536000, immutable",
-          },
-        ],
-      },
       {
         source: "/(.*)",
         headers: [
@@ -94,11 +85,6 @@ const nextConfig: NextConfig = {
           {
             key: "Strict-Transport-Security",
             value: "max-age=31536000; includeSubDomains; preload",
-          },
-          // 9. Explicit Cache-Control for OWASP ZAP Compliance
-          {
-            key: "Cache-Control",
-            value: "no-store, max-age=0, must-revalidate",
           },
         ],
       },
