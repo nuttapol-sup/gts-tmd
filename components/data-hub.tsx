@@ -847,16 +847,10 @@ export default function DataHub() {
                                     <a
                                       key={item.id}
                                       href={`/services?tab=${activeTab}&date=${selectedDate}&utc=${selectedUtc}&country=${selectedCountry}&bulletinId=${encodeURIComponent(item.id)}&bulletinHeader=${encodeURIComponent(item.headerLine || item.dataType)}`}
-                                      onClick={(e) => {
-                                        if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
-                                          e.preventDefault();
-                                          handleSelectSingleHeader(item.id);
-                                        }
-                                      }}
                                       target="_blank"
                                       rel="noopener noreferrer"
                                       className="px-3.5 py-1.5 rounded-xl bg-blue-50 dark:bg-cyan-950/80 hover:bg-blue-600 dark:hover:bg-cyan-600 hover:text-white text-blue-700 dark:text-cyan-300 font-semibold border border-blue-200 dark:border-cyan-500/40 hover:border-blue-300 dark:hover:border-cyan-300 transition-all cursor-pointer shadow-sm text-xs sm:text-sm inline-flex items-center gap-1.5"
-                                      title={`กดเพื่อเปิดอ่านเนื้อหาข่าว ${item.headerLine}`}
+                                      title={`กดเพื่อเปิดอ่านเนื้อหาข่าว ${item.headerLine} ในแท็บใหม่`}
                                     >
                                       <span>{item.headerLine || item.dataType}</span>
                                       <ExternalLink className="w-3.5 h-3.5 text-blue-600 dark:text-cyan-400 opacity-80" />
