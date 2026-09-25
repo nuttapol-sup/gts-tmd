@@ -31,7 +31,7 @@ export interface DocTreeNode {
   fileItem?: DocFileItem;
 }
 
-const NOC_DIR = "D:\\React\\gts-tmd\\Thailand NOC";
+const NOC_DIR = process.env.NOC_DIR || path.join(process.cwd(), "Thailand NOC");
 
 function formatFileSize(bytes: number): string {
   if (bytes === 0) return "0 Bytes";
@@ -239,7 +239,7 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const sortMode = searchParams.get("sort") || "custom";
 
-    if (!fs.existsSync(NOC_DIR)) {
+    if (!fs.existsSync(/*turbopackIgnore: true*/ NOC_DIR)) {
       fs.mkdirSync(NOC_DIR, { recursive: true });
     }
 

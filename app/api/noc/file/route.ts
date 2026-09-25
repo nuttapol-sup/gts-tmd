@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 
-const NOC_DIR = "D:\\React\\gts-tmd\\Thailand NOC";
+const NOC_DIR = process.env.NOC_DIR || path.join(process.cwd(), "Thailand NOC");
 
 const MIME_TYPES: Record<string, string> = {
   ".pdf": "application/pdf",
@@ -31,7 +31,7 @@ export async function GET(request: Request) {
   }
 
   // Prevent directory traversal attacks
-  const targetPath = path.normalize(path.join(NOC_DIR, relPath));
+  const targetPath = path.normalize(path.join(/*turbopackIgnore: true*/ NOC_DIR, relPath));
   if (!targetPath.toLowerCase().startsWith(NOC_DIR.toLowerCase())) {
     return new NextResponse("Forbidden path access", { status: 403 });
   }

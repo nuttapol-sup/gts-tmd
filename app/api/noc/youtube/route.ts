@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 
-const NOC_DIR = "D:\\React\\gts-tmd\\Thailand NOC";
+const NOC_DIR = process.env.NOC_DIR || path.join(process.cwd(), "Thailand NOC");
 
 function sanitizeFilename(name: string): string {
   return name.replace(/[/\\?%*:|"<>]/g, "_").trim();
@@ -21,7 +21,7 @@ export async function POST(request: Request) {
     }
 
     const targetDir = subfolder
-      ? path.join(NOC_DIR, subfolder)
+      ? path.join(/*turbopackIgnore: true*/ NOC_DIR, subfolder)
       : NOC_DIR;
 
     if (!fs.existsSync(targetDir)) {
