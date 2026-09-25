@@ -476,16 +476,21 @@ export default function DataHub() {
     return acc;
   }, {} as Record<string, GTSBulletin[]>);
 
+  const normalizeHeaderStr = (str: string) => (str || "").replace(/\s+/g, " ").trim().toUpperCase();
+
   const selectedBulletin =
-    (bulletinIdParam
-      ? ftpBulletins.find((b) => b.id === bulletinIdParam || b.id.includes(bulletinIdParam))
+    (bulletinIdParam ? ftpBulletins.find((b) => b.id === bulletinIdParam) : undefined) ||
+    (bulletinHeaderParam
+      ? ftpBulletins.find((b) => normalizeHeaderStr(b.headerLine) === normalizeHeaderStr(bulletinHeaderParam))
       : undefined) ||
     (bulletinHeaderParam
-      ? ftpBulletins.find((b) => (b.headerLine || b.dataType || "").trim().toUpperCase() === bulletinHeaderParam.trim().toUpperCase())
+      ? ftpBulletins.find((b) => normalizeHeaderStr(b.headerLine).startsWith(normalizeHeaderStr(bulletinHeaderParam)))
       : undefined) ||
-    (selectedBulletinId
-      ? ftpBulletins.find((b) => b.id === selectedBulletinId || b.id.includes(selectedBulletinId))
+    (bulletinHeaderParam
+      ? ftpBulletins.find((b) => normalizeHeaderStr(b.dataType) === normalizeHeaderStr(bulletinHeaderParam.split(" ")[0]))
       : undefined) ||
+    (selectedBulletinId ? ftpBulletins.find((b) => b.id === selectedBulletinId) : undefined) ||
+    (bulletinIdParam ? ftpBulletins.find((b) => b.id.includes(bulletinIdParam)) : undefined) ||
     (!isNewTabMode ? ftpBulletins[0] : undefined);
 
   const getCountryName = (code: string) => {
@@ -889,13 +894,14 @@ export default function DataHub() {
                   const upper = (c || "OTHER").toUpperCase();
                   return (upper.startsWith("RU") || upper === "RIII" || upper === "RUSSIA") ? "RUSSIA" : upper;
                 };
-                const selHeader = (selectedBulletin.headerLine || selectedBulletin.dataType || "").trim();
+                const selHeader = normalizeHeaderStr(selectedBulletin.headerLine || selectedBulletin.dataType);
                 const selCode = normCode(selectedBulletin.countryCode);
 
                 const matchingBulletins = ftpBulletins.filter((b) => {
-                  const bHeader = (b.headerLine || b.dataType || "").trim();
+                  const bHeader = normalizeHeaderStr(b.headerLine || b.dataType);
                   const bCode = normCode(b.countryCode);
-                  return bHeader === selHeader && bCode === selCode;
+                  const isHeaderMatch = bHeader === selHeader || bHeader.startsWith(selHeader) || selHeader.startsWith(bHeader);
+                  return isHeaderMatch && (selCode === "OTHER" || bCode === selCode || bCode === "OTHER");
                 });
 
                 // Deduplicate items with identical text content
