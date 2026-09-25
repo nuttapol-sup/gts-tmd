@@ -728,13 +728,23 @@ export async function handleFtpQuery(request: Request, forcedCategory?: string) 
             continue;
           }
 
-          // If specific bulletin header requested, strictly filter by requested header
+          // If specific bulletin header requested, strictly filter by requested header, country, and UTC time
           if (bulletinHeaderParam) {
-            const normReqHeader = bulletinHeaderParam.replace(/\s+/g, " ").trim().toUpperCase();
-            const normHLine = (headerLine || "").replace(/\s+/g, " ").trim().toUpperCase();
-            const normDType = (dataType || "").replace(/\s+/g, " ").trim().toUpperCase();
-            const isHeaderMatch = normHLine.startsWith(normReqHeader) || normReqHeader.startsWith(normHLine) || normDType === normReqHeader.split(" ")[0];
-            if (!isHeaderMatch) {
+            const parts = bulletinHeaderParam.trim().split(/\s+/);
+            const reqDataType = parts[0]?.toUpperCase();
+            const reqCountry = parts[1]?.toUpperCase();
+            const reqUtc = parts[2];
+
+            const curHLine = (headerLine || "").replace(/\s+/g, " ").trim().toUpperCase();
+            const curDType = (dataType || "").trim().toUpperCase();
+
+            if (reqDataType && curDType !== reqDataType && !curHLine.startsWith(reqDataType)) {
+              continue;
+            }
+            if (reqCountry && countryCode.toUpperCase() !== reqCountry && !curHLine.includes(reqCountry)) {
+              continue;
+            }
+            if (reqUtc && /^\d{6}$/.test(reqUtc) && utcTimeStr && utcTimeStr !== reqUtc && !curHLine.includes(reqUtc)) {
               continue;
             }
           }

@@ -487,7 +487,16 @@ export default function DataHub() {
       ? ftpBulletins.find((b) => normalizeHeaderStr(b.headerLine).startsWith(normalizeHeaderStr(bulletinHeaderParam)))
       : undefined) ||
     (bulletinHeaderParam
-      ? ftpBulletins.find((b) => normalizeHeaderStr(b.dataType) === normalizeHeaderStr(bulletinHeaderParam.split(" ")[0]))
+      ? ftpBulletins.find((b) => {
+          const parts = bulletinHeaderParam.trim().split(/\s+/);
+          const reqDataType = parts[0]?.toUpperCase();
+          const reqUtc = parts[2];
+          const bHLine = normalizeHeaderStr(b.headerLine);
+          const bDType = normalizeHeaderStr(b.dataType);
+          const isDtMatch = bDType === reqDataType || bHLine.startsWith(reqDataType);
+          const isUtcMatch = !reqUtc || !/^\d{6}$/.test(reqUtc) || b.utcTimeStr === reqUtc || bHLine.includes(reqUtc);
+          return isDtMatch && isUtcMatch;
+        })
       : undefined) ||
     (selectedBulletinId ? ftpBulletins.find((b) => b.id === selectedBulletinId) : undefined) ||
     (!isNewTabMode ? ftpBulletins[0] : undefined);
