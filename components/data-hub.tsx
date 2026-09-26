@@ -931,7 +931,7 @@ export default function DataHub() {
                     {isNewTabMode && (
                       <div className="flex flex-col items-center justify-center gap-1.5 mb-4 text-center">
                         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/90 dark:bg-emerald-500/15 border border-emerald-300 dark:border-emerald-500/30 text-emerald-800 dark:text-emerald-300 text-xs sm:text-sm font-bold shadow-md backdrop-blur-md">
-                          <Radio className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                          <RadioTower className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                           <span>ศูนย์โทรคมนาคมอุตุนิยมวิทยา - GTS TMD Weather Data Hub</span>
                         </div>
                       </div>
