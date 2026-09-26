@@ -10,7 +10,7 @@
 
 @layer base {
   :root {
-    --bg-main: #f8fafc;
+    --bg-main: #ffffff;
     --bg-card: #ffffff;
     --border-card: #e2e8f0;
     --text-primary: #0f172a;
@@ -47,7 +47,7 @@ html {
 }
 
 html.light {
-  background-color: #f8fafc;
+  background-color: #ffffff;
   color: #0f172a;
 }
 

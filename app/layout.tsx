@@ -45,7 +45,7 @@ export default function RootLayout({
       className={`${prompt.variable} ${kanit.variable} ${jetbrainsMono.variable} h-full antialiased light`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col font-sans bg-slate-50 dark:bg-[#040e0c] text-slate-900 dark:text-slate-100 selection:bg-emerald-600 selection:text-white transition-colors duration-300">
+      <body className="min-h-full flex flex-col font-sans bg-white dark:bg-[#040e0c] text-slate-900 dark:text-slate-100 selection:bg-emerald-600 selection:text-white transition-colors duration-300">
         <ThemeProvider>
           <LanguageProvider>
             {children}
