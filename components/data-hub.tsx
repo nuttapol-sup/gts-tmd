@@ -928,11 +928,19 @@ export default function DataHub() {
 
                 return (
                   <div className="space-y-4">
+                    {isNewTabMode && (
+                      <div className="flex flex-col items-center justify-center gap-1.5 mb-4 text-center">
+                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/90 dark:bg-emerald-500/15 border border-emerald-300 dark:border-emerald-500/30 text-emerald-800 dark:text-emerald-300 text-xs sm:text-sm font-bold shadow-md backdrop-blur-md">
+                          <Radio className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                          <span>ศูนย์โทรคมนาคมอุตุนิยมวิทยา - GTS TMD Weather Data Hub</span>
+                        </div>
+                      </div>
+                    )}
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-3">
                       {isNewTabMode ? (
                         <button
                           onClick={() => window.close()}
-                          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold border border-slate-300 dark:border-slate-700 transition-all cursor-pointer shrink-0"
+                          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/90 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold border border-slate-300 dark:border-slate-700 shadow-sm transition-all cursor-pointer shrink-0"
                         >
                           <X className="w-4 h-4 text-slate-500 dark:text-slate-400" />
                           ปิดแท็บนี้ (Close Tab)
@@ -947,7 +955,7 @@ export default function DataHub() {
                         </button>
                       )}
 
-                      <span className="text-xs text-emerald-800 dark:text-emerald-300 font-mono font-bold bg-emerald-50 dark:bg-emerald-950/60 px-3 py-1.5 rounded-xl border border-emerald-200 dark:border-emerald-800">
+                      <span className="text-xs text-emerald-800 dark:text-emerald-300 font-mono font-bold bg-white/90 dark:bg-emerald-950/60 px-3 py-1.5 rounded-xl border border-emerald-300 dark:border-emerald-800 shadow-sm">
                         แสดงหัวข่าว: {selectedBulletin.headerLine} ({listToDisplay.length} รายการ)
                       </span>
                     </div>
@@ -958,8 +966,8 @@ export default function DataHub() {
                         key={bulletin.id}
                         className={`glass-panel rounded-3xl p-6 border space-y-4 shadow-xl dark:shadow-2xl relative overflow-hidden transition-all ${
                           idx === 0
-                            ? "border-emerald-400/80 bg-white dark:bg-slate-900/90 shadow-md"
-                            : "border-slate-200 dark:border-emerald-500/30 bg-white dark:bg-slate-900/90"
+                            ? "border-emerald-500/80 bg-white/95 dark:bg-slate-900/90 shadow-lg shadow-emerald-900/5"
+                            : "border-slate-300 dark:border-emerald-500/30 bg-white/95 dark:bg-slate-900/90 shadow-md"
                         }`}
                       >
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-3">
