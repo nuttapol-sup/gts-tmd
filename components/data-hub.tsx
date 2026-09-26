@@ -635,60 +635,60 @@ export default function DataHub() {
             onClick={() => setActiveTab("synoptic")}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
               activeTab === "synoptic"
-                ? "bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-500 dark:to-teal-600 text-white shadow-md shadow-emerald-600/25"
+                ? "bg-emerald-600 bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-500 dark:to-teal-600 text-white shadow-md shadow-emerald-600/25"
                 : "text-slate-700 dark:text-slate-400 hover:text-emerald-700 dark:hover:text-white hover:bg-emerald-50 dark:hover:bg-slate-800/60"
             }`}
           >
-            <Satellite className="w-4 h-4" />
-            {t("ข่าว Synoptic", "Synoptic Bulletins")}
+            <Satellite className="w-4 h-4 shrink-0 text-current" />
+            <span>{t("ข่าว Synoptic", "Synoptic Bulletins")}</span>
           </button>
 
           <button
             onClick={() => setActiveTab("upperair")}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
               activeTab === "upperair"
-                ? "bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-500 dark:to-teal-600 text-white shadow-md shadow-emerald-600/25"
+                ? "bg-emerald-600 bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-500 dark:to-teal-600 text-white shadow-md shadow-emerald-600/25"
                 : "text-slate-700 dark:text-slate-400 hover:text-emerald-700 dark:hover:text-white hover:bg-emerald-50 dark:hover:bg-slate-800/60"
             }`}
           >
-            <Cloud className="w-4 h-4" />
-            {t("ข่าว Upper Air (Wind)", "Upper Air (Wind)")}
+            <Cloud className="w-4 h-4 shrink-0 text-current" />
+            <span>{t("ข่าว Upper Air (Wind)", "Upper Air (Wind)")}</span>
           </button>
 
           <button
             onClick={() => setActiveTab("warning")}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
               activeTab === "warning"
-                ? "bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-md shadow-amber-500/25"
+                ? "bg-amber-600 bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-md shadow-amber-500/25"
                 : "text-slate-700 dark:text-slate-400 hover:text-amber-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60"
             }`}
           >
-            <AlertTriangle className="w-4 h-4 text-amber-500 dark:text-amber-300" />
-            {t("ประกาศเตือนภัย (War)", "Weather Warnings")}
+            <AlertTriangle className="w-4 h-4 text-amber-500 dark:text-amber-300 shrink-0" />
+            <span>{t("ประกาศเตือนภัย (War)", "Weather Warnings")}</span>
           </button>
 
           <button
             onClick={() => setActiveTab("metar")}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
               activeTab === "metar"
-                ? "bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-500 dark:to-teal-600 text-white shadow-md shadow-emerald-600/25"
+                ? "bg-emerald-600 bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-500 dark:to-teal-600 text-white shadow-md shadow-emerald-600/25"
                 : "text-slate-700 dark:text-slate-400 hover:text-emerald-700 dark:hover:text-white hover:bg-emerald-50 dark:hover:bg-slate-800/60"
             }`}
           >
-            <RadioTower className="w-4 h-4" />
-            {t("ข่าว METAR (การบิน)", "METAR (Aviation)")}
+            <RadioTower className="w-4 h-4 shrink-0 text-current" />
+            <span>{t("ข่าว METAR (การบิน)", "METAR (Aviation)")}</span>
           </button>
 
           <button
             onClick={() => setActiveTab("notes")}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
               activeTab === "notes"
-                ? "bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-500 dark:to-teal-600 text-white shadow-md shadow-emerald-600/25"
+                ? "bg-emerald-600 bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-500 dark:to-teal-600 text-white shadow-md shadow-emerald-600/25"
                 : "text-slate-700 dark:text-slate-400 hover:text-emerald-700 dark:hover:text-white hover:bg-emerald-50 dark:hover:bg-slate-800/60"
             }`}
           >
-            <StickyNote className="w-4 h-4" />
-            {t("Note ท้ายข่าว", "GTS Raw Notes")}
+            <StickyNote className="w-4 h-4 shrink-0 text-current" />
+            <span>{t("Note ท้ายข่าว", "GTS Raw Notes")}</span>
           </button>
         </div>
 
@@ -723,7 +723,7 @@ export default function DataHub() {
                     type="date"
                     value={selectedDate}
                     onChange={(e) => setSelectedDate(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/90 border border-slate-300 dark:border-emerald-500/40 text-sm font-mono text-center text-slate-900 dark:text-emerald-300 focus:outline-none focus:border-emerald-600 dark:focus:border-emerald-400 shadow-inner"
+                    className="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-slate-900/90 border border-slate-300 dark:border-emerald-500/40 text-sm font-mono text-center text-slate-900 dark:text-emerald-300 focus:outline-none focus:border-emerald-600 dark:focus:border-emerald-400 shadow-inner"
                   />
                 </div>
               </div>
@@ -748,7 +748,7 @@ export default function DataHub() {
                           onClick={() => setSelectedUtc(item.utc)}
                           className={`p-1.5 rounded-xl text-center border transition-all cursor-pointer flex flex-col items-center justify-center ${
                             selectedUtc === item.utc
-                              ? "bg-gradient-to-tr from-emerald-600 to-teal-600 dark:from-emerald-500 dark:to-teal-600 text-white border-emerald-500 dark:border-emerald-300 shadow-md scale-105"
+                              ? "bg-emerald-600 bg-gradient-to-tr from-emerald-600 to-teal-600 dark:from-emerald-500 dark:to-teal-600 text-white border-emerald-500 dark:border-emerald-300 shadow-md scale-105"
                               : "bg-slate-100 dark:bg-slate-900/70 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:bg-emerald-50 dark:hover:border-emerald-700 hover:text-emerald-900 dark:hover:text-white"
                           }`}
                         >
@@ -771,10 +771,10 @@ export default function DataHub() {
                   <select
                     value={selectedCountry}
                     onChange={(e) => setSelectedCountry(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/90 border border-slate-300 dark:border-emerald-500/40 text-sm text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600 dark:focus:border-emerald-400 font-medium cursor-pointer"
+                    className="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-slate-900/90 border border-slate-300 dark:border-emerald-500/40 text-sm text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600 dark:focus:border-emerald-400 font-medium cursor-pointer shadow-sm"
                   >
                     {COUNTRIES.map((c) => (
-                      <option key={c.value} value={c.value}>
+                      <option key={c.value} value={c.value} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">
                         {c.value === "zero" ? c.name : `${c.name} (${c.value})`}
                       </option>
                     ))}

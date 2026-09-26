@@ -115,24 +115,27 @@ h1, h2, h3, h4, h5, h6 {
 /* Fallback for Windows 7 / Legacy Browsers without backdrop-filter support */
 @supports not (backdrop-filter: blur(1px)) {
   .glass-panel,
-  .glass-card,
-  .backdrop-blur-md,
-  .backdrop-blur-xl,
-  .backdrop-blur-2xl {
+  .glass-card {
     background-color: #ffffff !important;
     border: 1px solid #cbd5e1 !important;
     box-shadow: 0 4px 16px rgba(15, 23, 42, 0.12) !important;
   }
 
   .dark .glass-panel,
-  .dark .glass-card,
-  .dark .backdrop-blur-md,
-  .dark .backdrop-blur-xl,
-  .dark .backdrop-blur-2xl {
+  .dark .glass-card {
     background-color: #0b1815 !important;
     border: 1px solid rgba(16, 185, 129, 0.35) !important;
     box-shadow: 0 6px 24px rgba(0, 0, 0, 0.6) !important;
   }
+}
+
+/* Legacy Browser Fallbacks for Windows 7 Buttons & Gradients */
+.bg-gradient-to-r,
+.bg-gradient-to-br,
+.bg-gradient-to-l,
+.bg-gradient-to-t,
+.bg-gradient-to-b {
+  background-color: #059669;
 }
 
 .glass-card:hover {
