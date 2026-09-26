@@ -869,11 +869,11 @@ export default function DataHub() {
                       href={`/services?bulletinId=${encodeURIComponent(item.id)}&bulletinHeader=${encodeURIComponent(item.headerLine || item.dataType)}&date=${selectedDate}&utc=${item.hourStr || selectedUtc}&country=${item.countryCode}&tab=${activeTab}`}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      className="px-3.5 py-1.5 rounded-xl bg-blue-50 dark:bg-cyan-950/80 hover:bg-blue-600 dark:hover:bg-cyan-600 hover:text-white text-blue-700 dark:text-cyan-300 font-semibold border border-blue-200 dark:border-cyan-500/40 hover:border-blue-300 dark:hover:border-cyan-300 transition-all cursor-pointer shadow-sm text-xs sm:text-sm inline-flex items-center gap-1.5"
+                                      className="px-3.5 py-1.5 rounded-xl bg-white dark:bg-emerald-950/80 hover:bg-emerald-600 dark:hover:bg-emerald-600 hover:text-white text-emerald-900 dark:text-cyan-300 font-semibold border border-slate-300 dark:border-emerald-500/40 hover:border-emerald-400 dark:hover:border-cyan-300 transition-all cursor-pointer shadow-sm text-xs sm:text-sm inline-flex items-center gap-1.5"
                                       title={`กดเพื่อเปิดอ่านเนื้อหาข่าว ${item.headerLine} ในแท็บใหม่`}
                                     >
                                       <span>{item.headerLine || item.dataType}</span>
-                                      <ExternalLink className="w-3.5 h-3.5 text-blue-600 dark:text-cyan-400 opacity-80" />
+                                      <ExternalLink className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 opacity-80" />
                                     </a>
                                   ))}
                                 </div>
@@ -1372,3 +1372,5 @@ export default function DataHub() {
     </section>
   );
 }
+
+
