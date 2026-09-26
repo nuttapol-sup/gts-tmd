@@ -551,7 +551,7 @@ export default function ShowcaseViewer({
 
                     {/* F. TEXT CONTENT RENDERER */}
                     {doc.fileType === "text" && doc.textContent && (
-                      <div className="p-5 rounded-2xl bg-slate-900 dark:bg-slate-950 border border-slate-800 dark:border-emerald-500/40 font-mono text-xs text-emerald-300 leading-relaxed whitespace-pre-wrap overflow-x-auto max-h-[500px]">
+                      <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-emerald-500/40 font-mono text-xs sm:text-sm text-slate-900 dark:text-emerald-300 font-bold leading-relaxed whitespace-pre-wrap overflow-x-auto max-h-[500px]">
                         {doc.textContent}
                       </div>
                     )}

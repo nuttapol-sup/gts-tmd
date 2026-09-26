@@ -784,7 +784,7 @@ export default function DocumentsPage() {
       {/* Add YouTube Link Modal */}
       {showAddYtModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
-          <div className="w-full max-w-md bg-slate-900 rounded-3xl border border-cyan-500/40 p-6 space-y-6 shadow-2xl relative">
+          <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-emerald-500/40 p-6 space-y-6 shadow-2xl relative">
             <button
               onClick={() => setShowAddYtModal(false)}
               className="absolute top-4 right-4 text-slate-400 hover:text-white"
