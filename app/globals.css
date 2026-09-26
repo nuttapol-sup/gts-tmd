@@ -82,30 +82,57 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-kanit), var(--font-prompt), system-ui, sans-serif;
 }
 
-/* Custom Glassmorphism Panels */
+/* Custom Glassmorphism Panels with Windows 7 Legacy Fallbacks */
 .glass-panel {
+  background-color: #ffffff;
   background: var(--bg-card);
   border: 1px solid var(--border-card);
-  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06);
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.08);
 }
 
 .dark .glass-panel {
-  background: rgba(15, 23, 42, 0.92);
+  background-color: #0b1815;
+  background: rgba(15, 23, 42, 0.94);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(56, 189, 248, 0.2);
-  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5);
 }
 
 .glass-card {
+  background-color: #ffffff;
   background: #ffffff;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #cbd5e1;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .dark .glass-card {
-  background: rgba(30, 41, 59, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background-color: #0b1815;
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* Fallback for Windows 7 / Legacy Browsers without backdrop-filter support */
+@supports not (backdrop-filter: blur(1px)) {
+  .glass-panel,
+  .glass-card,
+  .backdrop-blur-md,
+  .backdrop-blur-xl,
+  .backdrop-blur-2xl {
+    background-color: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.12) !important;
+  }
+
+  .dark .glass-panel,
+  .dark .glass-card,
+  .dark .backdrop-blur-md,
+  .dark .backdrop-blur-xl,
+  .dark .backdrop-blur-2xl {
+    background-color: #0b1815 !important;
+    border: 1px solid rgba(16, 185, 129, 0.35) !important;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.6) !important;
+  }
 }
 
 .glass-card:hover {
