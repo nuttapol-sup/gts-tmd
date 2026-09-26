@@ -133,15 +133,18 @@ export interface DecodedSynopStation {
   stationId: string;
   stationName: string;
   countryFlag: string;
+  ppp?: string;
   temp?: string;
-  dewPoint?: string;
-  seaPressure?: string;
-  stationPressure?: string;
-  windDir?: string;
-  windSpeed?: string;
-  presentWeather?: string;
-  rainAmount?: string;
-  maxTemp?: string;
+  tx?: string;
+  dtx?: string;
+  tn?: string;
+  dtn?: string;
+  r3hr?: string;
+  r24hr?: string;
+  r1jan?: string;
+  rh?: string;
+  windDeg?: string;
+  windKt?: string;
   rawLine: string;
 }
 
@@ -200,32 +203,23 @@ const WMO_STATIONS_MAP: Record<string, { name: string; flag: string }> = {
   "30710": { name: "อีร์คุตสก์ (Irkutsk)", flag: "🇷🇺" },
 };
 
-function decodeWindDirection(dd: number): string {
-  if (dd === 0 || dd === 36) return "เหนือ (N)";
-  if (dd > 0 && dd < 9) return "ตะวันออกเฉียงเหนือ (NE)";
-  if (dd === 9) return "ตะวันออก (E)";
-  if (dd > 9 && dd < 18) return "ตะวันออกเฉียงใต้ (SE)";
-  if (dd === 18) return "ใต้ (S)";
-  if (dd > 18 && dd < 27) return "ตะวันตกเฉียงใต้ (SW)";
-  if (dd === 27) return "ตะวันตก (W)";
-  if (dd > 27 && dd < 36) return "ตะวันตกเฉียงเหนือ (NW)";
-  if (dd === 99) return "ลมแปรปรวน (VRB)";
-  return `${dd * 10}°`;
+function decodeWindDirAbbr(dd: number): string {
+  if (dd === 0) return "C";
+  if (dd === 99) return "VRB";
+  const deg = (dd * 10) % 360;
+  const dirs = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"];
+  const val = Math.floor((deg + 11.25) / 22.5);
+  return dirs[val % 16];
 }
 
-function decodePresentWeather(ww: number): string {
-  if (ww === 0) return "ท้องฟ้าแจ่มใส";
-  if (ww === 1 || ww === 2) return "มีเมฆเล็กน้อย";
-  if (ww === 3) return "ท้องฟ้ามืดครึ้ม";
-  if (ww === 5) return "หมอกแดด / ฟ้าหลัว (Haze)";
-  if (ww === 10) return "หมอกบาง (Mist)";
-  if (ww >= 40 && ww <= 49) return "หมอกหนา (Fog)";
-  if (ww >= 50 && ww <= 59) return "ฝนพรำ (Drizzle)";
-  if (ww >= 60 && ww <= 69) return "ฝนตกเล็กน้อยถึงปานกลาง (Rain)";
-  if (ww >= 70 && ww <= 79) return "หิมะตก (Snow)";
-  if (ww >= 80 && ww <= 89) return "ฝนซ่า / ฝนโชก (Showers)";
-  if (ww >= 90) return "ฝนฟ้าคะนอง (Thunderstorm)";
-  return `ww=${ww}`;
+function calculateRH(tempC: number, dewPointC: number): number {
+  if (isNaN(tempC) || isNaN(dewPointC)) return 0;
+  const es = 6.112 * Math.exp((17.67 * tempC) / (tempC + 243.5));
+  const e = 6.112 * Math.exp((17.67 * dewPointC) / (dewPointC + 243.5));
+  let rh = Math.round((e / es) * 100);
+  if (rh > 100) rh = 100;
+  if (rh < 0) rh = 0;
+  return rh;
 }
 
 function parseSynopBulletin(rawText: string): DecodedSynopStation[] {
@@ -244,17 +238,21 @@ function parseSynopBulletin(rawText: string): DecodedSynopStation[] {
     const stationId = firstToken;
     const info = WMO_STATIONS_MAP[stationId] || { name: `สถานี WMO ${stationId}`, flag: "🌐" };
 
+    let tempVal: number | undefined;
+    let dewVal: number | undefined;
+    let ppp: string | undefined;
     let temp: string | undefined;
-    let dewPoint: string | undefined;
-    let stationPressure: string | undefined;
-    let seaPressure: string | undefined;
-    let windDir: string | undefined;
-    let windSpeed: string | undefined;
-    let presentWeather: string | undefined;
-    let rainAmount: string | undefined;
-    let maxTemp: string | undefined;
+    let tx: string | undefined;
+    let dtx: string | undefined;
+    let tn: string | undefined;
+    let dtn: string | undefined;
+    let r3hr: string | undefined;
+    let r24hr: string | undefined;
+    let r1jan: string | undefined;
+    let rh: string | undefined;
+    let windDeg: string | undefined;
+    let windKt: string | undefined;
 
-    // Collect all lines belonging to this station report
     const stationLines = [line];
     let k = i + 1;
     while (k < lines.length) {
@@ -276,6 +274,7 @@ function parseSynopBulletin(rawText: string): DecodedSynopStation[] {
     const allStationTokens = stationLines.join(" ").split(/\s+/);
 
     let isSection333 = false;
+    let isSection555 = false;
 
     for (let j = 1; j < allStationTokens.length; j++) {
       const tok = allStationTokens[j].replace("=", "");
@@ -285,54 +284,81 @@ function parseSynopBulletin(rawText: string): DecodedSynopStation[] {
         isSection333 = true;
         continue;
       }
+      if (tok === "555") {
+        isSection555 = true;
+        continue;
+      }
 
-      if (!isSection333) {
-        if (tok.startsWith("1") && tok.length === 5) {
-          const sign = tok[1] === "1" ? "-" : "+";
-          const val = (parseInt(tok.substring(2), 10) / 10).toFixed(1);
-          temp = `${sign}${val} °C`;
-        } else if (tok.startsWith("2") && tok.length === 5 && tok[1] !== "0") {
-          const sign = tok[1] === "1" ? "-" : "+";
-          const val = (parseInt(tok.substring(2), 10) / 10).toFixed(1);
-          dewPoint = `${sign}${val} °C`;
-        } else if (tok.startsWith("3") && tok.length === 5) {
-          let rawP = parseInt(tok.substring(1), 10);
-          if (rawP < 1000) rawP += 10000;
-          stationPressure = `${(rawP / 10).toFixed(1)} hPa`;
-        } else if (tok.startsWith("4") && tok.length === 5) {
-          let rawP = parseInt(tok.substring(1), 10);
-          if (rawP < 1000) rawP += 10000;
-          seaPressure = `${(rawP / 10).toFixed(1)} hPa`;
-        } else if (tok.startsWith("7") && tok.length === 5) {
-          const ww = parseInt(tok.substring(1, 3), 10);
-          presentWeather = decodePresentWeather(ww);
+      if (!isSection333 && !isSection555) {
+        if (tok.length === 5 && /^\d{5}$/.test(tok)) {
+          if (tok.startsWith("1")) {
+            const sign = tok[1] === "1" ? -1 : 1;
+            tempVal = sign * (parseInt(tok.substring(2), 10) / 10);
+            temp = tempVal.toFixed(1);
+          } else if (tok.startsWith("2") && tok[1] !== "0") {
+            const sign = tok[1] === "1" ? -1 : 1;
+            dewVal = sign * (parseInt(tok.substring(2), 10) / 10);
+          } else if (tok.startsWith("4")) {
+            let rawP = parseInt(tok.substring(1), 10);
+            if (rawP < 1000) rawP += 10000;
+            ppp = (rawP / 10).toFixed(1);
+          } else if (tok.startsWith("6")) {
+            const rawRain = parseInt(tok.substring(1, 4), 10);
+            r3hr = rawRain === 990 ? "0.0" : (rawRain / 10).toFixed(1);
+          } else if (!tok.startsWith("3") && !tok.startsWith("5") && !tok.startsWith("7") && !tok.startsWith("8")) {
+            const dd = parseInt(tok.substring(1, 3), 10);
+            const ff = parseInt(tok.substring(3, 5), 10);
+            if (!isNaN(dd) && !isNaN(ff) && (dd <= 36 || dd === 99) && !windDeg) {
+              windDeg = decodeWindDirAbbr(dd);
+              windKt = String(ff);
+            }
+          }
         }
-      } else {
-        if ((tok.startsWith("1") || tok.startsWith("58")) && tok.length === 5) {
-          const startIdx = tok.startsWith("58") ? 2 : 1;
-          const sign = tok[startIdx] === "1" ? "-" : "+";
-          const val = (parseInt(tok.substring(startIdx + 1), 10) / 10).toFixed(1);
-          maxTemp = `${sign}${val} °C`;
-        } else if ((tok.startsWith("6") || tok.startsWith("7")) && tok.length === 5) {
-          const rawRain = parseInt(tok.substring(1, 4), 10);
-          rainAmount = `${(rawRain / 10).toFixed(1)} มม.`;
+      } else if (isSection333) {
+        if (tok.length === 5 && /^\d{5}$/.test(tok)) {
+          if (tok.startsWith("1")) {
+            const sign = tok[1] === "1" ? -1 : 1;
+            tx = (sign * (parseInt(tok.substring(2), 10) / 10)).toFixed(1);
+          } else if (tok.startsWith("2")) {
+            const sign = tok[1] === "1" ? -1 : 1;
+            tn = (sign * (parseInt(tok.substring(2), 10) / 10)).toFixed(1);
+          } else if (tok.startsWith("58")) {
+            const sign = tok[2] === "1" ? -1 : 1;
+            tx = (sign * (parseInt(tok.substring(3), 10) / 10)).toFixed(1);
+          } else if (tok.startsWith("59")) {
+            const sign = tok[2] === "1" ? -1 : 1;
+            tn = (sign * (parseInt(tok.substring(3), 10) / 10)).toFixed(1);
+          } else if (tok.startsWith("6")) {
+            const rawRain = parseInt(tok.substring(1, 4), 10);
+            r3hr = rawRain === 990 ? "0.0" : (rawRain / 10).toFixed(1);
+          } else if (tok.startsWith("7")) {
+            const rawRain = parseInt(tok.substring(1, 5), 10);
+            r24hr = rawRain === 9990 || rawRain === 990 ? "0.0" : (rawRain / 10).toFixed(1);
+          }
         }
       }
+    }
+
+    if (tempVal !== undefined && dewVal !== undefined) {
+      rh = `${calculateRH(tempVal, dewVal)}%`;
     }
 
     results.push({
       stationId,
       stationName: info.name,
       countryFlag: info.flag,
+      ppp,
       temp,
-      dewPoint,
-      stationPressure,
-      seaPressure,
-      windDir,
-      windSpeed,
-      presentWeather,
-      rainAmount,
-      maxTemp,
+      tx,
+      dtx,
+      tn,
+      dtn,
+      r3hr,
+      r24hr,
+      r1jan,
+      rh,
+      windDeg,
+      windKt,
       rawLine: line,
     });
   }
@@ -1202,48 +1228,71 @@ export default function DataHub() {
                   }
 
                   return (
-                    <table className="w-full text-left text-xs sm:text-sm text-slate-800 dark:text-slate-200">
-                      <thead className="bg-slate-100 dark:bg-slate-900/90 text-slate-800 dark:text-emerald-300 text-xs uppercase tracking-wider border-b border-slate-200 dark:border-slate-800">
+                    <table className="w-full text-left text-xs sm:text-sm text-slate-900 dark:text-slate-100">
+                      <thead className="bg-slate-100 dark:bg-slate-900 text-slate-900 dark:text-emerald-300 text-xs uppercase tracking-wider border-b border-slate-200 dark:border-slate-800 sticky top-0 z-10">
                         <tr>
-                          <th className="px-4 py-3 font-semibold">สถานีตรวจอากาศ</th>
-                          <th className="px-4 py-3 font-semibold">อุณหภูมิ (Temp)</th>
-                          <th className="px-4 py-3 font-semibold">จุดน้ำค้าง (Dew Point)</th>
-                          <th className="px-4 py-3 font-semibold">ความกดอากาศ (Sea Level)</th>
-                          <th className="px-4 py-3 font-semibold">ทิศทาง & ความเร็วลม</th>
-                          <th className="px-4 py-3 font-semibold">สภาพอากาศปัจจุบัน</th>
-                          <th className="px-4 py-3 font-semibold">ฝนสะสม</th>
+                          <th className="px-3 py-2.5 font-bold whitespace-nowrap border-r border-slate-200 dark:border-slate-800">Station Name</th>
+                          <th className="px-3 py-2.5 font-bold whitespace-nowrap text-right border-r border-slate-200 dark:border-slate-800">PPP (hPa)</th>
+                          <th className="px-3 py-2.5 font-bold whitespace-nowrap text-right border-r border-slate-200 dark:border-slate-800">T (C)</th>
+                          <th className="px-3 py-2.5 font-bold whitespace-nowrap text-right border-r border-slate-200 dark:border-slate-800">Tx (C)</th>
+                          <th className="px-3 py-2.5 font-bold whitespace-nowrap text-center border-r border-slate-200 dark:border-slate-800">DTx (24h)</th>
+                          <th className="px-3 py-2.5 font-bold whitespace-nowrap text-right border-r border-slate-200 dark:border-slate-800">Tn (C)</th>
+                          <th className="px-3 py-2.5 font-bold whitespace-nowrap text-center border-r border-slate-200 dark:border-slate-800">DTn (24h)</th>
+                          <th className="px-3 py-2.5 font-bold whitespace-nowrap text-right border-r border-slate-200 dark:border-slate-800">R3Hr (mm)</th>
+                          <th className="px-3 py-2.5 font-bold whitespace-nowrap text-right border-r border-slate-200 dark:border-slate-800">R24Hr (mm)</th>
+                          <th className="px-3 py-2.5 font-bold whitespace-nowrap text-right border-r border-slate-200 dark:border-slate-800">R1 JAN (mm)</th>
+                          <th className="px-3 py-2.5 font-bold whitespace-nowrap text-center border-r border-slate-200 dark:border-slate-800">RH (%)</th>
+                          <th className="px-3 py-2.5 font-bold whitespace-nowrap text-center border-r border-slate-200 dark:border-slate-800">Wind (deg)</th>
+                          <th className="px-3 py-2.5 font-bold whitespace-nowrap text-right">Wind (kt)</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-200 dark:divide-slate-800/60">
+                      <tbody className="divide-y divide-slate-200 dark:divide-slate-800/80 bg-white dark:bg-slate-950">
                         {decodedList.map((st, idx) => (
-                          <tr key={idx} className="hover:bg-emerald-50/60 dark:hover:bg-emerald-500/5 transition-all">
-                            <td className="px-4 py-3.5 font-medium whitespace-nowrap">
+                          <tr key={idx} className="hover:bg-emerald-50/60 dark:hover:bg-emerald-500/5 transition-colors">
+                            <td className="px-3 py-2.5 font-medium whitespace-nowrap border-r border-slate-200 dark:border-slate-800/60">
                               <div className="flex items-center gap-2">
                                 <span className="text-base">{st.countryFlag}</span>
                                 <div>
                                   <span className="text-slate-900 dark:text-white font-bold block">{st.stationName}</span>
-                                  <span className="text-[11px] font-mono text-emerald-700 dark:text-emerald-400">รหัส WMO: {st.stationId}</span>
+                                  <span className="text-[11px] font-mono text-emerald-700 dark:text-emerald-400">ID: {st.stationId}</span>
                                 </div>
                               </div>
                             </td>
-                            <td className="px-4 py-3.5 font-bold text-amber-700 dark:text-amber-300 whitespace-nowrap">
+                            <td className="px-3 py-2.5 font-mono text-slate-900 dark:text-emerald-300 text-right whitespace-nowrap border-r border-slate-200 dark:border-slate-800/60">
+                              {st.ppp || "---"}
+                            </td>
+                            <td className="px-3 py-2.5 font-bold text-amber-700 dark:text-amber-300 text-right whitespace-nowrap border-r border-slate-200 dark:border-slate-800/60">
                               {st.temp || "---"}
-                              {st.maxTemp && <span className="text-[11px] text-amber-600 dark:text-amber-400/80 block font-normal">(สูงสุด {st.maxTemp})</span>}
                             </td>
-                            <td className="px-4 py-3.5 text-teal-700 dark:text-teal-300 font-medium whitespace-nowrap">
-                              {st.dewPoint || "---"}
+                            <td className="px-3 py-2.5 font-bold text-red-600 dark:text-red-400 text-right whitespace-nowrap border-r border-slate-200 dark:border-slate-800/60">
+                              {st.tx || "---"}
                             </td>
-                            <td className="px-4 py-3.5 text-emerald-800 dark:text-emerald-300 font-mono whitespace-nowrap">
-                              {st.seaPressure || st.stationPressure || "---"}
+                            <td className="px-3 py-2.5 text-slate-600 dark:text-slate-400 text-center whitespace-nowrap border-r border-slate-200 dark:border-slate-800/60">
+                              {st.dtx || "---"}
                             </td>
-                            <td className="px-4 py-3.5 text-slate-700 dark:text-slate-300 whitespace-nowrap">
-                              {st.windDir ? `${st.windDir} / ${st.windSpeed}` : "---"}
+                            <td className="px-3 py-2.5 font-bold text-blue-600 dark:text-blue-400 text-right whitespace-nowrap border-r border-slate-200 dark:border-slate-800/60">
+                              {st.tn || "---"}
                             </td>
-                            <td className="px-4 py-3.5 text-emerald-800 dark:text-emerald-300 font-medium whitespace-nowrap">
-                              {st.presentWeather || "ปกติ"}
+                            <td className="px-3 py-2.5 text-slate-600 dark:text-slate-400 text-center whitespace-nowrap border-r border-slate-200 dark:border-slate-800/60">
+                              {st.dtn || "---"}
                             </td>
-                            <td className="px-4 py-3.5 text-teal-700 dark:text-teal-300 font-mono whitespace-nowrap">
-                              {st.rainAmount || "---"}
+                            <td className="px-3 py-2.5 font-mono text-teal-700 dark:text-teal-300 text-right whitespace-nowrap border-r border-slate-200 dark:border-slate-800/60">
+                              {st.r3hr || "---"}
+                            </td>
+                            <td className="px-3 py-2.5 font-mono text-teal-700 dark:text-teal-300 text-right whitespace-nowrap border-r border-slate-200 dark:border-slate-800/60">
+                              {st.r24hr || "---"}
+                            </td>
+                            <td className="px-3 py-2.5 font-mono text-slate-600 dark:text-slate-400 text-right whitespace-nowrap border-r border-slate-200 dark:border-slate-800/60">
+                              {st.r1jan || "---"}
+                            </td>
+                            <td className="px-3 py-2.5 font-medium text-emerald-700 dark:text-emerald-400 text-center whitespace-nowrap border-r border-slate-200 dark:border-slate-800/60">
+                              {st.rh || "---"}
+                            </td>
+                            <td className="px-3 py-2.5 text-slate-800 dark:text-slate-200 text-center font-semibold whitespace-nowrap border-r border-slate-200 dark:border-slate-800/60">
+                              {st.windDeg || "---"}
+                            </td>
+                            <td className="px-3 py-2.5 font-mono text-slate-900 dark:text-slate-100 text-right whitespace-nowrap">
+                              {st.windKt || "---"}
                             </td>
                           </tr>
                         ))}
