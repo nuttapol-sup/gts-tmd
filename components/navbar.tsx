@@ -166,8 +166,8 @@ export default function Navbar() {
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           scrolled
-            ? "bg-white/95 dark:bg-[#0b132b]/95 backdrop-blur-xl border-b border-slate-200 dark:border-cyan-500/30 py-2.5 sm:py-3 shadow-md dark:shadow-xl dark:shadow-cyan-950/40"
-            : "bg-white/90 dark:bg-[#0b132b]/85 lg:bg-slate-50/80 lg:dark:bg-transparent backdrop-blur-md lg:backdrop-blur-none border-b border-slate-200 dark:border-cyan-500/20 lg:border-transparent py-2.5 sm:py-5"
+            ? "bg-white/95 dark:bg-[#040e0c]/95 backdrop-blur-xl border-b border-slate-200 dark:border-emerald-500/30 py-2.5 sm:py-3 shadow-md dark:shadow-xl dark:shadow-emerald-950/40"
+            : "bg-white/90 dark:bg-[#040e0c]/85 lg:bg-slate-50/80 lg:dark:bg-transparent backdrop-blur-md lg:backdrop-blur-none border-b border-slate-200 dark:border-emerald-500/20 lg:border-transparent py-2.5 sm:py-5"
         }`}
       >
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">

@@ -192,12 +192,12 @@ export default function ApiDocsPage() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-50 dark:bg-[#0b132b] text-slate-900 dark:text-slate-100 flex flex-col pt-24 sm:pt-28 lg:pt-44 transition-colors duration-300">
+    <main className="min-h-screen bg-slate-50 dark:bg-[#040e0c] text-slate-900 dark:text-slate-100 flex flex-col pt-24 sm:pt-28 lg:pt-44 transition-colors duration-300">
       <Navbar />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full flex-grow space-y-10">
         {/* Header Hero Section */}
-        <div className="relative rounded-3xl p-8 sm:p-12 overflow-hidden bg-white dark:bg-gradient-to-br dark:from-[#0d1b3e] dark:via-[#0f274c] dark:to-[#0b132b] border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-2xl transition-colors">
+        <div className="relative rounded-3xl p-8 sm:p-12 overflow-hidden bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-emerald-500/30 shadow-sm dark:shadow-2xl transition-colors">
           <div className="relative z-10 space-y-4 max-w-3xl">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 text-xs font-bold border border-emerald-200 dark:border-emerald-800">
               <Zap className="w-4 h-4 text-emerald-600 dark:text-emerald-400 animate-pulse" />

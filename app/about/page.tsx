@@ -6,7 +6,7 @@ import { Info, Plane, Globe, ShieldCheck, Zap, Building } from "lucide-react";
 
 export default function AboutPage() {
   return (
-    <main className="min-h-screen bg-slate-50 dark:bg-[#0b132b] text-slate-900 dark:text-slate-100 flex flex-col pt-32 transition-colors duration-300">
+    <main className="min-h-screen bg-slate-50 dark:bg-[#040e0c] text-slate-900 dark:text-slate-100 flex flex-col pt-32 transition-colors duration-300">
       <Navbar />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
