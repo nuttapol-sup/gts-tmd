@@ -635,11 +635,11 @@ export default function DataHub() {
             onClick={() => setActiveTab("synoptic")}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
               activeTab === "synoptic"
-                ? "bg-emerald-600 bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-500 dark:to-teal-600 text-white shadow-md shadow-emerald-600/25"
+                ? "bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-500/40 shadow-sm"
                 : "text-slate-700 dark:text-slate-400 hover:text-emerald-700 dark:hover:text-white hover:bg-emerald-50 dark:hover:bg-slate-800/60"
             }`}
           >
-            <Satellite className="w-4 h-4 shrink-0 text-current" />
+            <Satellite className="w-4 h-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
             <span>{t("ข่าว Synoptic", "Synoptic Bulletins")}</span>
           </button>
 
@@ -647,11 +647,11 @@ export default function DataHub() {
             onClick={() => setActiveTab("upperair")}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
               activeTab === "upperair"
-                ? "bg-emerald-600 bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-500 dark:to-teal-600 text-white shadow-md shadow-emerald-600/25"
+                ? "bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-500/40 shadow-sm"
                 : "text-slate-700 dark:text-slate-400 hover:text-emerald-700 dark:hover:text-white hover:bg-emerald-50 dark:hover:bg-slate-800/60"
             }`}
           >
-            <Cloud className="w-4 h-4 shrink-0 text-current" />
+            <Cloud className="w-4 h-4 shrink-0 text-teal-600 dark:text-teal-400" />
             <span>{t("ข่าว Upper Air (Wind)", "Upper Air (Wind)")}</span>
           </button>
 
@@ -659,11 +659,11 @@ export default function DataHub() {
             onClick={() => setActiveTab("warning")}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
               activeTab === "warning"
-                ? "bg-amber-600 bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-md shadow-amber-500/25"
+                ? "bg-amber-100 dark:bg-amber-500/20 text-amber-900 dark:text-amber-300 border border-amber-300 dark:border-amber-500/40 shadow-sm"
                 : "text-slate-700 dark:text-slate-400 hover:text-amber-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60"
             }`}
           >
-            <AlertTriangle className="w-4 h-4 text-amber-500 dark:text-amber-300 shrink-0" />
+            <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-300 shrink-0" />
             <span>{t("ประกาศเตือนภัย (War)", "Weather Warnings")}</span>
           </button>
 
@@ -671,11 +671,11 @@ export default function DataHub() {
             onClick={() => setActiveTab("metar")}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
               activeTab === "metar"
-                ? "bg-emerald-600 bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-500 dark:to-teal-600 text-white shadow-md shadow-emerald-600/25"
+                ? "bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-500/40 shadow-sm"
                 : "text-slate-700 dark:text-slate-400 hover:text-emerald-700 dark:hover:text-white hover:bg-emerald-50 dark:hover:bg-slate-800/60"
             }`}
           >
-            <RadioTower className="w-4 h-4 shrink-0 text-current" />
+            <RadioTower className="w-4 h-4 shrink-0 text-indigo-600 dark:text-indigo-400" />
             <span>{t("ข่าว METAR (การบิน)", "METAR (Aviation)")}</span>
           </button>
 
@@ -683,18 +683,18 @@ export default function DataHub() {
             onClick={() => setActiveTab("notes")}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
               activeTab === "notes"
-                ? "bg-emerald-600 bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-500 dark:to-teal-600 text-white shadow-md shadow-emerald-600/25"
+                ? "bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-500/40 shadow-sm"
                 : "text-slate-700 dark:text-slate-400 hover:text-emerald-700 dark:hover:text-white hover:bg-emerald-50 dark:hover:bg-slate-800/60"
             }`}
           >
-            <StickyNote className="w-4 h-4 shrink-0 text-current" />
+            <StickyNote className="w-4 h-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
             <span>{t("Note ท้ายข่าว", "GTS Raw Notes")}</span>
           </button>
         </div>
 
         {/* GTS Query Form Control Card */}
         <div className="max-w-3xl mx-auto">
-          <div className="glass-panel rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-emerald-500/30 bg-white/95 dark:bg-slate-900/90 shadow-md dark:shadow-2xl space-y-6 transition-colors">
+          <div className="glass-panel rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-emerald-500/30 bg-white dark:bg-slate-900/90 shadow-md dark:shadow-2xl space-y-6 transition-colors">
             {/* Form Header */}
             <div className="text-center space-y-1.5 border-b border-slate-200 dark:border-slate-800 pb-4">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-500/15 border border-emerald-200 dark:border-emerald-500/30 text-emerald-800 dark:text-emerald-300 text-xs font-bold">
@@ -748,7 +748,7 @@ export default function DataHub() {
                           onClick={() => setSelectedUtc(item.utc)}
                           className={`p-1.5 rounded-xl text-center border transition-all cursor-pointer flex flex-col items-center justify-center ${
                             selectedUtc === item.utc
-                              ? "bg-emerald-600 bg-gradient-to-tr from-emerald-600 to-teal-600 dark:from-emerald-500 dark:to-teal-600 text-white border-emerald-500 dark:border-emerald-300 shadow-md scale-105"
+                              ? "bg-emerald-600 text-white border-emerald-700 dark:border-emerald-300 shadow-md scale-105 font-bold"
                               : "bg-slate-100 dark:bg-slate-900/70 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:bg-emerald-50 dark:hover:border-emerald-700 hover:text-emerald-900 dark:hover:text-white"
                           }`}
                         >
@@ -771,7 +771,7 @@ export default function DataHub() {
                   <select
                     value={selectedCountry}
                     onChange={(e) => setSelectedCountry(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-slate-900/90 border border-slate-300 dark:border-emerald-500/40 text-sm text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600 dark:focus:border-emerald-400 font-medium cursor-pointer shadow-sm"
+                    className="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-emerald-500/40 text-sm text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600 dark:focus:border-emerald-400 font-medium cursor-pointer shadow-sm"
                   >
                     {COUNTRIES.map((c) => (
                       <option key={c.value} value={c.value} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">
@@ -782,12 +782,12 @@ export default function DataHub() {
                 </div>
               </div>
 
-              {/* 4. Action Buttons (Removed Browse button as requested) */}
+              {/* 4. Action Buttons */}
               <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
                 <button
                   onClick={handleAllData}
                   disabled={isLoading}
-                  className="px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-gradient-to-r from-emerald-500 to-teal-600 hover:brightness-110 text-white shadow-lg shadow-emerald-500/25 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                  className="px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-md transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
                 >
                   {isLoading ? (
                     <RefreshCw className="w-4 h-4 animate-spin" />
@@ -800,7 +800,7 @@ export default function DataHub() {
                 <button
                   onClick={handleReset}
                   disabled={isLoading}
-                  className="px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-gradient-to-r from-rose-500 to-amber-600 hover:brightness-110 text-white shadow-lg shadow-rose-500/25 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                  className="px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-rose-600 hover:bg-rose-700 text-white shadow-md transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
                 >
                   <RotateCcw className="w-4 h-4" />
                   Reset (ล้างค่า)
