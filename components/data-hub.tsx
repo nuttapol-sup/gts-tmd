@@ -1019,7 +1019,7 @@ export default function DataHub() {
                           </div>
                         </div>
 
-                        <pre className="p-5 rounded-2xl bg-slate-900 dark:bg-slate-950 border border-slate-800 dark:border-emerald-500/40 font-mono text-xs sm:text-sm text-emerald-300 overflow-x-auto whitespace-pre-wrap leading-relaxed shadow-inner max-h-[500px] overflow-y-auto">
+                        <pre className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-emerald-500/40 font-mono text-xs sm:text-sm text-slate-900 dark:text-emerald-300 font-bold overflow-x-auto whitespace-pre-wrap leading-relaxed shadow-inner max-h-[500px] overflow-y-auto">
                           <code>{getBulletinRawText(bulletin)}</code>
                         </pre>
                       </div>
@@ -1119,7 +1119,7 @@ export default function DataHub() {
                               </div>
                               </div>
 
-                              <pre className="p-4 rounded-xl bg-slate-900 dark:bg-slate-950 border border-slate-800 dark:border-cyan-500/30 font-mono text-xs text-cyan-300 overflow-x-auto whitespace-pre-wrap leading-relaxed shadow-inner max-h-[360px] overflow-y-auto">
+                              <pre className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-cyan-500/30 font-mono text-xs text-slate-900 dark:text-cyan-300 font-bold overflow-x-auto whitespace-pre-wrap leading-relaxed shadow-inner max-h-[360px] overflow-y-auto">
                                 <code>{getBulletinRawText(bulletin)}</code>
                               </pre>
                             </div>
@@ -1256,7 +1256,7 @@ export default function DataHub() {
               {/* Raw Text Reference */}
               <div className="space-y-1.5 pt-2">
                 <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 block">ข้อความข่าวสาร GTS ดั้งเดิม (Raw Text Reference):</span>
-                <pre className="p-3 rounded-xl bg-slate-900 dark:bg-slate-950 border border-slate-800 text-[11px] font-mono text-emerald-300 overflow-x-auto whitespace-pre-wrap max-h-[100px] overflow-y-auto">
+                <pre className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-[11px] font-mono text-slate-900 dark:text-emerald-300 font-bold overflow-x-auto whitespace-pre-wrap max-h-[100px] overflow-y-auto">
                   <code>{decodingBulletin.rawText}</code>
                 </pre>
               </div>
@@ -1349,7 +1349,7 @@ export default function DataHub() {
                       </div>
                     </div>
 
-                    <pre className="p-4 rounded-2xl bg-slate-950 border border-purple-500/30 font-mono text-xs text-purple-300 overflow-x-auto whitespace-pre-wrap leading-relaxed shadow-inner max-h-[45vh] overflow-y-auto flex-1">
+                    <pre className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-purple-500/30 font-mono text-xs text-slate-900 dark:text-purple-300 font-bold overflow-x-auto whitespace-pre-wrap leading-relaxed shadow-inner max-h-[45vh] overflow-y-auto flex-1">
                       <code>{res.xml}</code>
                     </pre>
                   </div>
