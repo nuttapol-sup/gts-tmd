@@ -509,9 +509,10 @@ export default function DataHub() {
 
   const normalizeHeaderStr = (str: string) => (str || "").replace(/\s+/g, " ").trim().toUpperCase();
 
-  const getBBBWeight = (headerStr: string): number => {
-    if (!headerStr) return 0;
-    const h = headerStr.trim().toUpperCase();
+  const getBBBWeight = (headerStr: string, rawText?: string): number => {
+    const line1 = (rawText || "").split(/\r?\n/)[0] || "";
+    const h = `${headerStr || ""} ${line1}`.trim().toUpperCase();
+    if (!h) return 0;
 
     const ccMatch = h.match(/\bCC([A-Z]{1,2})\b/);
     if (ccMatch) {
@@ -934,8 +935,8 @@ export default function DataHub() {
                           <div className="space-y-1.5 pt-1 font-mono text-sm">
                             {sortedBaseKeys.map((baseKey) => {
                               const itemsInRow = [...subGroupsByBaseCode[baseKey]].sort((a, b) => {
-                                const wA = getBBBWeight(a.headerLine || a.dataType);
-                                const wB = getBBBWeight(b.headerLine || b.dataType);
+                                const wA = getBBBWeight(a.headerLine || a.dataType, getBulletinRawText(a));
+                                const wB = getBBBWeight(b.headerLine || b.dataType, getBulletinRawText(b));
                                 if (wA !== wB) return wA - wB;
                                 if (a.mtimeMs && b.mtimeMs && a.mtimeMs !== b.mtimeMs) {
                                   return a.mtimeMs - b.mtimeMs;
@@ -1026,8 +1027,8 @@ export default function DataHub() {
 
                 // Sort listToDisplay chronologically: Original (oldest) at TOP, Correction/Retransmission (LATEST) at BOTTOM
                 const listToDisplay = [...rawListToDisplay].sort((a, b) => {
-                  const wA = getBBBWeight(a.headerLine || a.dataType);
-                  const wB = getBBBWeight(b.headerLine || b.dataType);
+                  const wA = getBBBWeight(a.headerLine || a.dataType, getBulletinRawText(a));
+                  const wB = getBBBWeight(b.headerLine || b.dataType, getBulletinRawText(b));
                   if (wA !== wB) return wA - wB;
                   if (a.mtimeMs && b.mtimeMs && a.mtimeMs !== b.mtimeMs) {
                     return a.mtimeMs - b.mtimeMs;

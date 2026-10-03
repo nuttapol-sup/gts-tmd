@@ -26,9 +26,10 @@ export interface GTSBulletin {
   mtimeMs: number;
 }
 
-export function getBBBWeight(headerStr: string): number {
-  if (!headerStr) return 0;
-  const h = headerStr.trim().toUpperCase();
+export function getBBBWeight(headerStr: string, rawText?: string): number {
+  const line1 = (rawText || "").split(/\r?\n/)[0] || "";
+  const h = `${headerStr || ""} ${line1}`.trim().toUpperCase();
+  if (!h) return 0;
 
   // 1. Check for Correction: CCx (CCA, CCB, CCC...), COR
   const ccMatch = h.match(/\bCC([A-Z]{1,2})\b/);
@@ -976,8 +977,8 @@ export async function handleFtpQuery(request: Request, forcedCategory?: string) 
 
     // Sort bulletins strictly by BBB weight (Original -> RRA -> CCA -> CCB)
     bulletins.sort((a, b) => {
-      const wA = getBBBWeight(a.headerLine || a.dataType);
-      const wB = getBBBWeight(b.headerLine || b.dataType);
+      const wA = getBBBWeight(a.headerLine || a.dataType, a.rawText);
+      const wB = getBBBWeight(b.headerLine || b.dataType, b.rawText);
       if (wA !== wB) {
         return wA - wB;
       }
