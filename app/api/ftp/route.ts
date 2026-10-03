@@ -25,6 +25,59 @@ export interface GTSBulletin {
   filename: string;
 }
 
+export function getBBBWeight(headerStr: string): number {
+  if (!headerStr) return 0;
+  const h = headerStr.trim().toUpperCase();
+
+  // 1. Check for Correction: CCx (CCA, CCB, CCC...), COR
+  const ccMatch = h.match(/\bCC([A-Z]{1,2})\b/);
+  if (ccMatch) {
+    const code = ccMatch[1];
+    let offset = 0;
+    if (code.length === 1) {
+      offset = code.charCodeAt(0) - 65;
+    } else {
+      offset = 26 + (code.charCodeAt(0) - 65) * 26 + (code.charCodeAt(1) - 65);
+    }
+    return 3000 + offset;
+  }
+  if (/\bCOR\b/.test(h)) {
+    return 3999;
+  }
+
+  // 2. Check for Amendment: AAx, AMD, PPx
+  const aaMatch = h.match(/\b(AA|PP)([A-Z]{1,2})\b/);
+  if (aaMatch) {
+    const code = aaMatch[2];
+    let offset = 0;
+    if (code.length === 1) {
+      offset = code.charCodeAt(0) - 65;
+    } else {
+      offset = 26 + (code.charCodeAt(0) - 65) * 26 + (code.charCodeAt(1) - 65);
+    }
+    return 2000 + offset;
+  }
+  if (/\bAMD\b/.test(h)) {
+    return 2999;
+  }
+
+  // 3. Check for Retransmission: RRx (RRA, RRB, RRC...)
+  const rrMatch = h.match(/\bRR([A-Z]{1,2})\b/);
+  if (rrMatch) {
+    const code = rrMatch[1];
+    let offset = 0;
+    if (code.length === 1) {
+      offset = code.charCodeAt(0) - 65;
+    } else {
+      offset = 26 + (code.charCodeAt(0) - 65) * 26 + (code.charCodeAt(1) - 65);
+    }
+    return 1000 + offset;
+  }
+
+  // 4. Original bulletin (no BBB designator)
+  return 0;
+}
+
 function extractStationObjects(rawText: string): GTSStationItem[] {
   const stations: GTSStationItem[] = [];
   const lines = rawText.split(/\r?\n/);
@@ -918,17 +971,19 @@ export async function handleFtpQuery(request: Request, forcedCategory?: string) 
       }
     }
 
-    // Sort bulletins in chronological order so latest (newest) data appears LAST at the bottom
+    // Sort bulletins in chronological order so original data appears FIRST (TOP) and latest correction data appears LAST (BOTTOM)
     bulletins.sort((a, b) => {
-      if (a.filename !== b.filename) {
-        return a.filename.localeCompare(b.filename, undefined, { numeric: true });
+      const wA = getBBBWeight(a.headerLine || a.dataType);
+      const wB = getBBBWeight(b.headerLine || b.dataType);
+      if (wA !== wB) {
+        return wA - wB;
       }
       const timeA = parseInt(a.utcTimeStr || "0", 10);
       const timeB = parseInt(b.utcTimeStr || "0", 10);
       if (timeA !== timeB) {
         return timeA - timeB;
       }
-      return parseInt(a.id.split("-").pop() || "0", 10) - parseInt(b.id.split("-").pop() || "0", 10);
+      return a.filename.localeCompare(b.filename, undefined, { numeric: true });
     });
 
     // Deduplicate bulletins having exact same headerLine, countryCode, and rawText content

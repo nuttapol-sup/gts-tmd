@@ -504,6 +504,51 @@ export default function DataHub() {
 
   const normalizeHeaderStr = (str: string) => (str || "").replace(/\s+/g, " ").trim().toUpperCase();
 
+  const getBBBWeight = (headerStr: string): number => {
+    if (!headerStr) return 0;
+    const h = headerStr.trim().toUpperCase();
+
+    const ccMatch = h.match(/\bCC([A-Z]{1,2})\b/);
+    if (ccMatch) {
+      const code = ccMatch[1];
+      let offset = 0;
+      if (code.length === 1) {
+        offset = code.charCodeAt(0) - 65;
+      } else {
+        offset = 26 + (code.charCodeAt(0) - 65) * 26 + (code.charCodeAt(1) - 65);
+      }
+      return 3000 + offset;
+    }
+    if (/\bCOR\b/.test(h)) return 3999;
+
+    const aaMatch = h.match(/\b(AA|PP)([A-Z]{1,2})\b/);
+    if (aaMatch) {
+      const code = aaMatch[2];
+      let offset = 0;
+      if (code.length === 1) {
+        offset = code.charCodeAt(0) - 65;
+      } else {
+        offset = 26 + (code.charCodeAt(0) - 65) * 26 + (code.charCodeAt(1) - 65);
+      }
+      return 2000 + offset;
+    }
+    if (/\bAMD\b/.test(h)) return 2999;
+
+    const rrMatch = h.match(/\bRR([A-Z]{1,2})\b/);
+    if (rrMatch) {
+      const code = rrMatch[1];
+      let offset = 0;
+      if (code.length === 1) {
+        offset = code.charCodeAt(0) - 65;
+      } else {
+        offset = 26 + (code.charCodeAt(0) - 65) * 26 + (code.charCodeAt(1) - 65);
+      }
+      return 1000 + offset;
+    }
+
+    return 0;
+  };
+
   const selectedBulletin =
     (bulletinIdParam ? ftpBulletins.find((b) => b.id === bulletinIdParam) : undefined) ||
     (bulletinHeaderParam
@@ -883,7 +928,14 @@ export default function DataHub() {
                           {/* Row-by-Row Header Groups (ขึ้นบรรทัดใหม่แยกจำแนกตามรหัสข่าวหลัก) */}
                           <div className="space-y-1.5 pt-1 font-mono text-sm">
                             {sortedBaseKeys.map((baseKey) => {
-                              const itemsInRow = subGroupsByBaseCode[baseKey];
+                              const itemsInRow = [...subGroupsByBaseCode[baseKey]].sort((a, b) => {
+                                const wA = getBBBWeight(a.headerLine || a.dataType);
+                                const wB = getBBBWeight(b.headerLine || b.dataType);
+                                if (wA !== wB) return wA - wB;
+                                const idA = parseInt((a.id || "0").replace(/\D/g, ""), 10);
+                                const idB = parseInt((b.id || "0").replace(/\D/g, ""), 10);
+                                return idA - idB;
+                              });
                               return (
                                 <div
                                   key={baseKey}
@@ -929,13 +981,25 @@ export default function DataHub() {
                   return (upper.startsWith("RU") || upper === "RIII" || upper === "RUSSIA") ? "RUSSIA" : upper;
                 };
                 const selHeader = normalizeHeaderStr(selectedBulletin.headerLine || selectedBulletin.dataType);
+                const selHeaderParts = selHeader.split(/\s+/);
+                const selBaseKey = selHeaderParts[0];
+                const selCccc = selHeaderParts[1];
+                const selTime = selHeaderParts[2];
                 const selCode = normCode(selectedBulletin.countryCode);
 
                 const matchingBulletins = ftpBulletins.filter((b) => {
-                  const bHeader = normalizeHeaderStr(b.headerLine || b.dataType);
                   const bCode = normCode(b.countryCode);
-                  const isHeaderMatch = bHeader === selHeader || bHeader.startsWith(selHeader) || selHeader.startsWith(bHeader);
-                  return isHeaderMatch && (selCode === "OTHER" || bCode === selCode || bCode === "OTHER");
+                  const bHeader = normalizeHeaderStr(b.headerLine || b.dataType);
+                  const bHeaderParts = bHeader.split(/\s+/);
+                  const bBaseKey = bHeaderParts[0];
+                  const bCccc = bHeaderParts[1];
+                  const bTime = bHeaderParts[2];
+
+                  const isHeaderMatch = bBaseKey === selBaseKey || bHeader === selHeader || bHeader.startsWith(selHeader) || selHeader.startsWith(bHeader);
+                  const isCcccMatch = !selCccc || !bCccc || selCccc === bCccc;
+                  const isTimeMatch = !selTime || !/^\d{6}$/.test(selTime) || !bTime || !/^\d{6}$/.test(bTime) || selTime === bTime;
+
+                  return isHeaderMatch && isCcccMatch && isTimeMatch && (selCode === "OTHER" || bCode === selCode || bCode === "OTHER");
                 });
 
                 // Deduplicate items with identical text content
@@ -954,13 +1018,9 @@ export default function DataHub() {
 
                 // Sort listToDisplay chronologically: Original (oldest) at TOP, Correction/Retransmission (LATEST) at BOTTOM
                 const listToDisplay = [...rawListToDisplay].sort((a, b) => {
-                  const hA = (a.headerLine || "").toUpperCase();
-                  const hB = (b.headerLine || "").toUpperCase();
-                  const isCorrA = /\b(RR[A-Z]|CC[A-Z]|AMD|COR)\b/.test(hA);
-                  const isCorrB = /\b(RR[A-Z]|CC[A-Z]|AMD|COR)\b/.test(hB);
-                  if (isCorrA !== isCorrB) {
-                    return isCorrA ? 1 : -1;
-                  }
+                  const wA = getBBBWeight(a.headerLine || a.dataType);
+                  const wB = getBBBWeight(b.headerLine || b.dataType);
+                  if (wA !== wB) return wA - wB;
                   const idA = parseInt((a.id || "0").replace(/\D/g, ""), 10);
                   const idB = parseInt((b.id || "0").replace(/\D/g, ""), 10);
                   return idA - idB;
@@ -1120,13 +1180,9 @@ export default function DataHub() {
                         <div className="space-y-4">
                           {[...countryBulletins]
                             .sort((a, b) => {
-                              const hA = (a.headerLine || "").toUpperCase();
-                              const hB = (b.headerLine || "").toUpperCase();
-                              const isCorrA = /\b(RR[A-Z]|CC[A-Z]|AMD|COR)\b/.test(hA);
-                              const isCorrB = /\b(RR[A-Z]|CC[A-Z]|AMD|COR)\b/.test(hB);
-                              if (isCorrA !== isCorrB) {
-                                return isCorrA ? 1 : -1;
-                              }
+                              const wA = getBBBWeight(a.headerLine || a.dataType);
+                              const wB = getBBBWeight(b.headerLine || b.dataType);
+                              if (wA !== wB) return wA - wB;
                               const idA = parseInt((a.id || "0").replace(/\D/g, ""), 10);
                               const idB = parseInt((b.id || "0").replace(/\D/g, ""), 10);
                               return idA - idB;
