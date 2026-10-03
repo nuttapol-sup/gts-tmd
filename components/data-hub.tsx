@@ -437,9 +437,14 @@ export default function DataHub() {
         category: activeTab,
         allData: isAllData || isNewTabMode ? "true" : "false",
       });
-      if (bulletinIdParam) query.set("bulletinId", bulletinIdParam);
-      if (bulletinHeaderParam) query.set("bulletinHeader", bulletinHeaderParam);
-      const res = await fetch(`/api/ftp?${query.toString()}`);
+      query.set("_t", String(Date.now()));
+      const res = await fetch(`/api/ftp?${query.toString()}`, {
+        cache: "no-store",
+        headers: {
+          "Pragma": "no-cache",
+          "Cache-Control": "no-cache, no-store, must-revalidate",
+        },
+      });
       const data = await res.json();
       if (data.status === "success" && data.bulletins) {
         setFtpBulletins(data.bulletins);
