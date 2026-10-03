@@ -525,7 +525,7 @@ export default function DataHub() {
         })
       : undefined) ||
     (selectedBulletinId ? ftpBulletins.find((b) => b.id === selectedBulletinId) : undefined) ||
-    (!isNewTabMode ? ftpBulletins[0] : undefined);
+    (!isNewTabMode ? ftpBulletins[ftpBulletins.length - 1] : undefined);
 
   const getCountryName = (code: string) => {
     const upper = (code || "").toUpperCase();
@@ -987,18 +987,20 @@ export default function DataHub() {
                     </div>
 
                     <div className="space-y-6">
-                    {listToDisplay.map((bulletin, idx) => (
+                    {listToDisplay.map((bulletin, idx) => {
+                      const isLatest = idx === listToDisplay.length - 1;
+                      return (
                       <div
                         key={bulletin.id}
                         className={`glass-panel rounded-3xl p-6 border space-y-4 shadow-xl dark:shadow-2xl relative overflow-hidden transition-all ${
-                          idx === 0
-                            ? "border-emerald-500/80 bg-white/95 dark:bg-slate-900/90 shadow-lg shadow-emerald-900/5"
-                            : "border-slate-300 dark:border-emerald-500/30 bg-white/95 dark:bg-slate-900/90 shadow-md"
+                          isLatest
+                            ? "border-emerald-500/80 bg-white dark:bg-slate-900/90 shadow-lg shadow-emerald-900/5"
+                            : "border-slate-300 dark:border-emerald-500/30 bg-white dark:bg-slate-900/90 shadow-md"
                         }`}
                       >
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-3">
                           <div className="flex items-center gap-2.5 flex-wrap">
-                            {idx === 0 && (
+                            {isLatest && (
                               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 text-xs font-extrabold border border-emerald-300 dark:border-emerald-500/50 shadow-sm animate-pulse">
                                 <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                                 ข้อมูลตัวล่าสุด (LATEST)
@@ -1049,7 +1051,8 @@ export default function DataHub() {
                           <code>{getBulletinRawText(bulletin)}</code>
                         </pre>
                       </div>
-                    ))}
+                    );
+                  })}
                   </div>
                 </div>
               );

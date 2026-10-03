@@ -918,17 +918,17 @@ export async function handleFtpQuery(request: Request, forcedCategory?: string) 
       }
     }
 
-    // Sort bulletins so latest (newest) data appears FIRST
+    // Sort bulletins in chronological order so latest (newest) data appears LAST at the bottom
     bulletins.sort((a, b) => {
-      if (b.filename !== a.filename) {
-        return b.filename.localeCompare(a.filename, undefined, { numeric: true });
+      if (a.filename !== b.filename) {
+        return a.filename.localeCompare(b.filename, undefined, { numeric: true });
       }
       const timeA = parseInt(a.utcTimeStr || "0", 10);
       const timeB = parseInt(b.utcTimeStr || "0", 10);
-      if (timeB !== timeA) {
-        return timeB - timeA;
+      if (timeA !== timeB) {
+        return timeA - timeB;
       }
-      return parseInt(b.id.split("-").pop() || "0", 10) - parseInt(a.id.split("-").pop() || "0", 10);
+      return parseInt(a.id.split("-").pop() || "0", 10) - parseInt(b.id.split("-").pop() || "0", 10);
     });
 
     // Deduplicate bulletins having exact same headerLine, countryCode, and rawText content

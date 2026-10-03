@@ -63,28 +63,36 @@ function processFtpFiles() {
     let copyPrefix = `M`;
     let isBurf = false;
 
-    if (fileUpper.startsWith('NOTE')) {
+    let rawContent = '';
+    try {
+      rawContent = fs.readFileSync(filePath, 'utf-8').trim();
+    } catch (e) {
+      // ignore
+    }
+    const contentUpper = rawContent.toUpperCase();
+
+    if (fileUpper.includes('NOTE') || contentUpper.includes('NOTE0') || contentUpper.includes('NOTE1') || contentUpper.includes('NOTE2') || contentUpper.includes('NOTE3')) {
       categoryFolder = 'Note';
       extName = `.T${utcCycle}`;
       copyPrefix = `N`;
-    } else if (['IS', 'IU'].includes(prefix2) || prefix1 === 'H' || fileUpper.startsWith('BUFR') || fileUpper.startsWith('BURF')) {
+    } else if (['IS', 'IU'].includes(prefix2) || prefix1 === 'H' || fileUpper.includes('BUFR') || fileUpper.includes('BURF') || contentUpper.includes('BUFR')) {
       categoryFolder = 'Burf';
       extName = `.TXT`;
       copyPrefix = `B`;
       isBurf = true;
-    } else if (['SM', 'SI', 'SN'].includes(prefix2)) {
+    } else if (['SM', 'SI', 'SN'].includes(prefix2) || contentUpper.startsWith('SM') || contentUpper.startsWith('SI') || contentUpper.startsWith('SN') || contentUpper.includes('AAXX')) {
       categoryFolder = 'Synoptic';
       extName = `.T${utcCycle}`;
       copyPrefix = `SM`;
-    } else if (fileUpper.startsWith('U') || prefix2 === 'PR') {
+    } else if (fileUpper.startsWith('U') || prefix2 === 'PR' || contentUpper.startsWith('TT') || contentUpper.startsWith('PP')) {
       categoryFolder = 'Wind';
       extName = `.T${utcCycle}`;
       copyPrefix = `U`;
-    } else if (['WE', 'WW', 'WO', 'WS', 'WC', 'WV'].includes(prefix2)) {
+    } else if (['WE', 'WW', 'WO', 'WS', 'WC', 'WV'].includes(prefix2) || contentUpper.includes('WARNING') || contentUpper.includes('SIGMET')) {
       categoryFolder = 'War';
       extName = `.TXT`;
       copyPrefix = `W`;
-    } else if (['SA', 'SP'].includes(prefix2)) {
+    } else if (['SA', 'SP', 'FT', 'FC'].includes(prefix2) || contentUpper.includes('METAR') || contentUpper.includes('TAF')) {
       categoryFolder = 'Metar';
       extName = `.TXT`;
       copyPrefix = `M`;
