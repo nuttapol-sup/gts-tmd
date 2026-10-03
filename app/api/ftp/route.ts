@@ -23,6 +23,7 @@ export interface GTSBulletin {
   stations: GTSStationItem[];
   rawText: string;
   filename: string;
+  mtimeMs: number;
 }
 
 export function getBBBWeight(headerStr: string): number {
@@ -852,6 +853,7 @@ export async function handleFtpQuery(request: Request, forcedCategory?: string) 
             stations: extractStationObjects(sanitizedRaw),
             rawText: sanitizedRaw,
             filename,
+            mtimeMs: stat.mtimeMs || 0,
           });
           }
         } catch (e) {
@@ -962,6 +964,7 @@ export async function handleFtpQuery(request: Request, forcedCategory?: string) 
                 stations: extractStationObjects(sanitizedRaw),
                 rawText: sanitizedRaw,
                 filename,
+                mtimeMs: stat.mtimeMs || 0,
               });
             }
           } catch (e) {
@@ -971,8 +974,11 @@ export async function handleFtpQuery(request: Request, forcedCategory?: string) 
       }
     }
 
-    // Sort bulletins in chronological order so original data appears FIRST (TOP) and latest correction data appears LAST (BOTTOM)
+    // Sort bulletins in chronological order (เวลาที่ส่งข่าว / file arrival time) so original data appears FIRST (TOP) and latest correction data appears LAST (BOTTOM)
     bulletins.sort((a, b) => {
+      if (a.mtimeMs && b.mtimeMs && a.mtimeMs !== b.mtimeMs) {
+        return a.mtimeMs - b.mtimeMs;
+      }
       const wA = getBBBWeight(a.headerLine || a.dataType);
       const wB = getBBBWeight(b.headerLine || b.dataType);
       if (wA !== wB) {
@@ -1006,6 +1012,7 @@ export async function handleFtpQuery(request: Request, forcedCategory?: string) 
           utcTimeStr: b.utcTimeStr,
           stations: b.stations,
           rawText: b.rawText,
+          mtimeMs: b.mtimeMs || 0,
         });
       }
     }
