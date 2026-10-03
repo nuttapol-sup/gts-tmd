@@ -929,12 +929,12 @@ export default function DataHub() {
                           <div className="space-y-1.5 pt-1 font-mono text-sm">
                             {sortedBaseKeys.map((baseKey) => {
                               const itemsInRow = [...subGroupsByBaseCode[baseKey]].sort((a, b) => {
-                                if (a.mtimeMs && b.mtimeMs && a.mtimeMs !== b.mtimeMs) {
-                                  return a.mtimeMs - b.mtimeMs;
-                                }
                                 const wA = getBBBWeight(a.headerLine || a.dataType);
                                 const wB = getBBBWeight(b.headerLine || b.dataType);
                                 if (wA !== wB) return wA - wB;
+                                if (a.mtimeMs && b.mtimeMs && a.mtimeMs !== b.mtimeMs) {
+                                  return a.mtimeMs - b.mtimeMs;
+                                }
                                 const idA = parseInt((a.id || "0").replace(/\D/g, ""), 10);
                                 const idB = parseInt((b.id || "0").replace(/\D/g, ""), 10);
                                 return idA - idB;
@@ -1021,12 +1021,12 @@ export default function DataHub() {
 
                 // Sort listToDisplay chronologically: Original (oldest) at TOP, Correction/Retransmission (LATEST) at BOTTOM
                 const listToDisplay = [...rawListToDisplay].sort((a, b) => {
-                  if (a.mtimeMs && b.mtimeMs && a.mtimeMs !== b.mtimeMs) {
-                    return a.mtimeMs - b.mtimeMs;
-                  }
                   const wA = getBBBWeight(a.headerLine || a.dataType);
                   const wB = getBBBWeight(b.headerLine || b.dataType);
                   if (wA !== wB) return wA - wB;
+                  if (a.mtimeMs && b.mtimeMs && a.mtimeMs !== b.mtimeMs) {
+                    return a.mtimeMs - b.mtimeMs;
+                  }
                   const idA = parseInt((a.id || "0").replace(/\D/g, ""), 10);
                   const idB = parseInt((b.id || "0").replace(/\D/g, ""), 10);
                   return idA - idB;
@@ -1186,12 +1186,12 @@ export default function DataHub() {
                         <div className="space-y-4">
                           {[...countryBulletins]
                             .sort((a, b) => {
-                              if (a.mtimeMs && b.mtimeMs && a.mtimeMs !== b.mtimeMs) {
-                                return a.mtimeMs - b.mtimeMs;
-                              }
                               const wA = getBBBWeight(a.headerLine || a.dataType);
                               const wB = getBBBWeight(b.headerLine || b.dataType);
                               if (wA !== wB) return wA - wB;
+                              if (a.mtimeMs && b.mtimeMs && a.mtimeMs !== b.mtimeMs) {
+                                return a.mtimeMs - b.mtimeMs;
+                              }
                               const idA = parseInt((a.id || "0").replace(/\D/g, ""), 10);
                               const idB = parseInt((b.id || "0").replace(/\D/g, ""), 10);
                               return idA - idB;

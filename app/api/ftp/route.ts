@@ -974,15 +974,15 @@ export async function handleFtpQuery(request: Request, forcedCategory?: string) 
       }
     }
 
-    // Sort bulletins in chronological order (เวลาที่ส่งข่าว / file arrival time) so original data appears FIRST (TOP) and latest correction data appears LAST (BOTTOM)
+    // Sort bulletins strictly by BBB weight (Original -> RRA -> CCA -> CCB)
     bulletins.sort((a, b) => {
-      if (a.mtimeMs && b.mtimeMs && a.mtimeMs !== b.mtimeMs) {
-        return a.mtimeMs - b.mtimeMs;
-      }
       const wA = getBBBWeight(a.headerLine || a.dataType);
       const wB = getBBBWeight(b.headerLine || b.dataType);
       if (wA !== wB) {
         return wA - wB;
+      }
+      if (a.mtimeMs && b.mtimeMs && a.mtimeMs !== b.mtimeMs) {
+        return a.mtimeMs - b.mtimeMs;
       }
       const timeA = parseInt(a.utcTimeStr || "0", 10);
       const timeB = parseInt(b.utcTimeStr || "0", 10);
