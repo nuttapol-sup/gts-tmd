@@ -894,7 +894,7 @@ export async function handleFtpQuery(request: Request, forcedCategory?: string) 
               }
 
               const sanitizedRaw = cleanBinaryText(cleanRaw);
-              const effectiveCountryCode = resolveEffectiveCountry(countryCode, dataType, sanitizedRaw, countryParam);
+              const effectiveCountryCode = resolveEffectiveCountry(countryCode, dataType, sanitizedRaw);
 
               bulletins.push({
                 id: `ftp-${filename}-${blockIdx}`,

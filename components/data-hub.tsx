@@ -950,7 +950,21 @@ export default function DataHub() {
                   }
                 }
 
-                const listToDisplay = uniqueMatching.length > 0 ? uniqueMatching : [selectedBulletin];
+                const rawListToDisplay = uniqueMatching.length > 0 ? uniqueMatching : [selectedBulletin];
+
+                // Sort listToDisplay chronologically: Original (oldest) at TOP, Correction/Retransmission (LATEST) at BOTTOM
+                const listToDisplay = [...rawListToDisplay].sort((a, b) => {
+                  const hA = (a.headerLine || "").toUpperCase();
+                  const hB = (b.headerLine || "").toUpperCase();
+                  const isCorrA = /\b(RR[A-Z]|CC[A-Z]|AMD|COR)\b/.test(hA);
+                  const isCorrB = /\b(RR[A-Z]|CC[A-Z]|AMD|COR)\b/.test(hB);
+                  if (isCorrA !== isCorrB) {
+                    return isCorrA ? 1 : -1;
+                  }
+                  const idA = parseInt((a.id || "0").replace(/\D/g, ""), 10);
+                  const idB = parseInt((b.id || "0").replace(/\D/g, ""), 10);
+                  return idA - idB;
+                });
 
                 return (
                   <div className="space-y-4">
@@ -1104,11 +1118,24 @@ export default function DataHub() {
                         </div>
 
                         <div className="space-y-4">
-                          {countryBulletins.map((bulletin) => (
-                            <div
-                              key={bulletin.id}
-                              className="glass-panel rounded-2xl p-5 border border-slate-200 dark:border-cyan-500/25 bg-white dark:bg-slate-900/90 hover:border-blue-400 dark:hover:border-cyan-400 transition-all duration-300 space-y-3 shadow-md dark:shadow-xl"
-                            >
+                          {[...countryBulletins]
+                            .sort((a, b) => {
+                              const hA = (a.headerLine || "").toUpperCase();
+                              const hB = (b.headerLine || "").toUpperCase();
+                              const isCorrA = /\b(RR[A-Z]|CC[A-Z]|AMD|COR)\b/.test(hA);
+                              const isCorrB = /\b(RR[A-Z]|CC[A-Z]|AMD|COR)\b/.test(hB);
+                              if (isCorrA !== isCorrB) {
+                                return isCorrA ? 1 : -1;
+                              }
+                              const idA = parseInt((a.id || "0").replace(/\D/g, ""), 10);
+                              const idB = parseInt((b.id || "0").replace(/\D/g, ""), 10);
+                              return idA - idB;
+                            })
+                            .map((bulletin) => (
+                              <div
+                                key={bulletin.id}
+                                className="glass-panel rounded-2xl p-5 border border-slate-200 dark:border-cyan-500/25 bg-white dark:bg-slate-900/90 hover:border-blue-400 dark:hover:border-cyan-400 transition-all duration-300 space-y-3 shadow-md dark:shadow-xl"
+                              >
                               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800/80 pb-2">
                                 <div className="flex items-center gap-2.5 flex-wrap">
                                   <span className="px-2.5 py-0.5 rounded-md bg-blue-100 dark:bg-cyan-500/20 text-blue-800 dark:text-cyan-300 font-mono text-xs font-bold border border-blue-200 dark:border-cyan-500/30">
