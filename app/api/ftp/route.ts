@@ -80,6 +80,51 @@ export function getBBBWeight(headerStr: string, rawText?: string): number {
   return 0;
 }
 
+export const COUNTRY_NAMES: Record<string, string> = {
+  AMMC: "Australia",
+  VGDC: "Bangladesh",
+  VQPR: "Bhutan",
+  WBSB: "Brunei",
+  VDPP: "Cambodia",
+  BABJ: "China",
+  VHHH: "Hong Kong",
+  DEMS: "India",
+  WIIX: "Indonesia",
+  OLLL: "Iran",
+  RJTD: "Japan",
+  UAAA: "Kazakhstan",
+  OKBK: "Kuwait",
+  UAFF: "Kyrgyzstan",
+  VLIV: "Laos",
+  VMMC: "Macao",
+  FMMI: "Madagascar",
+  WMKK: "Malaysia",
+  VRMM: "Maldives",
+  MNUB: "Mongolia",
+  VBRR: "Myanmar",
+  VNKT: "Nepal",
+  DKPY: "North Korea",
+  OOMS: "Oman",
+  OCEAN: "Pacific Ocean",
+  RPLL: "Philippines",
+  ROAH: "Ryukyu Islands",
+  RUSSIA: "Russia (รัสเซีย)",
+  WSSS: "Singapore",
+  VCCC: "Sri Lanka",
+  RCAA: "Taiwan",
+  VTBB: "Thailand",
+  UTTT: "Uzbekistan",
+  VVGL: "Vietnam",
+};
+
+export function getCountrySortName(code: string): string {
+  const upper = (code || "").toUpperCase();
+  if (upper === "RUSSIA" || upper.startsWith("RU") || upper === "RIII") {
+    return "Russia (รัสเซีย)";
+  }
+  return COUNTRY_NAMES[upper] || upper;
+}
+
 function extractStationObjects(rawText: string): GTSStationItem[] {
   const stations: GTSStationItem[] = [];
   const lines = rawText.split(/\r?\n/);
@@ -1084,22 +1129,33 @@ export async function handleFtpQuery(request: Request, forcedCategory?: string) 
       }
     }
 
-    // Sort bulletins strictly by BBB weight (Original -> RRA -> CCA -> CCB)
+    // Sort bulletins exactly like the Data Hub page:
+    // 1. By Country Name (ตามชื่อประเทศ เช่น Australia -> Bangladesh -> Thailand -> Vietnam)
+    // 2. By Base Header Code (ตามรหัสหัวข่าวหลัก เช่น SMTH01 -> SMTH02)
+    // 3. By BBB Weight (Original -> RRx -> AAx -> CCx)
+    // 4. By Full Header String (A-Z)
+    // 5. By Modification Time
     bulletins.sort((a, b) => {
+      const countryA = getCountrySortName(a.countryCode);
+      const countryB = getCountrySortName(b.countryCode);
+      const cmpCountry = countryA.localeCompare(countryB, "th", { sensitivity: "base" });
+      if (cmpCountry !== 0) return cmpCountry;
+
+      const hA = (a.headerLine || a.dataType || "").trim();
+      const hB = (b.headerLine || b.dataType || "").trim();
+      const baseA = hA.split(/\s+/)[0] || "";
+      const baseB = hB.split(/\s+/)[0] || "";
+      const cmpBase = baseA.localeCompare(baseB, undefined, { numeric: true, sensitivity: "base" });
+      if (cmpBase !== 0) return cmpBase;
+
       const wA = getBBBWeight(a.headerLine || a.dataType, a.rawText);
       const wB = getBBBWeight(b.headerLine || b.dataType, b.rawText);
-      if (wA !== wB) {
-        return wA - wB;
-      }
-      if (a.mtimeMs && b.mtimeMs && a.mtimeMs !== b.mtimeMs) {
-        return a.mtimeMs - b.mtimeMs;
-      }
-      const timeA = parseInt(a.utcTimeStr || "0", 10);
-      const timeB = parseInt(b.utcTimeStr || "0", 10);
-      if (timeA !== timeB) {
-        return timeA - timeB;
-      }
-      return a.filename.localeCompare(b.filename, undefined, { numeric: true });
+      if (wA !== wB) return wA - wB;
+
+      const cmpFull = hA.localeCompare(hB, undefined, { numeric: true, sensitivity: "base" });
+      if (cmpFull !== 0) return cmpFull;
+
+      return (a.mtimeMs || 0) - (b.mtimeMs || 0);
     });
 
     // Deduplicate bulletins having exact same headerLine, countryCode, and rawText content
@@ -1119,6 +1175,7 @@ export async function handleFtpQuery(request: Request, forcedCategory?: string) 
           headerLine: b.headerLine,
           dataType: b.dataType,
           countryCode: b.countryCode,
+          countryName: getCountrySortName(b.countryCode),
           utcTimeStr: b.utcTimeStr,
           dayStr: b.dayStr,
           hourStr: b.hourStr,
