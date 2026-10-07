@@ -410,7 +410,10 @@ export default function DataHub() {
     return today.toISOString().split("T")[0];
   });
   const [selectedUtc, setSelectedUtc] = useState<string>(() => {
-    if (utcParam) return utcParam;
+    if (utcParam) {
+      const digits = utcParam.replace(/[^0-9]/g, "");
+      return digits.length >= 4 ? digits.substring(0, 2) : digits.padStart(2, "0");
+    }
     return getCurrentUtcCycle();
   });
   const [selectedCountry, setSelectedCountry] = useState<string>(() => {
@@ -430,9 +433,11 @@ export default function DataHub() {
   const fetchFtpData = async (isAllData = false) => {
     setIsLoading(true);
     try {
+      const normUtc = (selectedUtc || "").replace(/[^0-9]/g, "");
+      const utcVal = normUtc.length >= 4 ? normUtc.substring(0, 2) : normUtc.padStart(2, "0");
       const query = new URLSearchParams({
         date: selectedDate,
-        utc: selectedUtc,
+        utc: utcVal,
         country: selectedCountry,
         category: activeTab,
         allData: isAllData || isNewTabMode ? "true" : "false",
@@ -496,8 +501,59 @@ export default function DataHub() {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
+  const normalizedSelectedUtc = (selectedUtc || "").replace(/[^0-9]/g, "");
+  const targetUtc2D = normalizedSelectedUtc.length >= 4
+    ? normalizedSelectedUtc.substring(0, 2)
+    : (normalizedSelectedUtc ? normalizedSelectedUtc.padStart(2, "0") : "");
+
+  // Filter bulletins strictly according to active tab and selected UTC hour
+  const filteredFtpBulletins = ftpBulletins.filter((item) => {
+    // 1. Category validation
+    if (activeTab === "synoptic" || item.category === "synoptic") {
+      const dt = (item.dataType || item.headerLine || "").trim().toUpperCase();
+      if (!dt.startsWith("SM") && !dt.startsWith("SI")) {
+        return false;
+      }
+    } else if (activeTab === "upperair" || item.category === "upperair") {
+      const dt = (item.dataType || item.headerLine || "").trim().toUpperCase();
+      const isUpper =
+        dt.startsWith("U") ||
+        dt.startsWith("PR") ||
+        dt.startsWith("PP") ||
+        dt.startsWith("TT") ||
+        dt.startsWith("PILOT") ||
+        dt.startsWith("TEMP");
+      if (!isUpper) {
+        return false;
+      }
+    } else if (activeTab === "metar" || item.category === "metar") {
+      const dt = (item.dataType || item.headerLine || "").trim().toUpperCase();
+      const prefix2 = dt.substring(0, 2);
+      if (!["SA", "FT", "SP", "FC"].includes(prefix2)) {
+        return false;
+      }
+    }
+
+    // 2. Strict UTC Hour validation
+    if (targetUtc2D) {
+      let bHour = item.hourStr;
+      if (!bHour && item.utcTimeStr && item.utcTimeStr.length >= 4) {
+        bHour = item.utcTimeStr.substring(2, 4);
+      }
+      if (!bHour && item.headerLine) {
+        const timeMatch = item.headerLine.match(/\b\d{2}(\d{2})\d{2}\b/);
+        if (timeMatch) bHour = timeMatch[1];
+      }
+      if (bHour && bHour !== targetUtc2D) {
+        return false;
+      }
+    }
+
+    return true;
+  });
+
   // Group bulletins by country name
-  const groupedBulletins = ftpBulletins.reduce((acc, bulletin) => {
+  const groupedBulletins = filteredFtpBulletins.reduce((acc, bulletin) => {
     const matchedCountry = COUNTRIES.find((c) => c.value === bulletin.countryCode);
     const countryName = matchedCountry ? matchedCountry.name : bulletin.countryCode;
     if (!acc[countryName]) {
@@ -576,7 +632,7 @@ export default function DataHub() {
         })
       : undefined) ||
     (selectedBulletinId ? ftpBulletins.find((b) => b.id === selectedBulletinId) : undefined) ||
-    (!isNewTabMode ? ftpBulletins[ftpBulletins.length - 1] : undefined);
+    (!isNewTabMode ? (filteredFtpBulletins[filteredFtpBulletins.length - 1] || ftpBulletins[ftpBulletins.length - 1]) : undefined);
 
   const getCountryName = (code: string) => {
     const upper = (code || "").toUpperCase();
@@ -622,14 +678,7 @@ export default function DataHub() {
   const displayBulletins: GTSBulletin[] = [];
   const seenCountryHeaders = new Set<string>();
 
-  for (const item of ftpBulletins) {
-    if (activeTab === "synoptic" || item.category === "synoptic") {
-      const dt = (item.dataType || item.headerLine || "").trim().toUpperCase();
-      if (!dt.startsWith("SM") && !dt.startsWith("SI")) {
-        continue;
-      }
-    }
-
+  for (const item of filteredFtpBulletins) {
     let rawCode = (item.countryCode || "OTHER").toUpperCase();
     if (selectedCountry && selectedCountry !== "zero") {
       rawCode = selectedCountry.toUpperCase();
@@ -996,7 +1045,7 @@ export default function DataHub() {
                 const selTime = selHeaderParts[2];
                 const selCode = normCode(selectedBulletin.countryCode);
 
-                const matchingBulletins = ftpBulletins.filter((b) => {
+                const matchingBulletins = (filteredFtpBulletins.length > 0 ? filteredFtpBulletins : ftpBulletins).filter((b) => {
                   const bCode = normCode(b.countryCode);
                   const bHeader = normalizeHeaderStr(b.headerLine || b.dataType);
                   const bHeaderParts = bHeader.split(/\s+/);
@@ -1006,7 +1055,7 @@ export default function DataHub() {
 
                   const isHeaderMatch = bBaseKey === selBaseKey || bHeader === selHeader || bHeader.startsWith(selHeader) || selHeader.startsWith(bHeader);
                   const isCcccMatch = !selCccc || !bCccc || selCccc === bCccc;
-                  const isTimeMatch = !selTime || !/^\d{6}$/.test(selTime) || !bTime || !/^\d{6}$/.test(bTime) || selTime === bTime;
+                  const isTimeMatch = !selTime || !bTime || selTime === bTime;
 
                   return isHeaderMatch && isCcccMatch && isTimeMatch && (selCode === "OTHER" || bCode === selCode || bCode === "OTHER");
                 });

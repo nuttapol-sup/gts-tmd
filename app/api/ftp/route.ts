@@ -478,7 +478,7 @@ export async function handleFtpQuery(request: Request, forcedCategory?: string) 
   const rawBulletinHeader = searchParams.get("bulletinHeader") || searchParams.get("header") || "";
   const bulletinIdParam = rawBulletinId.trim();
   const bulletinHeaderParam = rawBulletinHeader.replace(/_/g, " ").trim();
-  const isAllData = searchParams.get("allData") === "true" || !!forcedCategory || !!bulletinIdParam || !!bulletinHeaderParam;
+  const isAllData = searchParams.get("allData") === "true";
 
   // Cybersecurity: Input sanitization to prevent Path Traversal & Special Character Injection
   const sanitizeAlphaNum = (val: string) => val.replace(/[^a-zA-Z0-9\-_]/g, "").substring(0, 30);
@@ -547,7 +547,10 @@ export async function handleFtpQuery(request: Request, forcedCategory?: string) 
       }
     }
 
-    const targetHour = utcParam ? utcParam.padStart(2, "0") : "";
+    const cleanUtcDigits = utcParam.replace(/[^0-9]/g, "");
+    const targetHour = cleanUtcDigits
+      ? (cleanUtcDigits.length >= 4 ? cleanUtcDigits.substring(0, 2) : cleanUtcDigits.padStart(2, "0"))
+      : "";
 
     // Determine target year folder: check BE (e.g. 2569), AD (e.g. 2026), or 2D (e.g. 26)
     const possibleYearFolders = [
@@ -634,16 +637,20 @@ export async function handleFtpQuery(request: Request, forcedCategory?: string) 
           }
         }
 
-        // Filter by UTC Hour e.g. .T09 (only for .T files; .TXT files contain all hours)
+        // Filter by UTC Hour e.g. .T09 (only for .T files; .TXT files contain all hours or specific cycle)
         if (targetHour) {
           const expectedSuffix = `.T${targetHour}`.toUpperCase();
-          const isCycleShortcut = filename.toUpperCase().endsWith(`${targetHour}.TXT`);
+          const isMatchingCycleFile = upperFn.endsWith(`${targetHour}.TXT`);
+          const isOtherCycleFile = /^(SM|M|W|U|N)\d{2}\.TXT$/i.test(filename) && !isMatchingCycleFile;
+
+          if (isOtherCycleFile) {
+            continue;
+          }
+
           if (upperFn.includes(".T") && !upperFn.endsWith(".TXT")) {
             if (!upperFn.includes(expectedSuffix)) {
               continue;
             }
-          } else if (isCycleShortcut) {
-            // matched cycle shortcut file
           }
         }
 
@@ -675,7 +682,7 @@ export async function handleFtpQuery(request: Request, forcedCategory?: string) 
           let dayStr = "";
           let hourStr = "";
 
-          // Find GTS Header line (e.g. SIAU24 AMMC 080900, NOTE02 VTBB 010900, SAOM32 OOMS 010000)
+          // Find GTS Header line (e.g. SIAU24 AMMC 080900, NOTE02 VTBB 010900, SAOM32 OOMS 010000, TTAA 01061 48455)
           for (const line of lines) {
             const parts = line.split(/\s+/);
             if (
@@ -689,6 +696,33 @@ export async function handleFtpQuery(request: Request, forcedCategory?: string) 
               utcTimeStr = parts[2];
               dayStr = utcTimeStr.substring(0, 2);
               hourStr = utcTimeStr.substring(2, 4);
+              break;
+            }
+            if (
+              parts.length >= 4 &&
+              /^\d{1,4}$/.test(parts[0]) &&
+              /^[A-Z0-9]{4,6}$/i.test(parts[1]) &&
+              /^\d{6}$/.test(parts[3])
+            ) {
+              headerLine = parts.slice(1).join(" ");
+              dataType = parts[1];
+              countryCode = parts[2];
+              utcTimeStr = parts[3];
+              dayStr = utcTimeStr.substring(0, 2);
+              hourStr = utcTimeStr.substring(2, 4);
+              break;
+            }
+            if (
+              parts.length >= 2 &&
+              (/^(TT|PP)[A-D]{2}$/i.test(parts[0]) || ["PILOT", "TEMP"].includes(parts[0].toUpperCase())) &&
+              /^\d{5}$/.test(parts[1])
+            ) {
+              headerLine = line;
+              dataType = parts[0];
+              countryCode = parts[2] && /^[A-Z]{4}$/i.test(parts[2]) ? parts[2] : "OTHER";
+              dayStr = parts[1].substring(0, 2);
+              hourStr = parts[1].substring(2, 4);
+              utcTimeStr = `${dayStr}${hourStr}00`;
               break;
             }
           }
@@ -804,9 +838,11 @@ export async function handleFtpQuery(request: Request, forcedCategory?: string) 
             }
           }
 
-          // Apply Hour Filter (skip if direct bulletin lookup or allData)
-          if (targetHour && hourStr && hourStr !== targetHour && !isAllData && !bulletinIdParam && !bulletinHeaderParam) {
-            continue;
+          // Apply Hour Filter (skip if direct bulletin lookup)
+          if (targetHour && !bulletinIdParam && !bulletinHeaderParam) {
+            if (!hourStr || hourStr !== targetHour) {
+              continue;
+            }
           }
 
           // Apply Country Code Filter (skip if direct bulletin lookup)
@@ -834,6 +870,21 @@ export async function handleFtpQuery(request: Request, forcedCategory?: string) 
           if (categoryParam === "synoptic" || category === "synoptic") {
             const dtUpper = (dataType || "").trim().toUpperCase();
             if (!dtUpper.startsWith("SM") && !dtUpper.startsWith("SI")) {
+              continue;
+            }
+          }
+
+          // Upper Air filter: only allow headers starting with U, PR, PP, TT, PILOT, TEMP
+          if (categoryParam === "upperair" || category === "upperair") {
+            const dtUpper = (dataType || "").trim().toUpperCase();
+            const isUpper =
+              dtUpper.startsWith("U") ||
+              dtUpper.startsWith("PR") ||
+              dtUpper.startsWith("PP") ||
+              dtUpper.startsWith("TT") ||
+              dtUpper.startsWith("PILOT") ||
+              dtUpper.startsWith("TEMP");
+            if (!isUpper) {
               continue;
             }
           }
@@ -923,10 +974,57 @@ export async function handleFtpQuery(request: Request, forcedCategory?: string) 
                   hourStr = parts[2].substring(2, 4);
                   break;
                 }
+                if (parts.length >= 4 && /^\d{1,4}$/.test(parts[0]) && /^[A-Z0-9]{4,6}$/i.test(parts[1]) && /^\d{6}$/.test(parts[3])) {
+                  headerLine = parts.slice(1).join(" ");
+                  dataType = parts[1];
+                  countryCode = parts[2];
+                  utcTimeStr = parts[3];
+                  dayStr = parts[3].substring(0, 2);
+                  hourStr = parts[3].substring(2, 4);
+                  break;
+                }
+                if (parts.length >= 2 && (/^(TT|PP)[A-D]{2}$/i.test(parts[0]) || ["PILOT", "TEMP"].includes(parts[0].toUpperCase())) && /^\d{5}$/.test(parts[1])) {
+                  headerLine = l;
+                  dataType = parts[0];
+                  countryCode = parts[2] && /^[A-Z]{4}$/i.test(parts[2]) ? parts[2] : "OTHER";
+                  dayStr = parts[1].substring(0, 2);
+                  hourStr = parts[1].substring(2, 4);
+                  utcTimeStr = `${dayStr}${hourStr}00`;
+                  break;
+                }
+              }
+
+              if (targetHour) {
+                if (!hourStr || hourStr !== targetHour) {
+                  continue;
+                }
               }
 
               let category: GTSBulletin["category"] = "synoptic";
               let categoryLabel = "ข่าว Synoptic (Surface)";
+
+              const scanDirLower = scanDir.toLowerCase();
+              const dtUpper = (dataType || "").trim().toUpperCase();
+              const t1 = dtUpper.substring(0, 1);
+              const t1t2 = dtUpper.substring(0, 2);
+
+              if (scanDirLower.includes("wind") || t1 === "U" || t1t2 === "TT" || t1t2 === "PP" || body.includes("TTAA") || body.includes("TTBB") || body.includes("PPAA")) {
+                category = "upperair";
+                categoryLabel = "ข่าว Upper Air (ชั้นบน)";
+              } else if (scanDirLower.includes("metar") || ["SA", "SP", "FT", "FC"].includes(t1t2)) {
+                category = "metar";
+                categoryLabel = "ข่าว METAR (อากาศการบิน)";
+              } else if (scanDirLower.includes("war") || t1 === "W") {
+                category = "warning";
+                categoryLabel = "ประกาศเตือนภัย (Warning)";
+              } else if (t1 === "S" || scanDirLower.includes("synoptic")) {
+                category = "synoptic";
+                categoryLabel = "ข่าว Synoptic (Surface)";
+              }
+
+              if (categoryParam && category !== categoryParam) {
+                continue;
+              }
 
               if (countryParam && countryParam !== "zero") {
                 if (!isCountryMatch(countryParam, countryCode, dataType, cleanRaw)) {
@@ -934,8 +1032,7 @@ export async function handleFtpQuery(request: Request, forcedCategory?: string) 
                 }
               }
 
-              if (categoryParam === "metar") {
-                const dtUpper = (dataType || "").trim().toUpperCase();
+              if (categoryParam === "metar" || category === "metar") {
                 const prefix2 = dtUpper.substring(0, 2);
                 if (!["SA", "FT", "SP", "FC"].includes(prefix2)) {
                   continue;
@@ -943,8 +1040,20 @@ export async function handleFtpQuery(request: Request, forcedCategory?: string) 
               }
 
               if (categoryParam === "synoptic" || category === "synoptic") {
-                const dtUpper = (dataType || "").trim().toUpperCase();
                 if (!dtUpper.startsWith("SM") && !dtUpper.startsWith("SI")) {
+                  continue;
+                }
+              }
+
+              if (categoryParam === "upperair" || category === "upperair") {
+                const isUpper =
+                  dtUpper.startsWith("U") ||
+                  dtUpper.startsWith("PR") ||
+                  dtUpper.startsWith("PP") ||
+                  dtUpper.startsWith("TT") ||
+                  dtUpper.startsWith("PILOT") ||
+                  dtUpper.startsWith("TEMP");
+                if (!isUpper) {
                   continue;
                 }
               }
@@ -1011,6 +1120,8 @@ export async function handleFtpQuery(request: Request, forcedCategory?: string) 
           dataType: b.dataType,
           countryCode: b.countryCode,
           utcTimeStr: b.utcTimeStr,
+          dayStr: b.dayStr,
+          hourStr: b.hourStr,
           stations: b.stations,
           rawText: b.rawText,
           mtimeMs: b.mtimeMs || 0,
