@@ -852,8 +852,8 @@ export default function DataHub() {
                               : "bg-slate-100 dark:bg-slate-900/70 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:bg-emerald-50 dark:hover:border-emerald-700 hover:text-emerald-900 dark:hover:text-white"
                           }`}
                         >
-                          <span className="text-[11px] font-bold font-mono">{item.utc}. UTC</span>
-                          <span className="text-[9px] opacity-75 font-mono">({item.ict})</span>
+                          <span className={`text-[11px] font-bold font-mono ${selectedUtc === item.utc ? "text-white" : ""}`}>{item.utc}. UTC</span>
+                          <span className={`text-[9px] font-mono ${selectedUtc === item.utc ? "text-white opacity-90" : "opacity-75"}`}>({item.ict})</span>
                         </button>
                       ))}
                     </div>
@@ -890,11 +890,11 @@ export default function DataHub() {
                   className="px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-md transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
                 >
                   {isLoading ? (
-                    <RefreshCw className="w-4 h-4 animate-spin" />
+                    <RefreshCw className="w-4 h-4 animate-spin text-white shrink-0" />
                   ) : (
-                    <Database className="w-4 h-4" />
+                    <Database className="w-4 h-4 text-white shrink-0" />
                   )}
-                  All Data (ดูข้อมูลทั้งหมด)
+                  <span className="text-white font-bold">{t("All Data (ดูข้อมูลทั้งหมด)", "All Data (Show All)")}</span>
                 </button>
 
                 <button
@@ -902,8 +902,8 @@ export default function DataHub() {
                   disabled={isLoading}
                   className="px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-rose-600 hover:bg-rose-700 text-white shadow-md transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
                 >
-                  <RotateCcw className="w-4 h-4" />
-                  Reset (ล้างค่า)
+                  <RotateCcw className="w-4 h-4 text-white shrink-0" />
+                  <span className="text-white font-bold">{t("Reset (ล้างค่า)", "Reset")}</span>
                 </button>
               </div>
             </div>
