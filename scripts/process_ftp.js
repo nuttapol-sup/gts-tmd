@@ -30,6 +30,94 @@ function getUtcCycleHour(hourNum) {
   return '00';
 }
 
+/**
+ * หาวัน/เวลาของข่าวจากหัวข่าว WMO (TTAAii CCCC DDHHMM [BBB]) เช่น "SMTH01 VTBB 190600 RRA"
+ * เพื่อให้ข่าวที่มาถึงล่าช้า (เช่น เน็ตล่มแล้วส่งตามมาทีหลัง) ถูกเก็บเข้ารอบเวลาที่ถูกต้อง
+ * คืนค่า Date (UTC) หรือ null ถ้าหาไม่พบ
+ */
+function getBulletinDate(rawContent, now) {
+  const lines = rawContent.split(/\r?\n/).slice(0, 6);
+  for (const line of lines) {
+    const m = line.trim().match(/^(?:\d{3}\s+)?[A-Z]{4}\d{2}\s+[A-Z]{4}\s+(\d{2})(\d{2})(\d{2})\b/);
+    if (!m) continue;
+    const dd = parseInt(m[1], 10);
+    const hh = parseInt(m[2], 10);
+    const mi = parseInt(m[3], 10);
+    if (dd < 1 || dd > 31 || hh > 23 || mi > 59) continue;
+
+    // วันในหัวข่าวมากกว่าวันนี้ = ข่าวของเดือนก่อน (เช่น วันที่ 1 ได้รับข่าววันที่ 31)
+    let year = now.getUTCFullYear();
+    let month = now.getUTCMonth();
+    if (dd > now.getUTCDate() + 1) {
+      month -= 1;
+      if (month < 0) { month = 11; year -= 1; }
+    }
+    const d = new Date(Date.UTC(year, month, dd, hh, mi));
+    if (d.getUTCMonth() !== month) continue; // วันที่ไม่มีจริงในเดือนนั้น
+    return d;
+  }
+  return null;
+}
+
+// ---------------- ระบบเฝ้าระวังข้อมูลไม่เข้า (Data Gap Monitor) ----------------
+const STATUS_FILE = path.join(BASE_FTP_DIR, 'ingest_status.json');
+const ALERT_AFTER_MIN = parseInt(process.env.INGEST_ALERT_MINUTES || '30', 10);
+const ALERT_WEBHOOK_URL = process.env.INGEST_ALERT_WEBHOOK || ''; // เช่น Discord/Teams/Google Chat webhook (ไม่บังคับ)
+let lastReceivedAt = Date.now();
+let alertActive = false;
+
+try {
+  const saved = JSON.parse(fs.readFileSync(STATUS_FILE, 'utf-8'));
+  if (saved.lastReceivedAt) lastReceivedAt = new Date(saved.lastReceivedAt).getTime();
+} catch (e) {
+  // ยังไม่มีไฟล์สถานะ
+}
+
+function writeStatus(extra) {
+  try {
+    fs.writeFileSync(STATUS_FILE, JSON.stringify({
+      lastReceivedAt: new Date(lastReceivedAt).toISOString(),
+      checkedAt: new Date().toISOString(),
+      alertActive,
+      ...extra,
+    }, null, 2));
+  } catch (e) {
+    // ignore
+  }
+}
+
+async function sendAlert(message) {
+  console.error(`[ALERT] ${message}`);
+  if (!ALERT_WEBHOOK_URL) return;
+  try {
+    await fetch(ALERT_WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: message, content: message }),
+    });
+  } catch (e) {
+    console.error('[ALERT] ส่งแจ้งเตือนไม่สำเร็จ:', e.message);
+  }
+}
+
+function checkDataGap() {
+  const gapMin = Math.floor((Date.now() - lastReceivedAt) / 60000);
+  if (gapMin >= ALERT_AFTER_MIN && !alertActive) {
+    alertActive = true;
+    sendAlert(`⚠️ GTS: ไม่มีข่าวเข้า server มาแล้ว ${gapMin} นาที (ล่าสุด ${new Date(lastReceivedAt).toISOString()}) กรุณาตรวจสอบระบบเครือข่าย`);
+  }
+  writeStatus({ minutesSinceLastData: gapMin });
+}
+
+function markReceived() {
+  if (alertActive) {
+    const gapMin = Math.floor((Date.now() - lastReceivedAt) / 60000);
+    sendAlert(`✅ GTS: ข่าวกลับมาเข้า server แล้ว (ขาดหายไป ${gapMin} นาที)`);
+  }
+  alertActive = false;
+  lastReceivedAt = Date.now();
+}
+
 function processFtpFiles() {
   if (!fs.existsSync(RECEIVED_DIR)) {
     fs.mkdirSync(RECEIVED_DIR, { recursive: true });
@@ -38,13 +126,9 @@ function processFtpFiles() {
 
   const files = fs.readdirSync(RECEIVED_DIR);
   if (files.length === 0) return;
+  markReceived();
 
   const now = new Date();
-  const dayStr = String(now.getDate()).padStart(2, '0');
-  const monthStr = MONTH_NAMES[now.getMonth()];
-  const yearBE = String(now.getFullYear() + 543);
-  const year2D = String(now.getFullYear()).substring(2);
-  const utcCycle = getUtcCycleHour(now.getUTCHours());
 
   for (const file of files) {
     try {
@@ -70,6 +154,17 @@ function processFtpFiles() {
       // ignore
     }
     const contentUpper = rawContent.toUpperCase();
+
+    // ใช้วัน/เวลาจากหัวข่าวเป็นหลัก (ถ้าไม่มี จึงใช้เวลาที่ได้รับไฟล์)
+    const bulletinDate = getBulletinDate(contentUpper, now);
+    const refDate = bulletinDate || now;
+    const dayStr = String(refDate.getUTCDate()).padStart(2, '0');
+    const monthStr = MONTH_NAMES[refDate.getUTCMonth()];
+    const yearBE = String(refDate.getUTCFullYear() + 543);
+    const year2D = String(refDate.getUTCFullYear()).substring(2);
+    const utcCycle = getUtcCycleHour(refDate.getUTCHours());
+    // ข่าวของวันอื่น (มาถึงล่าช้าข้ามวัน) ห้ามไปทับไฟล์ลัดของรอบปัจจุบัน (SM06.TXT ฯลฯ)
+    const isSameUtcDay = refDate.toISOString().slice(0, 10) === now.toISOString().slice(0, 10);
 
     if (fileUpper.includes('NOTE') || contentUpper.includes('NOTE0') || contentUpper.includes('NOTE1') || contentUpper.includes('NOTE2') || contentUpper.includes('NOTE3')) {
       categoryFolder = 'Note';
@@ -137,11 +232,14 @@ function processFtpFiles() {
         fs.appendFileSync(mainPath, formattedEntry, 'utf-8');
 
         const copyFileName = `${copyPrefix}${utcCycle}.TXT`;
-        const copyPath = path.join(targetFolder, copyFileName);
-        fs.copyFileSync(mainPath, copyPath);
+        if (isSameUtcDay) {
+          const copyPath = path.join(targetFolder, copyFileName);
+          fs.copyFileSync(mainPath, copyPath);
+        }
 
         fs.unlinkSync(filePath);
-        console.log(`[INGEST] Processed ${file} -> ${categoryFolder}/${mainFileName} & ${copyFileName}`);
+        const lateTag = bulletinDate && (now - bulletinDate) > 3 * 3600 * 1000 ? ' [LATE]' : '';
+        console.log(`[INGEST]${lateTag} Processed ${file} -> ${categoryFolder}/${mainFileName}${isSameUtcDay ? ` & ${copyFileName}` : ''}`);
       }
     } catch (err) {
       console.error(`[ERROR] Failed to process ${file}:`, err);
@@ -151,6 +249,10 @@ function processFtpFiles() {
 
 // เรียกทำงานครั้งแรกทันที
 processFtpFiles();
+
+// ตรวจสอบช่วงที่ข้อมูลไม่เข้าทุก 1 นาที
+setInterval(checkDataGap, 60000);
+checkDataGap();
 
 // ทำงานต่อเนื่องทุกๆ 10 วินาที (Daemon loop) ป้องกัน PM2 restart ค้าง
 setInterval(() => {
