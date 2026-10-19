@@ -138,6 +138,10 @@ function processFtpFiles() {
 
       if (stat.isDirectory()) continue;
 
+      // ข้ามไฟล์ที่ยังอัปโหลดไม่เสร็จ (.tmp/.part) หรือเพิ่งถูกเขียนภายใน 3 วินาที
+      if (/\.(tmp|part|filepart)$/i.test(file)) continue;
+      if (Date.now() - stat.mtimeMs < 3000) continue;
+
     const fileUpper = file.toUpperCase();
     const prefix2 = fileUpper.substring(0, 2);
     const prefix1 = fileUpper.substring(0, 1);
